@@ -1,10 +1,10 @@
-import All from "@/pages/All";
+"use client";
+import SignUp from "../components/SignUp";
 
 export default function Home() {
   return (
     <main className="h-full">
-      <All />
+      <SignUp />
     </main>
   );
 }
-import React from "react";

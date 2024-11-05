@@ -1,4 +1,4 @@
-"use client";
+/* {"use client";
 
 import { useState, useEffect } from "react";
 import {
@@ -652,7 +652,7 @@ function Create() {
       <form className="mt-8 max-w-4xl" data-testid="form" noValidate>
         {current === 0 ? (
           <div data-testid="course_step" className="max-w-lg">
-            {/* {JSON.stringify(courseFields)} */}
+            {/* {JSON.stringify(courseFields)} }
             <label className="mb-4 flex flex-col" htmlFor="title">
               <span className="mb-1 font-semibold">Tittel*</span>
               <input
@@ -944,4 +944,4 @@ export default function All() {
       </footer>
     </div>
   );
-}
+}*/
