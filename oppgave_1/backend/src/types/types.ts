@@ -38,3 +38,24 @@ export const CommentSchema = z.object({
     slug: z.string(),
   }),
 });
+
+
+export const LessonCreateSchema = LessonSchema.omit({ id: true, slug: true,})
+  .extend({text: z.array(z.object({id: z.string(),}))});
+export const LessonArraySchema = z.array(LessonSchema);
+export type Lesson = z.infer<typeof LessonSchema>;
+export type CreateLesson = z.infer<typeof LessonCreateSchema>;
+
+export const CommentCreateSchema = CommentSchema.omit({ id: true });
+export const CommentArraySchema = z.array(CommentSchema);
+export type CreateComment = z.infer<typeof CommentCreateSchema>;
+export type Comment = z.infer<typeof CommentSchema>
+
+export const CourseCreateSchema = CourseSchema.omit( {id: true} )
+export const CourseArraySchema = z.array(CourseSchema)
+export type CourseCreate = z.infer<typeof CourseCreateSchema>
+export type Course = z.infer<typeof CourseSchema>
+
+export type User = z.infer<typeof UserSchema>;
+
+
