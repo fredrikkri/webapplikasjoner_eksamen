@@ -1,14 +1,12 @@
-// Course.controller.ts
-
 import { Hono } from "hono";
-//import { courseService, type CourseService } from "./course.service";
+import { courseService, type CourseService } from "./course.service";
 import { errorResponse, type ErrorCode } from "../../lib/error";
 import { validateQuery } from "../../lib/query";
 
 export const createCourseController = (CourseService: any) => {
   const app = new Hono();
 
-  app.get("/Courses", async (c) => {
+  app.get("/courses", async (c) => {
     const query = validateQuery(c.req.query()).data ?? {};
 
     const result = await CourseService.list(query);
@@ -22,7 +20,7 @@ export const createCourseController = (CourseService: any) => {
     return c.json(result);
   });
 
-  app.get("/course/:id", async (c) => {
+  app.get("/courses/:id", async (c) => {
     const id = c.req.param("id");
     const result = await CourseService.getById(id);
 
@@ -47,7 +45,7 @@ export const createCourseController = (CourseService: any) => {
     return c.json(result, { status: 201 });
   });
 
-  app.patch("/:id", async (c) => {
+  app.patch("courses/:id", async (c) => {
     const id = c.req.param("id");
     const data = await c.req.json();
 
@@ -61,7 +59,7 @@ export const createCourseController = (CourseService: any) => {
     return c.json(result);
   });
 
-  app.delete("/Courses/:id", async (c) => {
+  app.delete("/courses/:id", async (c) => {
     console.log("USED BACKEND")
     const id = c.req.param("id");
     console.log("BACKEND ID:", id)
@@ -79,4 +77,4 @@ export const createCourseController = (CourseService: any) => {
   return app;
 };
 
-//export const CourseController = createCourseController(CourseService);
+export const CourseController = createCourseController(courseService);

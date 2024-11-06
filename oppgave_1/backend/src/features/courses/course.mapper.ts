@@ -1,5 +1,3 @@
-// course.mapper.ts
-
 import type { Course } from "../../types/types";
 
 const createId = () => {

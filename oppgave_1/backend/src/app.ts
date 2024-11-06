@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { port } from "./config";
-//import { CourseController } from "./features/courses/course.controller";
+import { CourseController } from "./features/courses/course.controller";
 
 const app = new Hono();
 

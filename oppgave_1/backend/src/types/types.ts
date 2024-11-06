@@ -22,6 +22,9 @@ export const CourseSchema = z.object({
   category: z.string(),
 });
 
+export const UpdateCourseSchema = CourseSchema.omit({
+});
+
 // SRC: kilde: chatgpt.com /
 export const UserSchema = z.object({
   id: z.string(),
@@ -67,11 +70,14 @@ export type CreateComment = z.infer<typeof CommentCreateSchema>;
 export type Comment = z.infer<typeof CommentSchema>
 
 export type CourseCreate = z.infer<typeof CourseCreateSchema>
+export type CourseResponse = z.infer<typeof CourseCreateSchema>
+export type UpdateCourse = z.infer<typeof UpdateCourseSchema>;
 export type Course = z.infer<typeof CourseSchema>
 
 export type User = z.infer<typeof UserSchema>;
 export type CourseCreateSteps = z.infer<typeof CourseCreateStepsSchema>
 export type Categories = z.infer<typeof CategoriesSchema>
+
 
 
 export const validateCreateCourse = (data: unknown) => {
