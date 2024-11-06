@@ -5,7 +5,7 @@ import Lesson from "./Lesson";
 import { users } from "../data/data";
 import Link from "next/link";
 
-interface CourseProps {
+class CourseProps {
   slug?: string;
 }
 
