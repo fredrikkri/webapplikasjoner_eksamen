@@ -2,11 +2,12 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { port } from "./config";
 import { CourseController } from "./features/courses/course.controller";
+import { endPoint } from "./config/config";
 
 const app = new Hono();
 
 app.use("/*", cors({
-  origin: "http://localhost:"+port,
+  origin: "http://localhost:4000",
   credentials: true,
 }));
 
