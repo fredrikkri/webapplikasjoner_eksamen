@@ -3,7 +3,8 @@
 	"type": "module",
 	"scripts": {
 		"dev": "tsx watch src/index.ts",
-		"db:setup": "tsx src/db/index.ts"
+		"db:setup": "tsx src/db/index.ts",
+		"dev:db": "tsx src/features/index.ts"
 	},
 	"dependencies": {
 		"@hono/node-server": "^1.12.1",
