@@ -10,15 +10,23 @@ import {
   type Course,
   type CourseResponse,
   type UpdateCourse,
+  type Lesson,
+  LessonSchema
 } from "../../types/types";
 
-import { createCourse, createCourseResponse } from "./course.mapper";
+import { createCourse, createCourseResponse, createLessonResponse } from "./course.mapper";
 import type { Query } from "../../lib/query";
 
 export const createCourseService = (courseRepository: CourseRepository) => {
+
   const getById = async (id: string): Promise<Result<Course | undefined>> => {
     return courseRepository.getById(id);
   };
+  
+  const getLessonsById = async (id: string): Promise<Result<Lesson[] | undefined>> =>  {
+    return courseRepository.getLessonsByCourseId(id)
+  }
+
 
   const list = async (query?: Query): Promise<Result<CourseResponse[]>> => {
     const result = await courseRepository.list(query);
@@ -59,12 +67,30 @@ export const createCourseService = (courseRepository: CourseRepository) => {
     return courseRepository.remove(id);
   };
 
+
+  const listLessons = async (query?: Query): Promise<Result<Lesson[]>> => {
+    const result = await courseRepository.listLesson(query);
+    
+    if (!result.success) {
+        return result
+    }
+
+    return {
+      ...result,
+      data: result.data.map(createLessonResponse),
+    };
+};
+
+
+
   return {
     list,
     create,
     update,
     getById,
+    getLessonsById,
     remove,
+    listLessons
   };
 };
 

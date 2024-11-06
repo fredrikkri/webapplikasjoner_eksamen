@@ -1,4 +1,4 @@
-import type { Course } from "../../types/types";
+import type { Course, Lesson } from "../../types/types";
 
 const createId = () => {
   return crypto.randomUUID();
@@ -21,6 +21,23 @@ export const createCourseResponse = (course: Course): Course => {
   };
 };
 
+export const createLessonResponse = (lesson: Lesson): Lesson => {
+  const { 
+    title, 
+    slug, 
+    preAmble, 
+    text,
+} = lesson;
+
+  return {
+    ...lesson,
+    title, 
+    slug, 
+    preAmble, 
+    text,
+  };
+};
+
 export const fromDb = (course: Course) => {
   return {
     id: course.id ?? createId(),  
@@ -29,6 +46,16 @@ export const fromDb = (course: Course) => {
     description: course?.description ?? "", 
     category: course?.category ?? "", 
     lessons: course?.lessons ?? []
+  };
+};
+
+export const fromDbLession = (lesson: Lesson): Lesson => {
+  return {
+      id: lesson.id.toString() ?? createId(),
+      title: lesson.title ?? "",
+      slug: lesson.slug ?? "",
+      preAmble: lesson.preAmble ?? "",
+      text: lesson.text ?? [],
   };
 };
 

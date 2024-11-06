@@ -99,3 +99,7 @@ export const validateCategories = (data: unknown) => {
 export const validateCourseCreateSteps = (data: unknown) => {
   return CourseCreateStepsSchema.safeParse(data);
 };
+
+const validateLesson = (lessonData: any) => {
+  return LessonSchema.parse(lessonData);
+};
