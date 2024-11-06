@@ -1,9 +1,7 @@
 import SignUp from "../components/SignUp";
 
-export default function Home() {
+export default function RootPage() {
   return (
-    <main className="h-full">
-      <SignUp />
-    </main>
+    <SignUp />
   );
 }
