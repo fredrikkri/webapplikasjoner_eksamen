@@ -7,13 +7,16 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-    "test:e2e": "playwright test --ui"
+		"test:e2e": "playwright test --ui"
 	},
 	"dependencies": {
 		"@tailwindcss/aspect-ratio": "^0.4.2",
 		"@tailwindcss/container-queries": "^0.1.1",
 		"@tailwindcss/forms": "^0.5.9",
 		"@tailwindcss/typography": "^0.5.15",
+		"@tiptap/pm": "^2.9.1",
+		"@tiptap/react": "^2.9.1",
+		"@tiptap/starter-kit": "^2.9.1",
 		"date-fns": "^4.1.0",
 		"lucide-react": "^0.453.0",
 		"next": "14.2.13",
