@@ -4,13 +4,15 @@ import { useCourse } from "../hooks/useCourse";
 import Lesson from "./Lesson";
 import { users } from "../data/data";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 class CourseProps {
   slug?: string;
 }
 
 function Course({ slug = "javascript-101" }: CourseProps) {
-  const lessonSlug = "variabler"; // Dette kan endres basert på brukervalg eller URL
+  const params = useParams();
+  const lessonSlug = params?.lessonSlug as string;
   const { course, loading, error } = useCourse(slug);
 
   if (loading) return <p>Laster...</p>;
