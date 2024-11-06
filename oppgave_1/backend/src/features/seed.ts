@@ -9,7 +9,7 @@ export const seed = async (db: DB) => {
 
 const path = join(".", "src", "features", "data", "data.json");
 const file = await promises.readFile(path, "utf-8");
-const { courses, comments, users, categories } = JSON.parse(file);
+const { courses, comments, users, categories, courseCreateSteps} = JSON.parse(file);
 
   const insertCourse = db.prepare(`
     INSERT INTO courses (id, title, slug, description, category)
@@ -36,6 +36,11 @@ const { courses, comments, users, categories } = JSON.parse(file);
     VALUES (?, ?, ?)
   `);
 
+  const insertCourseCreateSteps = db.prepare(`
+    INSERT INTO courseCreateSteps (id, name)
+    VALUES (?, ?)
+  `);
+
   // SRC: kilde: chatgpt.com /
   const insertCategory = db.prepare(`
     INSERT INTO categories (name) VALUES (?);
@@ -49,7 +54,11 @@ const { courses, comments, users, categories } = JSON.parse(file);
 
     for (const category of categories) {
         insertCategory.run(category);
-      }
+    }
+
+    for (const create of courseCreateSteps) {
+        insertCourseCreateSteps.run(create.id, create.name);
+    }
 
     for (const course of courses) {
       insertCourse.run(
@@ -58,7 +67,7 @@ const { courses, comments, users, categories } = JSON.parse(file);
         course.slug,
         course.description,
         course.category
-      );
+    );
 
       for (const lesson of course.lessons) {
         insertLesson.run(
