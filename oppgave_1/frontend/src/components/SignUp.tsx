@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // Updated to next/navigation for App Router
+import { useRouter } from "next/navigation";
 
 interface FormFields {
   name: string;
@@ -45,38 +45,50 @@ function SignUp() {
   };
 
   return (
-    <section className="mx-auto m-auto max-w-xl" data-testid="sign_up">
-      <h2 className="mb-4 text-xl font-bold" data-testid="title">
-        Ny bruker
-      </h2>
-      <form data-testid="form" onSubmit={handleSubmit} noValidate>
-        <label className="mb-4 flex flex-col" htmlFor="name">
-          <span className="mb-1 font-semibold">Navn*</span>
+    <div className="mx-auto max-w-xl rounded-2xl bg-white p-8 shadow-lg">
+      <div className="mb-8 text-center">
+        <h2 className="mb-2 text-3xl font-bold text-slate-800" data-testid="title">
+          Bli medlem
+        </h2>
+        <p className="text-slate-600">Opprett en konto for å få tilgang til alle kurs</p>
+      </div>
+      
+      <form data-testid="form" onSubmit={handleSubmit} noValidate className="space-y-6">
+        <div>
+          <label className="mb-1.5 block font-medium text-slate-700" htmlFor="name">
+            Navn<span className="text-emerald-600">*</span>
+          </label>
           <input
-            className="rounded"
+            className="w-full rounded-lg border border-slate-200 px-4 py-2.5 transition-colors focus:border-emerald-600 focus:outline-none"
             data-testid="form_name"
             type="text"
             name="name"
             id="name"
             value={fields.name}
             onChange={handleChange}
+            placeholder="Skriv ditt navn"
           />
-        </label>
-        <label className="mb-4 flex flex-col" htmlFor="email">
-          <span className="mb-1 font-semibold">Epost*</span>
+        </div>
+
+        <div>
+          <label className="mb-1.5 block font-medium text-slate-700" htmlFor="email">
+            E-post<span className="text-emerald-600">*</span>
+          </label>
           <input
-            className="rounded"
+            className="w-full rounded-lg border border-slate-200 px-4 py-2.5 transition-colors focus:border-emerald-600 focus:outline-none"
             data-testid="form_email"
             type="email"
             name="email"
             id="email"
             value={fields.email}
             onChange={handleChange}
+            placeholder="din@epost.no"
           />
-        </label>
-        <label className="flex items-center gap-2" htmlFor="admin">
+        </div>
+
+        <div className="flex items-center gap-3">
           <input
-            className="rounded"
+            className="h-5 w-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-600"
             data-testid="form_admin"
             type="checkbox"
             name="admin"
@@ -84,27 +96,31 @@ function SignUp() {
             onChange={handleChange}
             checked={fields.admin}
           />
-          <span className="font-semibold">Admin</span>
-        </label>
+          <label className="font-medium text-slate-700" htmlFor="admin">
+            Registrer som administrator
+          </label>
+        </div>
+
         <button
-          className="mt-8 rounded bg-emerald-600 px-10 py-2 text-center text-base text-white"
+          className="mt-8 w-full rounded-lg bg-emerald-600 py-3 text-base font-medium text-white transition-all hover:bg-emerald-700 hover:shadow-lg disabled:opacity-50"
           data-testid="form_submit"
           type="submit"
         >
-          Lag ny bruker
+          Opprett konto
         </button>
+
         {formError && (
-          <p className="font-semibold text-red-500" data-testid="form_error">
-            Fyll ut alle felter med *
+          <p className="mt-4 text-center font-medium text-red-500" data-testid="form_error">
+            Fyll ut alle påkrevde felt
           </p>
         )}
         {success && (
-          <p className="font-semibold text-emerald-500" data-testid="form_success">
-            Skjema sendt
+          <p className="mt-4 text-center font-medium text-emerald-600" data-testid="form_success">
+            Konto opprettet! Omdirigerer...
           </p>
         )}
       </form>
-    </section>
+    </div>
   );
 }
 
