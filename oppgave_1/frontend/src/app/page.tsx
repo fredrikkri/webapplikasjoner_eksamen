@@ -1,10 +1,9 @@
 "use client";
-import SignUp from "../components/SignUp";
+import Home from "@/components/Home";
+import SignUp from "@/components/SignUp";
 
-export default function Home() {
+export default function RootPage() {
   return (
-    <main className="h-full">
-      <SignUp />
-    </main>
+    <SignUp />
   );
 }

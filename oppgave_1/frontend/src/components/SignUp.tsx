@@ -29,7 +29,7 @@ function SignUp() {
     if (formIsValid.length === 0) {
       setSuccess(true);
       setTimeout(() => {
-        router.push("/kurs");
+        router.push("/home");
       }, 500);
     } else {
       setFormError(true);
@@ -45,7 +45,7 @@ function SignUp() {
   };
 
   return (
-    <section className="mx-auto max-w-xl" data-testid="sign_up">
+    <section className="mx-auto m-auto max-w-xl" data-testid="sign_up">
       <h2 className="mb-4 text-xl font-bold" data-testid="title">
         Ny bruker
       </h2>
