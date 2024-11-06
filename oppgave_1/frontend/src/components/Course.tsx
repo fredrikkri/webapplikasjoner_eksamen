@@ -6,7 +6,7 @@ import { users } from "../data/data";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-interface CourseProps {
+class CourseProps {
   slug?: string;
 }
 
