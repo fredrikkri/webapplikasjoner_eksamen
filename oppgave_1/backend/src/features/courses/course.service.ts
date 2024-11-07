@@ -10,9 +10,11 @@ import {
   type Course,
   type CourseResponse,
   type UpdateCourse,
+
   type Lesson,
   LessonSchema
 } from "../../types/types";
+
 
 import { createCourse, createCourseResponse, createLessonResponse } from "./course.mapper";
 import type { Query } from "../../lib/query";
