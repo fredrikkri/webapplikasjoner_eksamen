@@ -3,7 +3,7 @@ import type {
   CourseCreate,
   Course,
   UpdateCourse,
-} from "../../types/types";
+} from "../../types/course";
 import type { Result } from "../../types/index";
 import { fromDb, toDb } from "./course.mapper";
 import type { Query } from "../../lib/query";

@@ -1,8 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { port } from "./config";
 import { CourseController } from "./features/courses/course.controller";
-import { endPoint } from "./config/config";
 
 const app = new Hono();
 
@@ -12,6 +10,7 @@ app.use("/*", cors({
 }));
 
 app.route("api/v1", CourseController)
+//app.route("api/v1", LessonController);
 
 app.onError((err, c) => {
   console.error(err);

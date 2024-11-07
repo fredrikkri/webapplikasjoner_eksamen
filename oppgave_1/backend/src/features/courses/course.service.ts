@@ -10,7 +10,7 @@ import {
   type Course,
   type CourseResponse,
   type UpdateCourse,
-} from "../../types/types";
+} from "../../types/course";
 
 import { createCourse, createCourseResponse } from "./course.mapper";
 import type { Query } from "../../lib/query";
