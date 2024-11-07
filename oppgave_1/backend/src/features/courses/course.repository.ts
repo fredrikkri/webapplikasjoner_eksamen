@@ -29,7 +29,7 @@ export const createCourseRepository = (db: DB) => {
           success: false,
           error: { code: "NOT_FOUND", message: "Courses not found" },
         };
-      const query = db.prepare("SELECT * FROM lessons WHERE id = ?");
+      const query = db.prepare("SELECT * FROM courses WHERE id = ?");
       const data = query.get(id) as Course;
       return {
         success: true,
