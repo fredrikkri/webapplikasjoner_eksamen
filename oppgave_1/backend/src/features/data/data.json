@@ -2,7 +2,7 @@
   "courses": [
     {
       "id": "1",
-      "title": "JavaScript 101",
+      "title": "JavaScript 701",
       "slug": "javascript-101",
       "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore",
       "lessons": [

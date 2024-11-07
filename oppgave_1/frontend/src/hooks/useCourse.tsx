@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getCourse, createCourse } from "../lib/services";
+import { getCourse, createCourse, getAllCourses } from "../lib/services";
 
 interface LessonText {
   id: string;
@@ -32,6 +32,30 @@ export interface CourseData {
   category: string;
   lessons: Lesson[];
 }
+
+export const useAllCourses = () => {
+  const [courses, setCourses] = useState<Course[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        setLoading(true);
+        const data = await getAllCourses();
+        setCourses(data as Course[]);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('An error occurred while fetching all courses'));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+  return { courses, loading, error };
+};
 
 export const useCourse = (courseSlug: string) => {
   const [course, setCourse] = useState<Course | null>(null);
@@ -74,5 +98,5 @@ export const useCreateCourse = () => {
     }
   };
 
-  return { addCourse, loading, error };
+  return { addCourse, useAllCourses, loading, error };
 };

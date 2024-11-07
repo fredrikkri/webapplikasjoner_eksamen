@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { courses, categories } from "../data/data";
 import Link from "next/link";
+import { useAllCourses } from "@/hooks/useCourse";
 
 interface Course {
   id: string;
@@ -11,8 +12,15 @@ interface Course {
 }
 
 function Courses() {
+  const { courses: allCourses, loading, error } = useAllCourses(); 
   const [value, setValue] = useState<string>("");
-  const [data, setData] = useState<Course[]>(courses);
+  const [data, setData] = useState<Course[]>([]);
+
+  useEffect(() => {
+    if (allCourses) {
+      setData(allCourses);
+    }
+  }, [allCourses]);
 
   const handleFilter = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const category = event.target.value;
