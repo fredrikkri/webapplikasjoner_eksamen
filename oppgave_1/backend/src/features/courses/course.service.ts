@@ -29,8 +29,8 @@ export const createCourseService = (courseRepository: CourseRepository) => {
     return courseRepository.getLessonsByCourseId(id)
   }
 
-  const getLessonById = async (id: string): Promise<Result<Lesson | undefined>> =>  {
-    return courseRepository.getLessonByCourseId(id)
+  const getLessonById = async (slug: string): Promise<Result<Lesson | undefined>> =>  {
+    return courseRepository.getLessonByCourseId(slug)
   }
 
   const list = async (query?: Query): Promise<Result<CourseResponse[]>> => {

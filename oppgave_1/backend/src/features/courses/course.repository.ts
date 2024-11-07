@@ -15,6 +15,13 @@ export const createCourseRepository = (db: DB) => {
     return data.count > 0;
   };
 
+  const lessonExist = async (slug: string): Promise<boolean> => {
+    const query = db.prepare(
+      "SELECT COUNT(*) as count FROM lessons WHERE slug = ?"
+    );
+    const data = query.get(slug) as { count: number };
+    return data.count > 0;
+  };
 
 // SRC: kilde: chatgpt.com  || med endringer /
 const getLessonsByCourseId = async (id: string): Promise<Result<Lesson[]>> => {
@@ -65,9 +72,9 @@ const getLessonsByCourseId = async (id: string): Promise<Result<Lesson[]>> => {
 };
 
 // SRC: kilde: chatgpt.com || med endringer /
-const getLessonByCourseId = async (id: string): Promise<Result<Lesson | undefined>> => {
+const getLessonByCourseId = async (slug: string): Promise<Result<Lesson | undefined>> => {
   try {
-    const courseExists = await exist(id);
+    const courseExists = await lessonExist(slug);
     if (!courseExists) {
       return {
         success: false,
@@ -75,8 +82,8 @@ const getLessonByCourseId = async (id: string): Promise<Result<Lesson | undefine
       };
     }
 
-    const query = db.prepare("SELECT * FROM lessons WHERE id = ?");
-    const lessons = query.all(id) as Lesson[];
+    const query = db.prepare("SELECT * FROM lessons WHERE slug = ?");
+    const lessons = query.all(slug) as Lesson[];
 
     if (lessons.length === 0) {
       return {
@@ -87,7 +94,7 @@ const getLessonByCourseId = async (id: string): Promise<Result<Lesson | undefine
 
     const lessonWithTexts = await (async () => {
       const lesson = lessons[0];
-      const texts = await fetchTextsForLesson(lesson.id);
+      const texts = await fetchTextsForLesson(lesson.slug);
 
       return {
         ...fromDbLession(lesson),
