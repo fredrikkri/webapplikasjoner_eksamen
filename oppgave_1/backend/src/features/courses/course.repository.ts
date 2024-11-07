@@ -22,7 +22,7 @@ export const createCourseRepository = (db: DB) => {
   };
 
 
-  // SRC: kilde: chatgpt.com  || med endringer /
+// SRC: kilde: chatgpt.com  || med endringer /
 const getLessonsByCourseId = async (id: string): Promise<Result<Lesson[]>> => {
   try {
     const courseExists = await exist(id);
@@ -57,6 +57,53 @@ const getLessonsByCourseId = async (id: string): Promise<Result<Lesson[]>> => {
     return {
       success: true,
       data: lessonsWithTexts,
+    };
+  } catch (error) {
+    console.error("Error fetching lessons:", error);
+    return {
+      success: false,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error fetching lessons",
+      },
+    };
+  }
+};
+
+// SRC: kilde: chatgpt.com || med endringer /
+const getLessonByCourseId = async (id: string): Promise<Result<Lesson | undefined>> => {
+  try {
+    const courseExists = await exist(id);
+    if (!courseExists) {
+      return {
+        success: false,
+        error: { code: "NOT_FOUND", message: "Course not found" },
+      };
+    }
+
+    const query = db.prepare("SELECT * FROM lessons WHERE id = ?");
+    const lessons = query.all(id) as Lesson[];
+
+    if (lessons.length === 0) {
+      return {
+        success: false,
+        error: { code: "NOT_FOUND", message: "No lessons found for this course" },
+      };
+    }
+
+    const lessonWithTexts = await (async () => {
+      const lesson = lessons[0];
+      const texts = await fetchTextsForLesson(lesson.id);
+
+      return {
+        ...fromDbLession(lesson),
+        text: texts,
+      };
+    })();
+
+    return {
+      success: true,
+      data: lessonWithTexts,
     };
   } catch (error) {
     console.error("Error fetching lessons:", error);
@@ -357,7 +404,7 @@ const list = async (params?: Query): Promise<Result<Course[]>> => {
 };
 
 
-  return { create, list, getById, update, remove, listLesson, getLessonsByCourseId};
+  return { create, list, getById, update, remove, listLesson, getLessonsByCourseId, getLessonByCourseId};
 };
 
 export const courseRepository = createCourseRepository(db);
