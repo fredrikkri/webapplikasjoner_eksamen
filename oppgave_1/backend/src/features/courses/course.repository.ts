@@ -84,68 +84,77 @@ export const createCourseRepository = (db: DB) => {
     }
 };
 
+// SRC: kilde: chatgpt.com  || med endringer /
+const fetchCourses = async (params?: Query): Promise<Course[]> => {
+  const { name, pageSize = 10, page = 0 } = params ?? {};
+  const offset = (Number(page) - 1) * Number(pageSize);
 
+  let query = "SELECT * FROM courses";
+  query += name ? ` WHERE title LIKE '%${name}%'` : "";
+  query += ` LIMIT ${pageSize}`;
+  query += ` OFFSET ${offset}`;
+
+  const statement = db.prepare(query);
+  return statement.all() as Course[];
+};
+
+// SRC: kilde: chatgpt.com /
+const fetchLessonsForCourse = async (courseId: string): Promise<Lesson[]> => {
+  const lessonsStatement = db.prepare("SELECT * FROM lessons WHERE course_id = ?");
+  return lessonsStatement.all(courseId) as Lesson[];
+};
+
+// SRC: kilde: chatgpt.com  || justeringer /
+const fetchTextsForLesson = async (lessonId: string): Promise<{ id: string; text: string; }[]> => {
+  const textStatement = db.prepare("SELECT id, text FROM texts WHERE lesson_id = ?");
+  return textStatement.all(lessonId) as { id: string; text: string; }[];
+};
+
+// SRC: kilde: chatgpt.com /
 const list = async (params?: Query): Promise<Result<Course[]>> => {
   try {
-    const { name, pageSize = 10, page = 0 } = params ?? {};
+    const courses = await fetchCourses(params);
 
-    const offset = (Number(page) - 1) * Number(pageSize);
-    const hasPagination = Number(page) > 0;
-
-    let query = "SELECT * FROM courses";
-    query += name ? ` WHERE name LIKE '%${name}%'` : "";
-    query += pageSize ? ` LIMIT ${pageSize}` : "";
-    query += offset ? ` OFFSET ${offset}` : "";
-
-    const statement = db.prepare(query);
-    const data = statement.all() as Course[];
-
-    // SRC: kilde: chatgpt.com /
     const coursesWithLessons = await Promise.all(
-      data.map(async (course) => {
-        const lessonsStatement = db.prepare(
-          "SELECT * FROM lessons WHERE course_id = ?"
+      courses.map(async (course) => {
+        const lessons = await fetchLessonsForCourse(course.id);
+        const lessonsWithTexts = await Promise.all(
+          lessons.map(async (lesson) => {
+            const text = await fetchTextsForLesson(lesson.id);
+            return {
+              ...fromDbLession(lesson),
+              text,
+            };
+          })
         );
-        const lessons = lessonsStatement.all(course.id) as Lesson[];
 
         return {
           ...fromDb(course),
-          lessons: lessons.map(fromDbLession),
+          lessons: lessonsWithTexts,
         };
       })
     );
-    const { total } = db
-      .prepare("SELECT COUNT(*) as total from courses")
-      .get() as { total: number };
 
-    const totalPages = Math.ceil(total / Number(pageSize ?? 1));
-    const hasNextPage = Number(page) < totalPages;
-    const hasPreviousPage = Number(page ?? 1) > 1;
+    const { total } = db.prepare("SELECT COUNT(*) as total FROM courses").get() as { total: number };
 
     return {
       success: true,
       data: coursesWithLessons,
-      ...(hasPagination
-        ? {
-            total: data.length,
-            pageSize,
-            page,
-            totalPages,
-            hasNextPage,
-            hasPreviousPage,
-          }
-        : {}),
     };
   } catch (error) {
+    console.error("Error fetching courses:", error);
     return {
       success: false,
       error: {
         code: "INTERNAL_SERVER_ERROR",
-        message: "Feil med henting av Courses",
+        message: "Error fetching courses",
       },
     };
   }
 };
+
+
+
 
   const create = async (data: CourseCreate): Promise<Result<string>> => {
     try {
