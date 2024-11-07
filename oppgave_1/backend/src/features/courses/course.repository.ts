@@ -85,57 +85,67 @@ export const createCourseRepository = (db: DB) => {
 };
 
 
-  const list = async (params?: Query): Promise<Result<Course[]>> => {
-    try {
-      const { name, pageSize = 10, page = 0 } = params ?? {};
+const list = async (params?: Query): Promise<Result<Course[]>> => {
+  try {
+    const { name, pageSize = 10, page = 0 } = params ?? {};
 
-      const offset = (Number(page) - 1) * Number(pageSize);
+    const offset = (Number(page) - 1) * Number(pageSize);
+    const hasPagination = Number(page) > 0;
 
-      const hasPagination = Number(page) > 0;
+    let query = "SELECT * FROM courses";
+    query += name ? ` WHERE name LIKE '%${name}%'` : "";
+    query += pageSize ? ` LIMIT ${pageSize}` : "";
+    query += offset ? ` OFFSET ${offset}` : "";
 
-      let query = "SELECT * FROM courses";
-      query += name ? `WHERE name LIKE '%${name}%'` : "";
-      query += pageSize ? ` LIMIT ${pageSize}` : "";
-      query += offset ? ` OFFSET ${offset}` : "";
+    const statement = db.prepare(query);
+    const data = statement.all() as Course[];
 
-      const statement = db.prepare(query);
+    // SRC: kilde: chatgpt.com /
+    const coursesWithLessons = await Promise.all(
+      data.map(async (course) => {
+        const lessonsStatement = db.prepare(
+          "SELECT * FROM lessons WHERE course_id = ?"
+        );
+        const lessons = lessonsStatement.all(course.id) as Lesson[];
 
-      const data = statement.all() as Course[];
+        return {
+          ...fromDb(course),
+          lessons: lessons.map(fromDbLession),
+        };
+      })
+    );
+    const { total } = db
+      .prepare("SELECT COUNT(*) as total from courses")
+      .get() as { total: number };
 
-      const { total } = db
-        .prepare("SELECT COUNT(*) as total from courses")
-        .get() as {
-        total: number;
-      };
+    const totalPages = Math.ceil(total / Number(pageSize ?? 1));
+    const hasNextPage = Number(page) < totalPages;
+    const hasPreviousPage = Number(page ?? 1) > 1;
 
-      const totalPages = Math.ceil(total / Number(pageSize ?? 1));
-      const hasNextPage = Number(page) < totalPages;
-      const hasPreviousPage = Number(page ?? 1) > 1;
-
-      return {
-        success: true,
-        data: data.map(fromDb),
-        ...(hasPagination
-          ? {
-              total: data.length,
-              pageSize,
-              page,
-              totalPages,
-              hasNextPage,
-              hasPreviousPage,
-            }
-          : {}),
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: {
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Feil med henting av Courses",
-        },
-      };
-    }
-  };
+    return {
+      success: true,
+      data: coursesWithLessons,
+      ...(hasPagination
+        ? {
+            total: data.length,
+            pageSize,
+            page,
+            totalPages,
+            hasNextPage,
+            hasPreviousPage,
+          }
+        : {}),
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Feil med henting av Courses",
+      },
+    };
+  }
+};
 
   const create = async (data: CourseCreate): Promise<Result<string>> => {
     try {
