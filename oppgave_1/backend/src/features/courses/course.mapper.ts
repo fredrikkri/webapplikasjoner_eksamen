@@ -1,4 +1,6 @@
-import type { Course, Lesson } from "../../types/types";
+import type { Course} from "../../types/course";
+import type { Lesson} from "../../types/lesson";
+
 
 const createId = () => {
   return crypto.randomUUID();
