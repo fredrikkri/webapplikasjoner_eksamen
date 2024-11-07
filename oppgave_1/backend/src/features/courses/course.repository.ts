@@ -22,43 +22,54 @@ export const createCourseRepository = (db: DB) => {
   };
 
 
-  // SRC: kilde: chatgpt.com  || bug fixing /
-  const getLessonsByCourseId = async (id: string): Promise<Result<Lesson[]>> => {
-    try {
-        const courseExists = await exist(id);
-        const query = db.prepare("SELECT * FROM lessons WHERE course_id = ?");
-        const lessons = query.all(id) as Lesson[];
-        const data = lessons.map(fromDbLession);
-        
-        if (!courseExists) {
-            return {
-                success: false,
-                error: { code: "NOT_FOUND", message: "Course not found" }
-            };
-        }
-
-        if (lessons.length === 0) {
-            return {
-                success: false,
-                error: { code: "NOT_FOUND", message: "No lessons found for this course" }
-            };
-        }
-
-        return {
-            success: true,
-            data: data,
-        };
-    } catch (error) {
-        console.error("Error fetching lessons:", error);
-        return {
-            success: false,
-            error: {
-                code: "INTERNAL_SERVER_ERROR",
-                message: "Error fetching lessons",
-            },
-        };
+  // SRC: kilde: chatgpt.com  || med endringer /
+const getLessonsByCourseId = async (id: string): Promise<Result<Lesson[]>> => {
+  try {
+    const courseExists = await exist(id);
+    if (!courseExists) {
+      return {
+        success: false,
+        error: { code: "NOT_FOUND", message: "Course not found" },
+      };
     }
+
+    const query = db.prepare("SELECT * FROM lessons WHERE course_id = ?");
+    const lessons = query.all(id) as Lesson[];
+
+    if (lessons.length === 0) {
+      return {
+        success: false,
+        error: { code: "NOT_FOUND", message: "No lessons found for this course" },
+      };
+    }
+
+    const lessonsWithTexts = await Promise.all(
+      lessons.map(async (lesson) => {
+        const text = await fetchTextsForLesson(lesson.id);
+
+        return {
+          ...fromDbLession(lesson),
+          text: text,
+        };
+      })
+    );
+
+    return {
+      success: true,
+      data: lessonsWithTexts,
+    };
+  } catch (error) {
+    console.error("Error fetching lessons:", error);
+    return {
+      success: false,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error fetching lessons",
+      },
+    };
+  }
 };
+
 
 // SRC: kilde: chatgpt.com  || med endringer /
 const fetchCourses = async (params?: Query): Promise<Course[]> => {
