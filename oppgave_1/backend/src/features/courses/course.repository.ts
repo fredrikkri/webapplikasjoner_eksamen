@@ -133,10 +133,38 @@ const getById = async (id: string): Promise<Result<Course>> => {
 };
 
 
-// SRC: kilde: chatgpt.com /
+// SRC: kilde: chatgpt.com || med endringer/
 const list = async (params?: Query): Promise<Result<Course[]>> => {
   try {
     const courses = await fetchCourses(params);
+    const { name, pageSize = 10, page = 0 } = params ?? {};
+
+    const offset = (Number(page) - 1) * Number(pageSize);
+    const hasPagination = Number(page) > 0;
+
+    let query = "SELECT * FROM courses";
+    const conditions: string[] = [];
+
+    if (name) {
+        conditions.push(`title LIKE '%${name}%'`);
+    }
+
+    if (conditions.length > 0) {
+        query += ` WHERE ${conditions.join(' AND ')}`;
+    }
+
+    query += ` LIMIT ${pageSize}`;
+    query += ` OFFSET ${offset}`;
+
+    const statement = db.prepare(query);
+    const data = statement.all() as any[];
+
+    const lessons = data.map(fromDbLession);
+
+    const { total } = db.prepare("SELECT COUNT(*) as total FROM courses").get() as { total: number };
+    const totalPages = Math.ceil(total / Number(pageSize));
+    const hasNextPage = Number(page) < totalPages;
+    const hasPreviousPage = Number(page ?? 1) > 1;
 
     const coursesWithLessons = await Promise.all(
       courses.map(async (course) => {
@@ -154,15 +182,15 @@ const list = async (params?: Query): Promise<Result<Course[]>> => {
         return {
           ...fromDb(course),
           lessons: lessonsWithTexts,
+          ...(hasPagination ? { total: lessons.length, pageSize, page, totalPages, hasNextPage, hasPreviousPage } : {}),
         };
       })
     );
 
-    const { total } = db.prepare("SELECT COUNT(*) as total FROM courses").get() as { total: number };
-
     return {
       success: true,
       data: coursesWithLessons,
+      ...(hasPagination ? { total: lessons.length, pageSize, page, totalPages, hasNextPage, hasPreviousPage } : {}),
     };
   } catch (error) {
     console.error("Error fetching courses:", error);
