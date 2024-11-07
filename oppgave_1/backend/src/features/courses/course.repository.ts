@@ -21,30 +21,6 @@ export const createCourseRepository = (db: DB) => {
     return data.count > 0;
   };
 
-  const getById = async (id: string): Promise<Result<Course>> => {
-    try {
-      const course = await exist(id);
-      if (!course)
-        return {
-          success: false,
-          error: { code: "NOT_FOUND", message: "Courses not found" },
-        };
-      const query = db.prepare("SELECT * FROM courses WHERE id = ?");
-      const data = query.get(id) as Course;
-      return {
-        success: true,
-        data: fromDb(data),
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: {
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Feil med henting av Course",
-        },
-      };
-    }
-  };
 
   // SRC: kilde: chatgpt.com  || bug fixing /
   const getLessonsByCourseId = async (id: string): Promise<Result<Lesson[]>> => {
@@ -104,11 +80,58 @@ const fetchLessonsForCourse = async (courseId: string): Promise<Lesson[]> => {
   return lessonsStatement.all(courseId) as Lesson[];
 };
 
-// SRC: kilde: chatgpt.com  || justeringer /
+// SRC: kilde: chatgpt.com  || med justeringer /
 const fetchTextsForLesson = async (lessonId: string): Promise<{ id: string; text: string; }[]> => {
   const textStatement = db.prepare("SELECT id, text FROM texts WHERE lesson_id = ?");
   return textStatement.all(lessonId) as { id: string; text: string; }[];
 };
+
+// SRC: kilde: chatgpt.com  || med justeringer /
+const getById = async (id: string): Promise<Result<Course>> => {
+  try {
+    const courseExists = await exist(id);
+    if (!courseExists) {
+      return {
+        success: false,
+        error: { code: "NOT_FOUND", message: "Course not found" },
+      };
+    }
+
+    const query = db.prepare("SELECT * FROM courses WHERE id = ?");
+    const courseData = query.get(id) as Course;
+
+    const lessons = await fetchLessonsForCourse(id);
+
+    const lessonsWithTexts = await Promise.all(
+      lessons.map(async (lesson) => {
+        const text = await fetchTextsForLesson(lesson.id);
+
+        return {
+          ...fromDbLession(lesson),
+          text: text,
+        };
+      })
+    );
+
+    return {
+      success: true,
+      data: {
+        ...fromDb(courseData),
+        lessons: lessonsWithTexts,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching course:", error);
+    return {
+      success: false,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error fetching course",
+      },
+    };
+  }
+};
+
 
 // SRC: kilde: chatgpt.com /
 const list = async (params?: Query): Promise<Result<Course[]>> => {
