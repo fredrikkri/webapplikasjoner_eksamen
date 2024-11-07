@@ -7,11 +7,11 @@ import type { Query } from "../../lib/query";
 
 export const createCourseRepository = (db: DB) => {
 
-  const exist = async (id: string): Promise<boolean> => {
+  const exist = async (slug: string): Promise<boolean> => {
     const query = db.prepare(
-      "SELECT COUNT(*) as count FROM courses WHERE id = ?"
+      "SELECT COUNT(*) as count FROM courses WHERE slug = ?"
     );
-    const data = query.get(id) as { count: number };
+    const data = query.get(slug) as { count: number };
     return data.count > 0;
   };
 
@@ -139,9 +139,9 @@ const fetchTextsForLesson = async (lessonId: string): Promise<{ id: string; text
 };
 
 // SRC: kilde: chatgpt.com  || med justeringer /
-const getById = async (id: string): Promise<Result<Course>> => {
+const getById = async (slug: string): Promise<Result<Course>> => {
   try {
-    const courseExists = await exist(id);
+    const courseExists = await exist(slug);
     if (!courseExists) {
       return {
         success: false,
@@ -149,14 +149,14 @@ const getById = async (id: string): Promise<Result<Course>> => {
       };
     }
 
-    const query = db.prepare("SELECT * FROM courses WHERE id = ?");
-    const courseData = query.get(id) as Course;
+    const query = db.prepare("SELECT * FROM courses WHERE slug = ?");
+    const courseData = query.get(slug) as Course;  
 
-    const lessons = await fetchLessonsForCourse(id);
+    const lessons = await fetchLessonsForCourse(courseData.id);
 
     const lessonsWithTexts = await Promise.all(
       lessons.map(async (lesson) => {
-        const text = await fetchTextsForLesson(lesson.id);
+        const text = await fetchTextsForLesson(lesson.slug);
 
         return {
           ...fromDbLession(lesson),

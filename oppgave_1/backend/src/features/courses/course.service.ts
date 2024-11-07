@@ -21,8 +21,8 @@ import type { Query } from "../../lib/query";
 
 export const createCourseService = (courseRepository: CourseRepository) => {
 
-  const getById = async (id: string): Promise<Result<Course | undefined>> => {
-    return courseRepository.getById(id);
+  const getById = async (slug: string): Promise<Result<Course | undefined>> => {
+    return courseRepository.getById(slug);
   };
   
   const getLessonsById = async (id: string): Promise<Result<Lesson[] | undefined>> =>  {
