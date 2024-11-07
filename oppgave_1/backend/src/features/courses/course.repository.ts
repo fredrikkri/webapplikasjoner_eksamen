@@ -1,12 +1,6 @@
 import { db, type DB } from "../../features/db";
-import {
-  type CourseCreate,
-  type Course,
-  type UpdateCourse,
-  type Lesson,
-  LessonSchema,
-} from "../../types/types";
-
+import {type CourseCreate, type Course, type UpdateCourse} from "../../types/course";
+import {type Lesson, type LessonSchema} from "../../types/lesson";
 import type { Result } from "../../types/index";
 import { fromDb, fromDbLession, toDb } from "./course.mapper";
 import type { Query } from "../../lib/query";
