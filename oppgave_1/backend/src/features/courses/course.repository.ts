@@ -6,6 +6,7 @@ import {
   type Lesson,
   LessonSchema,
 } from "../../types/types";
+
 import type { Result } from "../../types/index";
 import { fromDb, fromDbLession, toDb } from "./course.mapper";
 import type { Query } from "../../lib/query";
@@ -28,7 +29,7 @@ export const createCourseRepository = (db: DB) => {
           success: false,
           error: { code: "NOT_FOUND", message: "Courses not found" },
         };
-      const query = db.prepare("SELECT * FROM lessons WHERE id = ?");
+      const query = db.prepare("SELECT * FROM courses WHERE id = ?");
       const data = query.get(id) as Course;
       return {
         success: true,

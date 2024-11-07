@@ -8,7 +8,6 @@ export const createCourseController = (CourseService: any) => {
 
   app.get("/courses", async (c) => {
     const query = validateQuery(c.req.query()).data ?? {};
-
     const result = await CourseService.list(query);
 
     if (!result.success)
