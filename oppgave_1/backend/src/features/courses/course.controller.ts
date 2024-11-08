@@ -19,6 +19,18 @@ export const createCourseController = (CourseService: any) => {
     return c.json(result);
   });
 
+  app.get("/courseCreateSteps", async (c) => {
+    const result = await CourseService.listCourseCreateSteps();
+
+    if (!result.success)
+      return errorResponse(
+        c,
+        result.error.code as ErrorCode,
+        result.error.message
+      );
+    return c.json(result);
+  });
+
   app.get("/courses/:slug", async (c) => {
     const slug = c.req.param("slug");
     const result = await CourseService.getById(slug);
