@@ -1,0 +1,40 @@
+import { User } from "@/types/types";
+
+const createId = () => {
+    return crypto.randomUUID();
+  };
+
+  export const createUserResponse = (user: User): User => {
+    const { name } = user;
+    const [firstName, ...rest] = name.split(" ");
+  
+    return {
+      ...user,
+      name
+        };
+  };
+
+export const fromDb = (user: User) => {
+    return {
+      id: user.id ?? createId(),  
+      name: user?.name ?? "unknown", 
+      email: user?.email ?? "unknown"
+    };
+};
+
+export const createUser = (user: Partial<User>): User => {
+    return {
+      id: user.id ?? createId(),
+      name: user.name ?? "unknown",
+      email: user.email ?? "unknown"
+    };
+};
+
+export const toDb = (data: Partial<User>) => {
+    const user = createUser(data)
+    return {
+      id: user.id,  
+      name: user.name, 
+      email: user.email
+    };
+};
