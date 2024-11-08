@@ -94,7 +94,7 @@ const getLessonByCourseId = async (slug: string): Promise<Result<Lesson | undefi
 
     const lessonWithTexts = await (async () => {
       const lesson = lessons[0];
-      const texts = await fetchTextsForLesson(lesson.slug);
+      const texts = await fetchTextsForLesson(lesson.id);
 
       return {
         ...fromDbLession(lesson),
@@ -163,7 +163,7 @@ const getById = async (slug: string): Promise<Result<Course>> => {
 
     const lessonsWithTexts = await Promise.all(
       lessons.map(async (lesson) => {
-        const text = await fetchTextsForLesson(lesson.slug);
+        const text = await fetchTextsForLesson(lesson.id);
 
         return {
           ...fromDbLession(lesson),
