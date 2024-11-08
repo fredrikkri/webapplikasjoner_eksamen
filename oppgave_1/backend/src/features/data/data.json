@@ -107,13 +107,13 @@
     {
       "id": "1",
       "createdBy": { "id": "2", "name": "Sara Olsen" },
-      "comment": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
+      "comment": "very nice lesson. I learn how to cure covid from this lesson. thank you",
       "lesson": { "slug": "variabler" }
     },
     {
       "id": "2",
       "createdBy": { "id": "3", "name": "Finn Finnsen" },
-      "comment": "Dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
+      "comment": "This lesson was okay. I only learned how to cure cancer.",
       "lesson": { "slug": "variabler" }
     }
   ],

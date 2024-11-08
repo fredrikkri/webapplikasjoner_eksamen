@@ -108,7 +108,6 @@ const getCommentsByLessonSlug = async (lessonSlug: string): Promise<Result<Comme
       },
     };
   }
- 
 }
 
 // SRC: kilde: chatgpt.com || med endringer /

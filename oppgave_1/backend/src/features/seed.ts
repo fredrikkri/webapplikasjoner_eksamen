@@ -82,15 +82,14 @@ const { courses, comments, users, categories, courseCreateSteps} = JSON.parse(fi
         for (const text of lesson.text) {
           insertText.run(text.text, lesson.id);
         }
-
-        for (const comment of comments) {
-          insertComment.run(
-            comment.createdBy.name,
-            comment.comment,
-            comment.lesson.slug
-          );
-        }
       }
+    }
+    for (const comment of comments) {
+      insertComment.run(
+        comment.createdBy.name,
+        comment.comment,
+        comment.lesson.slug
+      );
     }
   })();
 };
