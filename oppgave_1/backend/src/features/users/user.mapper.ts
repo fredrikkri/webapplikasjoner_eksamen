@@ -1,17 +1,13 @@
 import { User } from "@/types/types";
 
-const createId = () => {
-    return crypto.randomUUID();
+export const createUserResponse = (user: User): User => {
+  const { name } = user;
+     
+  return {
+    ...user,
+    name
   };
-
-  export const createUserResponse = (user: User): User => {
-    const { name } = user;
-      
-    return {
-      ...user,
-      name
-        };
-  };
+};
 
 export const fromDb = (user: User) => {
     return {
