@@ -9,7 +9,7 @@ app.use("/*", cors({
   credentials: true,
 }));
 
-app.route("api/v1", CourseController)
+app.route("/api/v1", CourseController)
 //app.route("api/v1", LessonController);
 
 app.onError((err, c) => {

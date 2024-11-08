@@ -32,7 +32,7 @@ export const createCourseController = (CourseService: any) => {
     return c.json(result);
   });
 
-  app.post("/add", async (c) => {
+  app.post("/courses", async (c) => {
     const data = await c.req.json();
     const result = await CourseService.create(data);
     if (!result.success)
@@ -72,29 +72,6 @@ export const createCourseController = (CourseService: any) => {
       );
     return c.json(result);
   });
-
-//   app.get("/courses/:id/lessons", async (c) => {
-//     const id = c.req.param("id");
-//     const result = await CourseService.getById(id);
-//     const result2 = await CourseService.getLessonsById(id);
-
-//     if (!result.success) {
-//         return errorResponse(
-//             c,
-//             result.error.code as ErrorCode,
-//             result.error.message
-//         );
-//     }
-
-//     if (!result2.success) {
-//         return errorResponse(
-//             c,
-//             result2.error.code as ErrorCode,
-//             result2.error.message
-//         );
-//     }
-//     return c.json(result2);
-// });
 
 app.get("/courses/:slug/:slugLesson", async (c) => {
   const slug = c.req.param("slug");
