@@ -6,8 +6,7 @@ const createId = () => {
 
   export const createUserResponse = (user: User): User => {
     const { name } = user;
-    const [firstName, ...rest] = name.split(" ");
-  
+      
     return {
       ...user,
       name

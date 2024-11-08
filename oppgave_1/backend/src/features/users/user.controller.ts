@@ -33,7 +33,7 @@ export const createUserController = (userService: UserService) => {
       return c.json(result);
     });
   
-    app.post("users/", async (c) => {
+    app.post("/users", async (c) => {
       const data = await c.req.json();
       const result = await userService.create(data);
       if (!result.success)

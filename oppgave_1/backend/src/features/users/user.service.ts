@@ -1,14 +1,11 @@
 import type { Result } from "@/types";
-
-
-
 import { createUser, createUserResponse } from "./user.mapper";
 import type { Query } from "@/lib/query";
 import { createUserRepository, UserRepository, userRepository } from "./user.repository";
 import { CreateUser, User, validateCreateUser } from "../../types/user";
 
 export const createUserService = (userRepository: UserRepository) => {
-    
+
   const getById = async (id: string): Promise<Result<User>> => {
     return userRepository.getById(id);
   };

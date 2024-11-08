@@ -32,7 +32,7 @@ export const createUserRepository = (db: DB) => {
             success: false,
             error: {
               code: "SOME_CODE_HERE",
-              message: "Failed getting students",
+              message: "Failed getting users",
             },
           };
         }
@@ -63,7 +63,7 @@ export const createUserRepository = (db: DB) => {
             success: false,
             error: {
               code: "INTERNAL_SERVER_ERROR",
-              message: "Failed creating student",
+              message: "Failed creating user",
             },
           };
         }
