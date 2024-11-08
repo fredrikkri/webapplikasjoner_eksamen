@@ -13,7 +13,7 @@ export const createTables = (db: DB) => {
     CREATE TABLE IF NOT EXISTS lessons (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
-        slug TEXT NOT NULL,
+        slug TEXT UNIQUE NOT NULL,
         preAmble TEXT NOT NULL,
         course_id TEXT ,
         FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
@@ -30,8 +30,8 @@ export const createTables = (db: DB) => {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         createdBy TEXT NOT NULL,
         comment TEXT NOT NULL,
-        lesson_id INTEGER,
-        FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE
+        lesson_slug TEXT NOT NULL,
+        FOREIGN KEY (lesson_slug) REFERENCES lessons(slug) ON DELETE CASCADE
     );
 
     CREATE TABLE IF NOT EXISTS users (
