@@ -263,9 +263,6 @@ const list = async (params?: Query): Promise<Result<Course[]>> => {
   }
 };
 
-
-
-
   const create = async (data: CourseCreate): Promise<Result<string>> => {
     try {
       const course = toDb(data);
@@ -311,7 +308,7 @@ const list = async (params?: Query): Promise<Result<Course[]>> => {
 
       const query = db.prepare(`
         UPDATE courses
-        SET id = ?, title = ?, slug = ?, description = ?, category = ?
+        SET title = ?, slug = ?, description = ?, category = ?
         WHERE id = ?
       `);
       query.run(course.id, course.title, course.slug, course.description, course.category);

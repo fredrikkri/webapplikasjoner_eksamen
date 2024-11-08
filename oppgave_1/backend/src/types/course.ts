@@ -11,8 +11,7 @@ export const CourseSchema = z.object({
   category: z.string(),
 });
 
-export const UpdateCourseSchema = CourseSchema.omit({
-});
+export const UpdateCourseSchema = CourseSchema.omit({ lessons: true});
 
 export const CourseCreateStepsSchema = z.object({
   id: z.string(),
