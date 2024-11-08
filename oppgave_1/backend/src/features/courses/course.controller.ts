@@ -44,7 +44,7 @@ export const createCourseController = (CourseService: any) => {
     return c.json(result, { status: 201 });
   });
 
-  app.patch("courses/:id", async (c) => {
+  app.patch("/courses/:id", async (c) => {
     const id = c.req.param("id");
     const data = await c.req.json();
 
@@ -59,10 +59,7 @@ export const createCourseController = (CourseService: any) => {
   });
 
   app.delete("/courses/:id", async (c) => {
-    console.log("USED BACKEND")
     const id = c.req.param("id");
-    console.log("BACKEND ID:", id)
-
     const result = await CourseService.remove(id);
     if (!result.success)
       return errorResponse(
@@ -73,29 +70,59 @@ export const createCourseController = (CourseService: any) => {
     return c.json(result);
   });
 
-app.get("/courses/:slug/:slugLesson", async (c) => {
-  const slug = c.req.param("slug");
-  const slugLesson = c.req.param("slugLesson");
-  const result = await CourseService.getById(slug);
-  const result2 = await CourseService.getLessonById(slugLesson);
+  app.get("/courses/:slug/:slugLesson", async (c) => {
+    const slug = c.req.param("slug");
+    const slugLesson = c.req.param("slugLesson");
+    const result = await CourseService.getById(slug);
+    const result2 = await CourseService.getLessonById(slugLesson);
 
-  if (!result.success) {
+    if (!result.success) {
       return errorResponse(
-          c,
-          result.error.code as ErrorCode,
-          result.error.message
+        c,
+        result.error.code as ErrorCode,
+        result.error.message
       );
-  }
+    }
 
-  if (!result2.success) {
+    if (!result2.success) {
       return errorResponse(
-          c,
-          result2.error.code as ErrorCode,
-          result2.error.message
+        c,
+        result2.error.code as ErrorCode,
+        result2.error.message
       );
-  }
-  return c.json(result2);
-});
+    }
+    return c.json(result2);
+  });
+
+  // New endpoints for lesson operations
+  app.patch("/courses/:courseSlug/lessons/:lessonSlug", async (c) => {
+    const courseSlug = c.req.param("courseSlug");
+    const lessonSlug = c.req.param("lessonSlug");
+    const data = await c.req.json();
+
+    const result = await CourseService.updateLesson(courseSlug, lessonSlug, data);
+    if (!result.success)
+      return errorResponse(
+        c,
+        result.error.code as ErrorCode,
+        result.error.message
+      );
+    return c.json(result);
+  });
+
+  app.delete("/courses/:courseSlug/lessons/:lessonSlug", async (c) => {
+    const courseSlug = c.req.param("courseSlug");
+    const lessonSlug = c.req.param("lessonSlug");
+
+    const result = await CourseService.removeLesson(courseSlug, lessonSlug);
+    if (!result.success)
+      return errorResponse(
+        c,
+        result.error.code as ErrorCode,
+        result.error.message
+      );
+    return c.json(result);
+  });
 
   return app;
 };

@@ -1,7 +1,8 @@
-import { comments } from "../../data/data";
+import { fetchWithRetry } from "../utils/apiUtils";
+import { BASE_URL } from "../../config/config";
 
 interface CreatedBy {
-  id: string;  // Changed from string | number to just string
+  id: string;
   name: string;
 }
 
@@ -16,23 +17,40 @@ export interface Comment {
   lesson: LessonRef;
 }
 
-// Henter kommentarer basert på lessonSlug
+// Fetch comments for a lesson
 export const getComments = async (lessonSlug: string): Promise<Comment[]> => {
-  const filteredComments = comments.filter(
-    (comment) => comment.lesson.slug === lessonSlug
-  );
-  return filteredComments;
+  try {
+    const response = await fetchWithRetry<Comment[]>(
+      `${BASE_URL}/lessons/${lessonSlug}/comments`
+    );
+    if (response.success) {
+      return response.data;
+    }
+    throw new Error(response.error?.message || 'Failed to fetch comments');
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+    throw error;
+  }
 };
 
-// Oppretter en ny kommentar og legger den til kommentardataen
+// Create a new comment
 export const createComment = async (data: Comment): Promise<void> => {
-  // Convert any number id to string to ensure type consistency
-  const commentData: Comment = {
-    ...data,
-    createdBy: {
-      ...data.createdBy,
-      id: String(data.createdBy.id)
+  try {
+    const response = await fetchWithRetry<Comment>(
+      `${BASE_URL}/lessons/${data.lesson.slug}/comments`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    if (!response.success) {
+      throw new Error(response.error?.message || 'Failed to create comment');
     }
-  };
-  comments.push(commentData);
+  } catch (error) {
+    console.error('Error creating comment:', error);
+    throw error;
+  }
 };

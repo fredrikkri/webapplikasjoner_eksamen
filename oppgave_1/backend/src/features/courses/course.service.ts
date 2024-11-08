@@ -10,28 +10,25 @@ import {
   type Course,
   type CourseResponse,
   type UpdateCourse,
-
   type Lesson,
   LessonSchema
 } from "../../types/types";
-
 
 import { createCourse, createCourseResponse, createLessonResponse } from "./course.mapper";
 import type { Query } from "../../lib/query";
 
 export const createCourseService = (courseRepository: CourseRepository) => {
-
   const getById = async (slug: string): Promise<Result<Course | undefined>> => {
     return courseRepository.getById(slug);
   };
   
   const getLessonsById = async (id: string): Promise<Result<Lesson[] | undefined>> =>  {
-    return courseRepository.getLessonsByCourseId(id)
-  }
+    return courseRepository.getLessonsByCourseId(id);
+  };
 
   const getLessonById = async (slug: string): Promise<Result<Lesson | undefined>> =>  {
-    return courseRepository.getLessonByCourseId(slug)
-  }
+    return courseRepository.getLessonByCourseId(slug);
+  };
 
   const list = async (query?: Query): Promise<Result<CourseResponse[]>> => {
     const result = await courseRepository.list(query);
@@ -72,21 +69,26 @@ export const createCourseService = (courseRepository: CourseRepository) => {
     return courseRepository.remove(id);
   };
 
-
   const listLessons = async (query?: Query): Promise<Result<Lesson[]>> => {
     const result = await courseRepository.listLesson(query);
     
     if (!result.success) {
-        return result
+      return result;
     }
 
     return {
       ...result,
       data: result.data.map(createLessonResponse),
     };
-};
+  };
 
+  const updateLesson = async (courseSlug: string, lessonSlug: string, data: Partial<Lesson>) => {
+    return courseRepository.updateLesson(courseSlug, lessonSlug, data);
+  };
 
+  const removeLesson = async (courseSlug: string, lessonSlug: string) => {
+    return courseRepository.removeLesson(courseSlug, lessonSlug);
+  };
 
   return {
     list,
@@ -96,7 +98,9 @@ export const createCourseService = (courseRepository: CourseRepository) => {
     getLessonsById,
     getLessonById,
     remove,
-    listLessons
+    listLessons,
+    updateLesson,
+    removeLesson
   };
 };
 

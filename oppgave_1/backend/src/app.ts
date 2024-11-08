@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { CourseController } from "./features/courses/course.controller";
+import { CommentController } from "./features/courses/comment.controller";
 
 const app = new Hono();
 
@@ -9,8 +10,8 @@ app.use("/*", cors({
   credentials: true,
 }));
 
-app.route("/api/v1", CourseController)
-//app.route("api/v1", LessonController);
+app.route("/api/v1", CourseController);
+app.route("/api/v1", CommentController);
 
 app.onError((err, c) => {
   console.error(err);
