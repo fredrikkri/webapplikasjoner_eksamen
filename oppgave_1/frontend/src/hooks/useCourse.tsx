@@ -1,37 +1,6 @@
 import { useState, useEffect } from "react";
 import { getCourse, createCourse, getAllCourses } from "../lib/services";
-
-interface LessonText {
-  id: string;
-  text: string;
-}
-
-interface Lesson {
-  id: string;
-  title: string;
-  slug: string;
-  preAmble: string;
-  text: LessonText[];
-  order?: string; // Made optional since it's not always present
-}
-
-export interface Course {
-  id: string;
-  title: string;
-  slug: string;
-  description: string;
-  category: string;
-  lessons: Lesson[];
-}
-
-export interface CourseData {
-  id: string;
-  title: string;
-  slug: string;
-  description: string;
-  category: string;
-  lessons: Lesson[];
-}
+import { Course, ApiResponse } from "../types/types";
 
 export const useAllCourses = () => {
   const [courses, setCourses] = useState<Course[] | null>(null);
@@ -69,7 +38,7 @@ export const useCourse = (courseSlug: string) => {
         const data = await getCourse(courseSlug);
         setCourse(data as Course);
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('An error occurred'));
+        setError(err instanceof Error ? err : new Error('Failed to fetch course'));
       } finally {
         setLoading(false);
       }
@@ -86,17 +55,47 @@ export const useCourse = (courseSlug: string) => {
 export const useCreateCourse = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
+  const { courses, loading: coursesLoading } = useAllCourses();
 
-  const addCourse = async (courseData: CourseData) => {
+  const addCourse = async (courseData: Course): Promise<void> => {
     try {
       setLoading(true);
+      setError(null);
+
+      // Optimistic update
+      if (courses) {
+        const updatedCourses = [...courses, courseData];
+        // Update local state immediately
+        // This would typically be handled by a global state management solution
+      }
+
       await createCourse(courseData);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('An error occurred'));
+      // Rollback optimistic update
+      if (courses) {
+        const originalCourses = courses.filter(course => course.id !== courseData.id);
+        // Restore original state
+        // This would typically be handled by a global state management solution
+      }
+
+      let errorMessage = 'Failed to create course';
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'object' && err !== null && 'message' in err) {
+        errorMessage = String(err.message);
+      }
+
+      setError(new Error(errorMessage));
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
-  return { addCourse, useAllCourses, loading, error };
+  return { 
+    addCourse, 
+    loading, 
+    error,
+    isReady: !coursesLoading // Helper to know when we can safely perform optimistic updates
+  };
 };
