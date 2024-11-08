@@ -18,6 +18,7 @@ import {
 
 import { createCourse, createCourseResponse, createLessonResponse } from "./course.mapper";
 import type { Query } from "../../lib/query";
+import { CourseCreateSteps, CourseCreateStepsResponse } from "@/types/courseCreateSteps";
 
 export const createCourseService = (courseRepository: CourseRepository) => {
 
@@ -28,8 +29,6 @@ export const createCourseService = (courseRepository: CourseRepository) => {
   const getCommentsByLessonSlug = async (lessonSlug: string): Promise<Result<Comment[] | undefined>> => {
     return courseRepository.getCommentsByLessonSlug(lessonSlug);
   };
-
-  
   
   const getLessonsById = async (id: string): Promise<Result<Lesson[] | undefined>> =>  {
     return courseRepository.getLessonsByCourseId(id)
@@ -47,6 +46,11 @@ export const createCourseService = (courseRepository: CourseRepository) => {
       ...result,
       data: result.data.map(createCourseResponse),
     };
+  };
+
+  const listCourseCreateSteps = async (): Promise<Result<CourseCreateStepsResponse[]>> => {
+    return courseRepository.listCourseCreateSteps();
+     
   };
 
   const create = async (data: CourseCreate): Promise<Result<string>> => {
@@ -103,7 +107,8 @@ export const createCourseService = (courseRepository: CourseRepository) => {
     getLessonById,
     remove,
     listLessons,
-    getCommentsByLessonSlug
+    getCommentsByLessonSlug, 
+    listCourseCreateSteps
   };
 };
 

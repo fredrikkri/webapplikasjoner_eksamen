@@ -4,6 +4,8 @@ import {type Lesson, type LessonSchema} from "../../types/lesson";
 import type { Result } from "../../types/index";
 import { fromDb, fromDbLession, toDb } from "./course.mapper";
 import type { Query } from "../../lib/query";
+import { CourseCreateSteps } from "@/types/types";
+import { CourseCreateStepsResponse } from "@/types/courseCreateSteps";
 
 export const createCourseRepository = (db: DB) => {
 
@@ -18,14 +20,6 @@ export const createCourseRepository = (db: DB) => {
   const lessonExist = async (slug: string): Promise<boolean> => {
     const query = db.prepare(
       "SELECT COUNT(*) as count FROM lessons WHERE slug = ?"
-    );
-    const data = query.get(slug) as { count: number };
-    return data.count > 0;
-  };
-
-  const lessonExistId = async (slug: string): Promise<boolean> => {
-    const query = db.prepare(
-      "SELECT COUNT(*) as count FROM lessons WHERE id = ?"
     );
     const data = query.get(slug) as { count: number };
     return data.count > 0;
@@ -191,6 +185,17 @@ const fetchTextsForLesson = async (lessonId: string): Promise<{ id: string; text
   return textStatement.all(lessonId) as { id: string; text: string; }[];
 };
 
+const listCourseCreateSteps = async (): Promise<Result<CourseCreateSteps[]>> => {
+  try {
+    const CourseCreateStepsQuery = db.prepare("SELECT * FROM courseCreateSteps");
+    const data = CourseCreateStepsQuery.all() as CourseCreateSteps[];
+    return { success: true, data };
+  } catch  {
+    return { success: false, 
+      error:{code: "NOT_FOUND", message: "courseCreateSteps not found"} };
+  }
+};
+
 // SRC: kilde: chatgpt.com  || med justeringer /
 const getById = async (slug: string): Promise<Result<Course>> => {
   try {
@@ -308,6 +313,8 @@ const list = async (params?: Query): Promise<Result<Course[]>> => {
     };
   }
 };
+
+
 
   const create = async (data: CourseCreate): Promise<Result<string>> => {
     try {
@@ -448,7 +455,7 @@ const list = async (params?: Query): Promise<Result<Course[]>> => {
 };
 
 
-  return { create, list, getById, update, remove, listLesson, getLessonsByCourseId, getLessonByCourseId, getCommentsByLessonSlug};
+  return { create, list, getById, update, remove, listLesson, getLessonsByCourseId, getLessonByCourseId, getCommentsByLessonSlug, listCourseCreateSteps};
 };
 
 export const courseRepository = createCourseRepository(db);
