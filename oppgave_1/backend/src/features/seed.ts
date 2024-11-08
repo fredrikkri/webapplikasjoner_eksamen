@@ -27,7 +27,7 @@ const { courses, comments, users, categories, courseCreateSteps} = JSON.parse(fi
   `);
 
   const insertComment = db.prepare(`
-    INSERT INTO comments (createdBy, comment, lesson_id)
+    INSERT INTO comments (createdBy, comment, lesson_slug)
     VALUES (?, ?, ?)
   `);
 
@@ -84,9 +84,11 @@ const { courses, comments, users, categories, courseCreateSteps} = JSON.parse(fi
         }
 
         for (const comment of comments) {
-          if (comment.lesson.slug === lesson.slug) {
-            insertComment.run(comment.createdBy.name, comment.comment, lesson.Id);
-          }
+          insertComment.run(
+            comment.createdBy.name,
+            comment.comment,
+            comment.lesson.slug
+          );
         }
       }
     }
