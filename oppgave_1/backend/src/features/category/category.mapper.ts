@@ -1,5 +1,5 @@
 import { Categories } from "@/types/category";
-import { createId } from "@/util/utils";
+import { createId } from "../../util/utils";
 
 
 

@@ -1,4 +1,4 @@
-import { createId } from "@/util/utils";
+import { createId } from "../../util/utils";
 import type { Course} from "../../types/course";
 import type { Lesson} from "../../types/lesson";
 
