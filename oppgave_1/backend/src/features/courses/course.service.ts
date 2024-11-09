@@ -10,10 +10,12 @@ import {
   type Course,
   type CourseResponse,
   type UpdateCourse,
-
+} from "../../types/course";
+import {
   type Lesson,
   LessonSchema
-} from "../../types/types";
+} from "../../types/lesson";
+
 
 
 import { createCourse, createCourseResponse, createLessonResponse } from "./course.mapper";
