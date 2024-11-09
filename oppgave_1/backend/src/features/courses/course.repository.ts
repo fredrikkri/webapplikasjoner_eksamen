@@ -147,17 +147,6 @@ const fetchTextsForLesson = async (lessonId: string): Promise<{ id: string; text
   return textStatement.all(lessonId) as { id: string; text: string; }[];
 };
 
-const listCourseCreateSteps = async (): Promise<Result<CourseCreateSteps[]>> => {
-  try {
-    const CourseCreateStepsQuery = db.prepare("SELECT * FROM courseCreateSteps");
-    const data = CourseCreateStepsQuery.all() as CourseCreateSteps[];
-    return { success: true, data };
-  } catch  {
-    return { success: false, 
-      error:{code: "NOT_FOUND", message: "courseCreateSteps not found"} };
-  }
-};
-
 // SRC: kilde: chatgpt.com  || med justeringer /
 const getById = async (slug: string): Promise<Result<Course>> => {
   try {
@@ -417,7 +406,7 @@ const list = async (params?: Query): Promise<Result<Course[]>> => {
 };
 
 
-  return { create, list, getById, update, remove, listLesson, getLessonsByCourseId, getLessonByCourseId, listCourseCreateSteps};
+  return { create, list, getById, update, remove, listLesson, getLessonsByCourseId, getLessonByCourseId};
 };
 
 export const courseRepository = createCourseRepository(db);
