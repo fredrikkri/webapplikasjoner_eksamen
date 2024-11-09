@@ -4,37 +4,13 @@ import type { Lesson} from "../../types/lesson";
 
 
 export const createCourseResponse = (course: Course): Course => {
-  const { id, 
-    title, 
-    slug, 
-    description, 
-    category,
-} = course;
-
-  return {
-    ...course,
-    title, 
-    slug, 
-    description, 
-    category,
-  };
+  const { id, title, slug, description, category} = course;
+  return {...course, title, slug, description, category};
 };
 
 export const createLessonResponse = (lesson: Lesson): Lesson => {
-  const { 
-    title, 
-    slug, 
-    preAmble, 
-    text,
-} = lesson;
-
-  return {
-    ...lesson,
-    title, 
-    slug, 
-    preAmble, 
-    text,
-  };
+  const { title, slug, preAmble, text} = lesson;
+  return {...lesson, title, slug, preAmble, text,};
 };
 
 export const fromDb = (course: Course) => {
