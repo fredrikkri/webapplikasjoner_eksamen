@@ -26,10 +26,6 @@ export const createCourseService = (courseRepository: CourseRepository) => {
     return courseRepository.getById(slug);
   };
 
-  const getCommentsByLessonSlug = async (lessonSlug: string): Promise<Result<Comment[] | undefined>> => {
-    return courseRepository.getCommentsByLessonSlug(lessonSlug);
-  };
-  
   const getLessonsById = async (id: string): Promise<Result<Lesson[] | undefined>> =>  {
     return courseRepository.getLessonsByCourseId(id)
   }
@@ -96,8 +92,6 @@ export const createCourseService = (courseRepository: CourseRepository) => {
     };
 };
 
-
-
   return {
     list,
     create,
@@ -107,7 +101,6 @@ export const createCourseService = (courseRepository: CourseRepository) => {
     getLessonById,
     remove,
     listLessons,
-    getCommentsByLessonSlug, 
     listCourseCreateSteps
   };
 };

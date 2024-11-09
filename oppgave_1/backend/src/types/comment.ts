@@ -4,11 +4,10 @@ import { UserSchema } from './user';
 // SRC: kilde: chatgpt.com /
 export const CommentSchema = z.object({
     id: z.string(),
-    createdBy: UserSchema,
+    createdBy: z.string(),
     comment: z.string(),
-    lesson: z.object({
-      slug: z.string(),
-    }),
+    lesson_slug: z.string(
+    ),
   });
 
 export const CommentCreateSchema = CommentSchema.omit({ id: true });

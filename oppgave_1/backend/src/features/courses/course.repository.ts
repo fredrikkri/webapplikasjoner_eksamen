@@ -4,7 +4,7 @@ import {type Lesson, type LessonSchema} from "../../types/lesson";
 import type { Result } from "../../types/index";
 import { fromDb, fromDbLession, toDb } from "./course.mapper";
 import type { Query } from "../../lib/query";
-import { CourseCreateSteps } from "@/types/types";
+import { CourseCreateSteps } from "@/types/courseCreateSteps";
 import { CourseCreateStepsResponse } from "@/types/courseCreateSteps";
 
 export const createCourseRepository = (db: DB) => {
@@ -72,43 +72,6 @@ const getLessonsByCourseId = async (id: string): Promise<Result<Lesson[]>> => {
     };
   }
 };
-
-const getCommentsByLessonSlug = async (lessonSlug: string): Promise<Result<Comment[]>> => {
-  try {
-    const lessonExists = await lessonExist(lessonSlug);
-    if (!lessonExists) {
-      return {
-        success: false,
-        error: { code: "NOT_FOUND", message: "Course not found" },
-      };
-    }
-
-    const query = db.prepare("SELECT * FROM comments WHERE lesson_slug = ?");
-    const comments = query.all(lessonSlug) as Comment[];
-
-    if (comments.length === 0) {
-      return {
-        success: false,
-        error: { code: "NOT_FOUND", message: "No comments found for this lesson" },
-      };
-    }
-    
-    return {
-      success: true,
-      data: comments,
-    };
-
-  } catch (error) {
-    console.error("Error fetching lesson:", error);
-    return {
-      success: false,
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Error fetching lesson",
-      },
-    };
-  }
-}
 
 // SRC: kilde: chatgpt.com || med endringer /
 const getLessonByCourseId = async (slug: string): Promise<Result<Lesson | undefined>> => {
@@ -454,7 +417,7 @@ const list = async (params?: Query): Promise<Result<Course[]>> => {
 };
 
 
-  return { create, list, getById, update, remove, listLesson, getLessonsByCourseId, getLessonByCourseId, getCommentsByLessonSlug, listCourseCreateSteps};
+  return { create, list, getById, update, remove, listLesson, getLessonsByCourseId, getLessonByCourseId, listCourseCreateSteps};
 };
 
 export const courseRepository = createCourseRepository(db);
