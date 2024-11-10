@@ -1,3 +1,4 @@
+import { ENDPOINTS } from "@/config/config";
 import { comments } from "../../data/data";
 
 interface CreatedBy {
@@ -18,10 +19,20 @@ export interface Comment {
 
 // Henter kommentarer basert på lessonSlug
 export const getComments = async (lessonSlug: string): Promise<Comment[]> => {
-  const filteredComments = comments.filter(
-    (comment) => comment.lesson.slug === lessonSlug
-  );
-  return filteredComments;
+  // const filteredComments = comments.filter(
+  //   (comment) => comment.lesson.slug === lessonSlug
+  // );
+  // return filteredComments;
+  const response = await fetch(ENDPOINTS.comments + `/${lessonSlug}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch comments for lesson with slug: ${lessonSlug}`);
+  }
+  const result = await response.json();
+  if (!result.success) {
+    throw new Error(result.error.message || `Failed to fetch comments for lesson with slug: ${lessonSlug}`);
+  }
+
+  return result.data as Comment[];
 };
 
 // Oppretter en ny kommentar og legger den til kommentardataen

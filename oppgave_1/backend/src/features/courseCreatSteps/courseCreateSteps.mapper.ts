@@ -18,4 +18,3 @@ export const fromDb = (data: CourseCreateSteps) => {
       name: data?.name ?? "unknown",
     };
 };
-
