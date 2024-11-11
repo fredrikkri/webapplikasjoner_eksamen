@@ -29,3 +29,11 @@ export const EventSchema = z.object({
   export const validateEvent = (data: unknown) => {
     return EventSchema.safeParse(data);
   };
+
+  export const validateEventCreate = (data: unknown) => {
+    return EventCreateSchema.safeParse(data);
+  };
+
+  export const validateEventUpdate = (data: unknown) => {
+    return EventUpdateSchema.safeParse(data);
+  };
