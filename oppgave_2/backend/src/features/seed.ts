@@ -2,6 +2,7 @@ import { DB } from "./db";
 import { promises } from "fs";
 import { join } from "path";
 
+// SRC: kilde: chatgpt.com  /
 export const seed = async (db: DB) => {
   const path = join(".", "src", "features", "data", "data.json");
   const file = await promises.readFile(path, "utf-8");
@@ -23,12 +24,10 @@ export const seed = async (db: DB) => {
   `);
 
   db.transaction(() => {
-    // Insert users
     for (const user of users) {
       insertUser.run(user.name, user.email);
     }
 
-    // Insert events
     for (const event of events) {
       insertEvent.run(
         event.id,
@@ -45,7 +44,6 @@ export const seed = async (db: DB) => {
       );
     }
 
-    // Insert days
     for (const day of days) {
       insertDay.run(day.day);
     }
