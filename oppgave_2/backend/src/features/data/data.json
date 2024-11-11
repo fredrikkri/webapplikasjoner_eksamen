@@ -1,100 +1,78 @@
 {
   "events": [
     {
-      "id": "1",
+      "id": "event-1",
       "title": "Tech Conference 2024",
-      "slug": "tech-conference-2024",
       "description": "A major technology conference covering the latest in AI, blockchain, and web development.",
+      "slug": "tech-conference-2024",
       "date": "2024-11-20",
-      "time": "09:00",
-      "totalattenders": 250,
-      "hostuid": "1"
+      "location": "Oslo, Norway",
+      "event_type": "Conference",
+      "total_slots": 300,
+      "available_slots": 200,
+      "price": 1500
     },
     {
-      "id": "2",
+      "id": "event-2",
       "title": "Web Development Bootcamp",
-      "slug": "web-dev-bootcamp",
       "description": "A comprehensive bootcamp to master web development.",
+      "slug": "web-dev-bootcamp",
       "date": "2024-12-01",
-      "time": "10:00",
-      "totalattenders": 120,
-      "hostuid": "3"
+      "location": "Bergen, Norway",
+      "event_type": "Bootcamp",
+      "total_slots": 100,
+      "available_slots": 50,
+      "price": 800
     }
   ],
-  "attenders": [
+  "events_active": [
     {
-      "UID": "1",
-      "event_id": "1"
+      "event_id": "event-1"
     },
     {
-      "UID": "2",
-      "event_id": "1"
-    },
-    {
-      "UID": "3",
-      "event_id": "2"
+      "event_id": "event-2"
     }
   ],
-  "rules": [
+  "events_template": [
     {
-      "event_id": "1"
-    },
-    {
-      "event_id": "2"
+      "event_id": "event-1"
     }
   ],
-  "eventdays": [
+  "registrations": [
     {
-      "day": "Monday",
-      "rules_id": "1"
+      "event_id": "event-1",
+      "email": "john.doe@example.com",
+      "had_paid": "true",
+      "registration_date": "2024-11-01"
     },
     {
-      "day": "Tuesday",
-      "rules_id": "1"
-    },
-    {
-      "day": "Wednesday",
-      "rules_id": "1"
-    },
-    {
-      "day": "Thursday",
-      "rules_id": "2"
-    },
-    {
-      "day": "Friday",
-      "rules_id": "2"
+      "event_id": "event-2",
+      "email": "jane.smith@example.com",
+      "had_paid": "false",
+      "registration_date": "2024-11-05"
     }
   ],
-  
   "days": [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday"
-  ],
-  "users": [
     {
-      "id": "1",
-      "name": "John Doe",
-      "email": "john.doe@example.com"
+      "day": "Monday"
     },
     {
-      "id": "2",
-      "name": "Jane Smith",
-      "email": "jane.smith@example.com"
+      "day": "Tuesday"
     },
     {
-      "id": "3",
-      "name": "Alice Brown",
-      "email": "alice.brown@example.com"
+      "day": "Wednesday"
     },
     {
-      "id": "4",
-      "name": "Bob Johnson",
-      "email": "bob.johnson@example.com"
+      "day": "Thursday"
+    },
+    {
+      "day": "Friday"
+    },
+    {
+      "day": "Saturday"
+    },
+    {
+      "day": "Sunday"
     }
   ]
 }
