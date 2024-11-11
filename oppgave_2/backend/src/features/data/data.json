@@ -1,26 +1,4 @@
 {
-  "users": [
-    {
-      "id": 1,
-      "name": "John Doe",
-      "email": "john.doe@example.com"
-    },
-    {
-      "id": 2,
-      "name": "Jane Smith",
-      "email": "jane.smith@example.com"
-    },
-    {
-      "id": 3,
-      "name": "Alice Brown",
-      "email": "alice.brown@example.com"
-    },
-    {
-      "id": 4,
-      "name": "Bob Johnson",
-      "email": "bob.johnson@example.com"
-    }
-  ],
   "events": [
     {
       "id": "event-1",
@@ -29,11 +7,10 @@
       "slug": "tech-conference-2024",
       "date": "2024-11-20",
       "location": "Oslo, Norway",
-      "type": "Conference",
+      "event_type": "Conference",
       "total_slots": 300,
-      "price": 1500,
       "available_slots": 200,
-      "created_by": 1
+      "price": 1500
     },
     {
       "id": "event-2",
@@ -42,11 +19,37 @@
       "slug": "web-dev-bootcamp",
       "date": "2024-12-01",
       "location": "Bergen, Norway",
-      "type": "Bootcamp",
+      "event_type": "Bootcamp",
       "total_slots": 100,
-      "price": 800,
       "available_slots": 50,
-      "created_by": 2
+      "price": 800
+    }
+  ],
+  "events_active": [
+    {
+      "event_id": "event-1"
+    },
+    {
+      "event_id": "event-2"
+    }
+  ],
+  "events_template": [
+    {
+      "event_id": "event-1"
+    }
+  ],
+  "registrations": [
+    {
+      "event_id": "event-1",
+      "email": "john.doe@example.com",
+      "had_paid": "true",
+      "registration_date": "2024-11-01"
+    },
+    {
+      "event_id": "event-2",
+      "email": "jane.smith@example.com",
+      "had_paid": "false",
+      "registration_date": "2024-11-05"
     }
   ],
   "days": [

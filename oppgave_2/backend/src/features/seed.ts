@@ -6,11 +6,27 @@ import { join } from "path";
 export const seed = async (db: DB) => {
   const path = join(".", "src", "features", "data", "data.json");
   const file = await promises.readFile(path, "utf-8");
-  const { events, days, users } = JSON.parse(file);
+  const { events, events_active, events_template, registrations, days } = JSON.parse(file);
 
+  // Prepare the insert statements
   const insertEvent = db.prepare(`
-    INSERT INTO events (id, title, description, slug, date, location, type, total_slots, price, available_slots, created_by)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO events (id, title, description, slug, date, location, event_type, total_slots, available_slots, price)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  const insertEventActive = db.prepare(`
+    INSERT INTO events_active (event_id)
+    VALUES (?)
+  `);
+
+  const insertEventTemplate = db.prepare(`
+    INSERT INTO events_template (event_id)
+    VALUES (?)
+  `);
+
+  const insertRegistration = db.prepare(`
+    INSERT INTO registrations (event_id, email, had_paid, registration_date)
+    VALUES (?, ?, ?, ?)
   `);
 
   const insertDay = db.prepare(`
@@ -18,16 +34,8 @@ export const seed = async (db: DB) => {
     VALUES (?)
   `);
 
-  const insertUser = db.prepare(`
-    INSERT INTO users (name, email)
-    VALUES (?, ?)
-  `);
-
   db.transaction(() => {
-    for (const user of users) {
-      insertUser.run(user.name, user.email);
-    }
-
+    // Insert events
     for (const event of events) {
       insertEvent.run(
         event.id,
@@ -36,11 +44,27 @@ export const seed = async (db: DB) => {
         event.slug,
         event.date,
         event.location,
-        event.type,
+        event.event_type,
         event.total_slots,
-        event.price,
         event.available_slots,
-        event.created_by
+        event.price
+      );
+    }
+
+    for (const activeEvent of events_active) {
+      insertEventActive.run(activeEvent.event_id);
+    }
+
+    for (const template of events_template) {
+      insertEventTemplate.run(template.event_id);
+    }
+
+    for (const registration of registrations) {
+      insertRegistration.run(
+        registration.event_id,
+        registration.email,
+        registration.had_paid,
+        registration.registration_date
       );
     }
 
