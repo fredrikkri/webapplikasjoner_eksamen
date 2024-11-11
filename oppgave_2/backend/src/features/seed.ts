@@ -5,27 +5,11 @@ import { join } from "path";
 export const seed = async (db: DB) => {
   const path = join(".", "src", "features", "data", "data.json");
   const file = await promises.readFile(path, "utf-8");
-  const { events, attenders, rules, eventdays, days, users } = JSON.parse(file);
+  const { events, days, users } = JSON.parse(file);
 
-  // SRC: kilde: chatgpt.com /
   const insertEvent = db.prepare(`
-    INSERT INTO events (id, title, slug, description, date, time, totalattenders, hostuid)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `);
-
-  const insertAttender = db.prepare(`
-    INSERT INTO attenders (UID, event_id)
-    VALUES (?, ?)
-  `);
-
-  const insertRule = db.prepare(`
-    INSERT INTO rules (event_id)
-    VALUES (?)
-  `);
-
-  const insertEventDay = db.prepare(`
-    INSERT INTO eventdays (day, rules_id)
-    VALUES (?, ?)
+    INSERT INTO events (id, title, description, slug, date, location, type, total_slots, price, available_slots, created_by)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
   const insertDay = db.prepare(`
@@ -34,42 +18,36 @@ export const seed = async (db: DB) => {
   `);
 
   const insertUser = db.prepare(`
-    INSERT INTO users (id, name, email)
-    VALUES (?, ?, ?)
+    INSERT INTO users (name, email)
+    VALUES (?, ?)
   `);
 
   db.transaction(() => {
+    // Insert users
     for (const user of users) {
-      insertUser.run(user.id, user.name, user.email);
+      insertUser.run(user.name, user.email);
     }
 
+    // Insert events
     for (const event of events) {
       insertEvent.run(
         event.id,
         event.title,
-        event.slug,
         event.description,
+        event.slug,
         event.date,
-        event.time,
-        event.totalattenders,
-        event.hostuid
+        event.location,
+        event.type,
+        event.total_slots,
+        event.price,
+        event.available_slots,
+        event.created_by
       );
     }
 
-    for (const rule of rules) {
-      insertRule.run(rule.event_id);
-    }
-
-    for (const eventday of eventdays) {
-      insertEventDay.run(eventday.day, eventday.rules_id);
-    }
-
+    // Insert days
     for (const day of days) {
-      insertDay.run(day);
-    }
-
-    for (const attender of attenders) {
-      insertAttender.run(attender.UID, attender.event_id);
+      insertDay.run(day.day);
     }
   })();
 };

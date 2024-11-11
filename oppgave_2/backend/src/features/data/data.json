@@ -1,100 +1,75 @@
 {
-  "events": [
-    {
-      "id": "1",
-      "title": "Tech Conference 2024",
-      "slug": "tech-conference-2024",
-      "description": "A major technology conference covering the latest in AI, blockchain, and web development.",
-      "date": "2024-11-20",
-      "time": "09:00",
-      "totalattenders": 250,
-      "hostuid": "1"
-    },
-    {
-      "id": "2",
-      "title": "Web Development Bootcamp",
-      "slug": "web-dev-bootcamp",
-      "description": "A comprehensive bootcamp to master web development.",
-      "date": "2024-12-01",
-      "time": "10:00",
-      "totalattenders": 120,
-      "hostuid": "3"
-    }
-  ],
-  "attenders": [
-    {
-      "UID": "1",
-      "event_id": "1"
-    },
-    {
-      "UID": "2",
-      "event_id": "1"
-    },
-    {
-      "UID": "3",
-      "event_id": "2"
-    }
-  ],
-  "rules": [
-    {
-      "event_id": "1"
-    },
-    {
-      "event_id": "2"
-    }
-  ],
-  "eventdays": [
-    {
-      "day": "Monday",
-      "rules_id": "1"
-    },
-    {
-      "day": "Tuesday",
-      "rules_id": "1"
-    },
-    {
-      "day": "Wednesday",
-      "rules_id": "1"
-    },
-    {
-      "day": "Thursday",
-      "rules_id": "2"
-    },
-    {
-      "day": "Friday",
-      "rules_id": "2"
-    }
-  ],
-  
-  "days": [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday"
-  ],
   "users": [
     {
-      "id": "1",
+      "id": 1,
       "name": "John Doe",
       "email": "john.doe@example.com"
     },
     {
-      "id": "2",
+      "id": 2,
       "name": "Jane Smith",
       "email": "jane.smith@example.com"
     },
     {
-      "id": "3",
+      "id": 3,
       "name": "Alice Brown",
       "email": "alice.brown@example.com"
     },
     {
-      "id": "4",
+      "id": 4,
       "name": "Bob Johnson",
       "email": "bob.johnson@example.com"
+    }
+  ],
+  "events": [
+    {
+      "id": "event-1",
+      "title": "Tech Conference 2024",
+      "description": "A major technology conference covering the latest in AI, blockchain, and web development.",
+      "slug": "tech-conference-2024",
+      "date": "2024-11-20",
+      "location": "Oslo, Norway",
+      "type": "Conference",
+      "total_slots": 300,
+      "price": 1500,
+      "available_slots": 200,
+      "created_by": 1
+    },
+    {
+      "id": "event-2",
+      "title": "Web Development Bootcamp",
+      "description": "A comprehensive bootcamp to master web development.",
+      "slug": "web-dev-bootcamp",
+      "date": "2024-12-01",
+      "location": "Bergen, Norway",
+      "type": "Bootcamp",
+      "total_slots": 100,
+      "price": 800,
+      "available_slots": 50,
+      "created_by": 2
+    }
+  ],
+  "days": [
+    {
+      "day": "Monday"
+    },
+    {
+      "day": "Tuesday"
+    },
+    {
+      "day": "Wednesday"
+    },
+    {
+      "day": "Thursday"
+    },
+    {
+      "day": "Friday"
+    },
+    {
+      "day": "Saturday"
+    },
+    {
+      "day": "Sunday"
     }
   ]
 }
