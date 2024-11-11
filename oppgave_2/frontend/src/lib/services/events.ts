@@ -2,13 +2,16 @@ import { BASE_URL, ENDPOINTS } from "@/config/config";
 // import { events } from "../../data/data";
 
 export interface Event {
-    id: string;
-    title: string;
-    description: string;
-    date: Date;
-    location: string;
-    isFull: Boolean;
-    slug: string;
+  id: string;
+  title: string;
+  description: string;
+  slug: string;
+  date: Date;
+  location: string;
+  event_type: string;
+  total_slots: string;
+  available_slots: number;
+  price: number;
 }
 
 export const getEvent = async (slug: string): Promise<Event | undefined> => {

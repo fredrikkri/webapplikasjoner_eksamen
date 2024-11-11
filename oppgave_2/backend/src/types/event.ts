@@ -11,7 +11,6 @@ export const EventSchema = z.object({
     total_slots: z.number(),
     available_slots: z.number(),
     price: z.number()
-
   })
   
   export type Event = z.infer<typeof EventSchema>

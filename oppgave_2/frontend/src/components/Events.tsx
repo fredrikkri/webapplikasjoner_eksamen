@@ -35,7 +35,6 @@ const Events = () => {
               <p>{event.description}</p>
               <p><strong>Dato:</strong> {new Date(event.date).toISOString()}</p>
               <p><strong>Lokasjon:</strong> {event.location}</p>
-              <p><strong>Status:</strong> {event.isFull ? "Fullbooket" : "Ledige plasser"}</p>
               <button onClick={() => alert(`Påmelding for ${event.title}`)}>
                 Meld deg på
               </button>
