@@ -1,0 +1,100 @@
+{
+  "events": [
+    {
+      "id": "1",
+      "title": "Tech Conference 2024",
+      "slug": "tech-conference-2024",
+      "description": "A major technology conference covering the latest in AI, blockchain, and web development.",
+      "date": "2024-11-20",
+      "time": "09:00",
+      "totalattenders": 250,
+      "hostuid": "1"
+    },
+    {
+      "id": "2",
+      "title": "Web Development Bootcamp",
+      "slug": "web-dev-bootcamp",
+      "description": "A comprehensive bootcamp to master web development.",
+      "date": "2024-12-01",
+      "time": "10:00",
+      "totalattenders": 120,
+      "hostuid": "3"
+    }
+  ],
+  "attenders": [
+    {
+      "UID": "1",
+      "event_id": "1"
+    },
+    {
+      "UID": "2",
+      "event_id": "1"
+    },
+    {
+      "UID": "3",
+      "event_id": "2"
+    }
+  ],
+  "rules": [
+    {
+      "event_id": "1"
+    },
+    {
+      "event_id": "2"
+    }
+  ],
+  "eventdays": [
+    {
+      "day": "Monday",
+      "rules_id": "1"
+    },
+    {
+      "day": "Tuesday",
+      "rules_id": "1"
+    },
+    {
+      "day": "Wednesday",
+      "rules_id": "1"
+    },
+    {
+      "day": "Thursday",
+      "rules_id": "2"
+    },
+    {
+      "day": "Friday",
+      "rules_id": "2"
+    }
+  ],
+  
+  "days": [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+  ],
+  "users": [
+    {
+      "id": "1",
+      "name": "John Doe",
+      "email": "john.doe@example.com"
+    },
+    {
+      "id": "2",
+      "name": "Jane Smith",
+      "email": "jane.smith@example.com"
+    },
+    {
+      "id": "3",
+      "name": "Alice Brown",
+      "email": "alice.brown@example.com"
+    },
+    {
+      "id": "4",
+      "name": "Bob Johnson",
+      "email": "bob.johnson@example.com"
+    }
+  ]
+}
