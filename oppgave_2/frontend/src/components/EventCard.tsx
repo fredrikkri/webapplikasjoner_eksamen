@@ -24,7 +24,7 @@ interface EventCardProps {
           <strong>Lokasjon:</strong> {location}
         </p>
         <Link href={`/events/${slug}`}>
-      <button className="px-3 py-3 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 transition my-4 mx-1">
+      <button className="px-3 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 transition my-4 mx-1">
         Gå til arrangement
       </button>
     </Link>
