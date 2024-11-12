@@ -1,7 +1,6 @@
 import { createId } from "../../util/utils";
 import type { Event } from "../../types/event";
 
-
 export const createEventResponse = (event: Event): Event => {
     const { id, title, description, slug, date, location, event_type, total_slots, available_slots, price} = event;
     return {...event, title, description, slug, date, location, event_type, total_slots, available_slots, price};

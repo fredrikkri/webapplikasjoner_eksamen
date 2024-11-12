@@ -1,43 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Event as EventType } from "../types/Event";
-import { dummyEvents } from '@/data/data';
+import { useParams } from 'next/navigation';
+import { useEvent } from '@/hooks/useEvent';
 
 interface EventProps {
   slug?: string;
 }
 
-const SingleEvent: React.FC<EventProps> = ({ slug = "sommerkonsert" }) => {
-  const [event, setEvent] = useState<EventType | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+function SingleEvent({ slug = "sommerkonsert" }: EventProps) {
+  const params = useParams();
+  const lessonSlug = params?.lessonSlug as string;
+ 
+  const { event, loading, error } = useEvent(slug);
 
-  useEffect(() => {
-    const fetchEvent = async () => {
-      try {
-        const response = await fetch(`/api/v1/events/${slug}`);
-        if (!response.ok) {
-          throw new Error(`Fant ikke eventet: ${response.statusText}`);
-        }
-
-        const result = await response.json();
-        setEvent(result.data);
-      } catch (error) {
-        setError("Kunne ikke hente eventer.");
-        console.error("Error fetching this event:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEvent();
-  }, [slug]);
-
-  if (loading) return <div>Loading event...</div>;
+  if (loading) return <div>Laster event...</div>;
 
   if (error) return (
     <div className="rounded-lg border-2 border-red-100 bg-red-50 p-6 text-center">
       <p className="text-lg font-medium text-red-800">
-        Noe gikk galt: {error}
+        Noe gikk galt: {error.message}
       </p>
     </div>
   );

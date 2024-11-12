@@ -38,7 +38,7 @@ export const useEvent = (eventSlug: string) => {
         const eventdata = await getEvent(eventSlug);
         setEvent(eventdata as EventType);
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('An error occurred'));
+        setError(err instanceof Error ? err : new Error('An error occurred while fetching an event'));
       } finally {
         setLoading(false);
       }

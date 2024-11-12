@@ -1,39 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { Event as EventType } from "../types/Event";
-import { dummyEvents } from '@/data/data';
+import { useAllEvents } from '@/hooks/useEvent';
+
+interface Event {
+  id: string;
+  title: string;
+  description: string;
+  slug: string;
+  date: Date;
+  location: string;
+  event_type: string;
+  total_slots: string;
+  available_slots: number;
+  price: number;
+}
 
 const Events = () => {
-  const [events, setEvents] = useState<EventType[]>(dummyEvents);
-  const [loading, setLoading] = useState(true);
+  const { events, loading, error } = useAllEvents(); 
+  const [data, setData] = useState<Event[]>([]);
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch('/api/v1/events');
-        const result = await response.json();
-        setEvents(result.data);
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (events && events.length) {
+      setData(events);
+    }
+  }, [events]);
 
-    fetchEvents();
-  }, []);
-
-  if (loading) return <div>Loading events...</div>;
+  if (loading) return <div>Laster arrangementer...</div>;
+  if (error) return <div>Det oppstod en feil ved henting av eventer.</div>;
 
   return (
     <div>
-      <h1>Alle eventer</h1>
+      <h1>Alle arrangementer</h1>
       <div>
-        {events.length > 0 ? (
-          events.map((event) => (
+        {data.length > 0 ? (
+          data.map((event) => (
             <div key={event.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
               <h2>{event.title}</h2>
               <p>{event.description}</p>
-              <p><strong>Dato:</strong> {new Date(event.date).toISOString()}</p>
+              <p><strong>Dato:</strong> {new Date(event.date).toLocaleDateString('no-NO', {
+                year: 'numeric', month: 'long', day: 'numeric'
+              })}</p>
               <p><strong>Lokasjon:</strong> {event.location}</p>
               <button onClick={() => alert(`Påmelding for ${event.title}`)}>
                 Meld deg på
@@ -41,7 +46,7 @@ const Events = () => {
             </div>
           ))
         ) : (
-          <p>Ingen tilgjengelig arrangementer.</p>
+          <p>Ingen tilgjengelige eventer.</p>
         )}
       </div>
     </div>
