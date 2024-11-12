@@ -32,8 +32,8 @@ export const createRegistrationRepository = (db: DB) => {
           const registration = toDb(data);
     
           const query = db.prepare(`
-            INSERT INTO courses (id, title, slug, description, lessons, category)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO courses (id, event_id, email, had_paid, registration_date)
+            VALUES (?, ?, ?, ?, ?)
           `);
           query.run(
             registration.id,
@@ -51,7 +51,7 @@ export const createRegistrationRepository = (db: DB) => {
             success: false,
             error: {
               code: "INTERNAL_SERVER_ERROR",
-              message: "Feil med oppretting av course",
+              message: "Feil med oppretting av registration",
             },
           };
         }
