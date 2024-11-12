@@ -2,13 +2,12 @@ import { DB } from "./db";
 import { promises } from "fs";
 import { join } from "path";
 
-// SRC: kilde: chatgpt.com  /
+// SRC: kilde: chatgpt.com || med justeringer /
 export const seed = async (db: DB) => {
   const path = join(".", "src", "features", "data", "data.json");
   const file = await promises.readFile(path, "utf-8");
   const { events, events_active, events_template, registrations, days } = JSON.parse(file);
 
-  // Prepare the insert statements
   const insertEvent = db.prepare(`
     INSERT INTO events (id, title, description, slug, date, location, event_type, total_slots, available_slots, price)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -35,7 +34,6 @@ export const seed = async (db: DB) => {
   `);
 
   db.transaction(() => {
-    // Insert events
     for (const event of events) {
       insertEvent.run(
         event.id,
