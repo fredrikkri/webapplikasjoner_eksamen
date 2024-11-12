@@ -25,7 +25,7 @@ export const seed = async (db: DB) => {
   `);
 
   const insertRegistration = db.prepare(`
-    INSERT INTO registrations (event_id, email, had_paid, registration_date)
+    INSERT INTO registrations (event_id, email, has_paid, registration_date)
     VALUES (?, ?, ?, ?)
   `);
 
@@ -63,7 +63,7 @@ export const seed = async (db: DB) => {
       insertRegistration.run(
         registration.event_id,
         registration.email,
-        registration.had_paid,
+        registration.has_paid,
         registration.registration_date
       );
     }

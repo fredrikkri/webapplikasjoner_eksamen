@@ -5,7 +5,7 @@ export const RegistrationSchema = z.object({
     id: z.string(),
     event_id: z.string(),
     email: z.string(),
-    had_paid: z.string(),
+    has_paid: z.string(),
     registration_date: z.date()
   });
 
