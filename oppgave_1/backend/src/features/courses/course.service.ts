@@ -11,6 +11,7 @@ import {
   type CourseResponse,
   type UpdateCourse,
 } from "../../types/course";
+
 import {
   type Lesson,
   LessonSchema
