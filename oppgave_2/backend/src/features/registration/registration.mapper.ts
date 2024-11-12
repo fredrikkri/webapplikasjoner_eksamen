@@ -1,6 +1,7 @@
 import { Registration } from "@/types/registration";
+import { createId } from "../../util/utils";
 
-export const createCategoryResponse = (data: Registration): Registration => {
+export const createRegistrationResponse = (data: Registration): Registration => {
     const { id, event_id, email, had_paid, registration_date } = data;
       
     return {
