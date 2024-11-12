@@ -18,20 +18,30 @@ export const createRegistrationService = (registrationRepository: RegistrationRe
       };
 
       const create = async (data: CreateRegistration): Promise<Result<string>> => {
-        const course = createRegistration(data);
+        const registration = createRegistration(data);
     
-        if (!validateCreateRegistration(course).success) {
+        if (!validateCreateRegistration(registration).success) {
           return {
             success: false,
             error: { code: "BAD_REQUEST", message: "Invalid Registration data" },
           };
         }
-        return registrationRepository.create(course);
+        return registrationRepository.create(registration);
       };
 
+      const getRegistrationsByEventId = async (eventId: string): Promise<Result<Registration[] | undefined>> => {
+        const result = await registrationRepository.getRegistrationById(eventId);
+        if (!result.success) return result;
+
+        return {
+          ...result,
+          data: result.data.map(createRegistrationResponse),
+        };
+        
+    };
 
 
-      return { list, create }
+      return { list, create, getRegistrationsByEventId }
 }
 
 export const registrationService = createRegistrationService(registrationRepository);
