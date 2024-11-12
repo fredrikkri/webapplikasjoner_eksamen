@@ -6,7 +6,7 @@ export const createTables = (db: DB) => {
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
         description TEXT NOT NULL,
-        slug TEXT NOT NULL UNIQUE,
+        slug TEXT UNIQUE NOT NULL,
         date TEXT NOT NULL,
         location TEXT NOT NULL,
         event_type TEXT NOT NULL,
@@ -31,7 +31,7 @@ export const createTables = (db: DB) => {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         event_id TEXT NOT NULL,
         email TEXT NOT NULL,
-        had_paid TEXT NOT NULL,
+        has_paid TEXT NOT NULL,
         registration_date TEXT NOT NULL,
         FOREIGN KEY (event_id) REFERENCES events(id)
     );

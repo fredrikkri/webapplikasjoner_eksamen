@@ -42,13 +42,13 @@
     {
       "event_id": "event-1",
       "email": "john.doe@example.com",
-      "had_paid": "true",
+      "has_paid": "true",
       "registration_date": "2024-11-01"
     },
     {
       "event_id": "event-2",
       "email": "jane.smith@example.com",
-      "had_paid": "false",
+      "has_paid": "false",
       "registration_date": "2024-11-05"
     }
   ],

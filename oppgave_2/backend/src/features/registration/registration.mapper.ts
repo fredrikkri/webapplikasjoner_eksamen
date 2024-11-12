@@ -2,14 +2,14 @@ import { Registration, RegistrationCreateSchema } from "@/types/registration";
 import { createId } from "../../util/utils";
 
 export const createRegistrationResponse = (data: Registration): Registration => {
-    const { id, event_id, email, had_paid, registration_date } = data;
+    const { id, event_id, email, has_paid, registration_date } = data;
       
     return {
       ...data,
       id,
       event_id,
       email,
-      had_paid,
+      has_paid,
       registration_date
       };
   };
@@ -19,7 +19,7 @@ export const createRegistrationResponse = (data: Registration): Registration => 
         id: data.id ?? createId(),
         event_id: data.event_id ?? "N/A",
         email: data.email ?? "unknown",
-        had_paid: data.had_paid ?? "false",
+        has_paid: data.has_paid ?? "false",
         registration_date: data.registration_date ?? new Date
     };
   };
@@ -29,7 +29,7 @@ export const createRegistrationResponse = (data: Registration): Registration => 
         id: data.id ?? createId(),
         event_id: data.event_id ?? "N/A",
         email: data.email ?? "unknown",
-        had_paid: data.had_paid ?? "false",
+        has_paid: data.has_paid ?? "false",
         registration_date: data.registration_date ?? "N/A"
       };
   };
@@ -41,7 +41,7 @@ export const createRegistrationResponse = (data: Registration): Registration => 
         id: regdata?.id ?? createId(),
         event_id: regdata.event_id ?? null,
         email: regdata.email ?? "unknown",
-        had_paid: regdata.had_paid ?? "false",
+        has_paid: regdata.has_paid ?? "false",
         registration_date: regdata.registration_date ?? new Date
     };
   };

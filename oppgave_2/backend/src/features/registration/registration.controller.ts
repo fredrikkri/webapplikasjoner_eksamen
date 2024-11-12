@@ -29,6 +29,19 @@ export const createRegistrationController = (registrationService: RegistrationSe
         return c.json(result, { status: 201 });
       });
 
+      app.get("/registrations/:event_id", async (c) => {
+        const eventId = c.req.param("event_id");
+        const result = await registrationService.getRegistrationsByEventId(eventId);
+    
+        if (!result.success)
+          return errorResponse(
+            c,
+            result.error.code as ErrorCode,
+            result.error.message
+          );
+        return c.json(result);
+      });
+
     return app;
 }
 
