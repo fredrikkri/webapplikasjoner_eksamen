@@ -23,7 +23,7 @@ export const createRegistrationService = (registrationRepository: RegistrationRe
         if (!validateCreateRegistration(course).success) {
           return {
             success: false,
-            error: { code: "BAD_REQUEST", message: "Invalid Course data" },
+            error: { code: "BAD_REQUEST", message: "Invalid Registration data" },
           };
         }
         return registrationRepository.create(course);
