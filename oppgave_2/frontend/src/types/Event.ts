@@ -6,7 +6,7 @@ export type Event = {
     date: Date;
     location: string;
     event_type: string;
-    total_slots: string;
+    total_slots: number;
     available_slots: number;
     price: number;
 }

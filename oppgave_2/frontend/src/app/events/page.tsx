@@ -1,9 +1,14 @@
 'use client';
 import React from "react";
 import Events from "../../components/Events";
+import Home from "@/components/Home";
 
 export default function EventsPage() {
-    return <Events />;
+    return (
+    <Home>
+    <Events />
+  </Home>
+    )
   }
 
   

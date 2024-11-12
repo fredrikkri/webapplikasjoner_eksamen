@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAllEvents } from '@/hooks/useEvent';
+import EventCard from './EventCard';
 
 interface Event {
   id: string;
@@ -33,20 +34,10 @@ const Events = () => {
       <div>
         {data.length > 0 ? (
           data.map((event) => (
-            <div key={event.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
-              <h2>{event.title}</h2>
-              <p>{event.description}</p>
-              <p><strong>Dato:</strong> {new Date(event.date).toLocaleDateString('no-NO', {
-                year: 'numeric', month: 'long', day: 'numeric'
-              })}</p>
-              <p><strong>Lokasjon:</strong> {event.location}</p>
-              <button onClick={() => alert(`Påmelding for ${event.title}`)}>
-                Meld deg på
-              </button>
-            </div>
+            <EventCard title={event.title} description={event.description} date={event.date} location={event.location} slug={event.slug}/>
           ))
         ) : (
-          <p>Ingen tilgjengelige eventer.</p>
+          <p>Ingen tilgjengelige arrangementer.</p>
         )}
       </div>
     </div>
