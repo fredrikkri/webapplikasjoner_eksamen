@@ -1,4 +1,3 @@
-import { User } from "@/types/types";
 import db, { DB } from "../db";
 import { Result } from "@/types";
 import { fromDb } from "./category.mapper";
