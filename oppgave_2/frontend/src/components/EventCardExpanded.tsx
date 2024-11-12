@@ -14,7 +14,7 @@ interface EventCardProps {
   
   export default function EventCardExpanded({ title, description, slug, date, location, event_type, total_slots, available_slots, price}: EventCardProps) {
     return (
-      <div style={{ border: '1px solid #cce', padding: '18px', margin: '25px 0', borderRadius: '18px' }}>
+      <div style={{ padding: '8px', margin: '25px 0', borderRadius: '18px' }}>
         <h2>{title}</h2>
         <p>{description}</p>
         <p>
