@@ -1,19 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Event as EventType } from "../types/Event";
-import { useParams } from 'next/navigation';
 import { useEvent } from '@/hooks/useEvent';
+import EventCardExpanded from './EventCardExpanded';
 
 interface EventProps {
   slug?: string;
 }
 
-function SingleEvent({ slug = "sommerkonsert" }: EventProps) {
-  const params = useParams();
-  const lessonSlug = params?.lessonSlug as string;
+function SingleEvent({ slug = "" }: EventProps) {
  
   const { event, loading, error } = useEvent(slug);
 
-  if (loading) return <div>Laster event...</div>;
+  if (loading) return <div>Laster arrangement...</div>;
 
   if (error) return (
     <div className="rounded-lg border-2 border-red-100 bg-red-50 p-6 text-center">
@@ -32,13 +28,17 @@ function SingleEvent({ slug = "sommerkonsert" }: EventProps) {
   );
 
   return (
-    <div style={{ border: '1px solid #cce', padding: '18px', margin: '25px 0', borderRadius: '18px' }}>
-      <h2>{event.title}</h2>
-      <p>{event.description}</p>
-      <p><strong>Dato:</strong> {new Date(event.date).toISOString()}</p>
-      <p><strong>Lokasjon:</strong> {event.location}</p>
-      <button onClick={() => alert(`Påmelding for ${event.title}`)}>Meld deg på</button>
-    </div>
+    <EventCardExpanded 
+      title={event.title} 
+      description={event.description} 
+      slug={event.slug}
+      date={event.date} 
+      location={event.location} 
+      event_type={event.event_type}
+      total_slots={event.total_slots}
+      available_slots={event.available_slots}
+      price={event.price} 
+      />
   );
 };
 
