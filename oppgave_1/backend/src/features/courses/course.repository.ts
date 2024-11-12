@@ -1,11 +1,9 @@
 import { db, type DB } from "../../features/db";
 import {type CourseCreate, type Course, type UpdateCourse} from "../../types/course";
-import {type Lesson, type LessonSchema} from "../../types/lesson";
+import {type Lesson} from "../../types/lesson";
 import type { Result } from "../../types/index";
 import { fromDb, fromDbLession, toDb } from "./course.mapper";
 import type { Query } from "../../lib/query";
-import { CourseCreateSteps } from "@/types/courseCreateSteps";
-import { CourseCreateStepsResponse } from "@/types/courseCreateSteps";
 
 export const createCourseRepository = (db: DB) => {
 

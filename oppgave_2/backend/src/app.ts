@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { EventController } from "./features/event/event.controller";
 
 const app = new Hono();
 app.use("/*", cors());
@@ -9,6 +10,7 @@ app.use("/*", cors({
   credentials: true,
 }));
 
+app.route("api/v1", EventController)
 
 app.onError((err, c) => {
   console.error(err);
