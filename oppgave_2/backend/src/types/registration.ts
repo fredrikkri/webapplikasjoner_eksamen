@@ -19,6 +19,6 @@ export const RegistrationArraySchema = z.array(RegistrationSchema);
 export type CreateRegistration = z.infer<typeof RegistrationCreateSchema>;
 export type Registration = z.infer<typeof RegistrationSchema>
 
-export const validateCreateComment = (data: unknown) => {
+export const validateCreateRegistration = (data: unknown) => {
     return RegistrationCreateSchema.safeParse(data);
   };

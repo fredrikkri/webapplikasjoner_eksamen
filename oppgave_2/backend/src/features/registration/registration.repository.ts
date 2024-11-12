@@ -1,6 +1,7 @@
 import { Result } from "@/types";
 import db, { DB } from "../db";
-import { Registration } from "@/types/registration";
+import { CreateRegistration, Registration } from "@/types/registration";
+import { toDb } from "./registration.mapper";
 
 
 export const createRegistrationRepository = (db: DB) => {
@@ -26,9 +27,39 @@ export const createRegistrationRepository = (db: DB) => {
         }
       };
 
+      const create = async (data: CreateRegistration): Promise<Result<string>> => {
+        try {
+          const registration = toDb(data);
+    
+          const query = db.prepare(`
+            INSERT INTO courses (id, title, slug, description, lessons, category)
+            VALUES (?, ?, ?, ?, ?, ?)
+          `);
+          query.run(
+            registration.id,
+            registration.event_id,
+            registration.email,
+            registration.had_paid,
+            registration.registration_date
+          );
+          return {
+            success: true,
+            data: registration.id,
+          };
+        } catch (error) {
+          return {
+            success: false,
+            error: {
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Feil med oppretting av course",
+            },
+          };
+        }
+      };
+
       
 
-      return { list }
+      return { list, create }
 }
 
 export const registrationRepository = createRegistrationRepository(db);

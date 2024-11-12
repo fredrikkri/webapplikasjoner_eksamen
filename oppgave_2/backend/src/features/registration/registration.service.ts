@@ -1,8 +1,8 @@
 import { Query } from "@/lib/query";
 import { Result } from "@/types";
-import { Registration } from "@/types/registration";
+import { CreateRegistration, Registration, validateCreateRegistration } from "../../types/registration";
 import { registrationRepository, RegistrationRepository } from "./registration.repository";
-import { createRegistrationResponse } from "./registration.mapper";
+import { createRegistration, createRegistrationResponse } from "./registration.mapper";
 
 
 export const createRegistrationService = (registrationRepository: RegistrationRepository)=> {
@@ -17,8 +17,21 @@ export const createRegistrationService = (registrationRepository: RegistrationRe
         };
       };
 
+      const create = async (data: CreateRegistration): Promise<Result<string>> => {
+        const course = createRegistration(data);
+    
+        if (!validateCreateRegistration(course).success) {
+          return {
+            success: false,
+            error: { code: "BAD_REQUEST", message: "Invalid Course data" },
+          };
+        }
+        return registrationRepository.create(course);
+      };
 
-      return { list }
+
+
+      return { list, create }
 }
 
 export const registrationService = createRegistrationService(registrationRepository);

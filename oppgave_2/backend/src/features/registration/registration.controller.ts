@@ -17,6 +17,17 @@ export const createRegistrationController = (registrationService: RegistrationSe
         return c.json(result);
       });
 
+      app.post("/add", async (c) => {
+        const data = await c.req.json();
+        const result = await registrationService.create(data);
+        if (!result.success)
+          return errorResponse(
+            c,
+            result.error.code as ErrorCode,
+            result.error.message
+          );
+        return c.json(result, { status: 201 });
+      });
 
     return app;
 }
