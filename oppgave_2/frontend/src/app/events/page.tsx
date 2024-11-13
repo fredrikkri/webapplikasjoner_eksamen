@@ -1,12 +1,12 @@
 'use client';
 import React from "react";
-import Events from "../../components/Events";
 import Home from "@/components/Home";
+import EventsByDate from "@/components/EventsByDate";
 
 export default function EventsPage() {
     return (
     <Home>
-    <Events />
+    <EventsByDate />
   </Home>
     )
   }

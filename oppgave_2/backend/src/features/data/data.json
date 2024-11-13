@@ -23,6 +23,18 @@
       "total_slots": 100,
       "available_slots": 50,
       "price": 800
+    },
+    {
+      "id": "event-3",
+      "title": "Sommerkonsert",
+      "description": "En fin sommerkonsert med hevy metal bandet ACDC.",
+      "slug": "sommerkonsert",
+      "date": "2025-09-04",
+      "location": "Fredrikstad, Norway",
+      "event_type": "Konsert",
+      "total_slots": 200,
+      "available_slots": 30,
+      "price": 1200
     }
   ],
   "events_active": [
