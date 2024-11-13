@@ -1,5 +1,7 @@
 import { Result } from "@/types";
 import db, { DB } from "../db";
+import { toDb } from "./template.mapper";
+import { TemplateCreate } from "@/types/template";
 
 export const createTemplateRepository = (db: DB) => {
 
@@ -19,7 +21,6 @@ export const createTemplateRepository = (db: DB) => {
         JOIN events_template et ON e.id = et.event_id
       `);
       
-      // Fetch data from the database
       const data = statement.all() as Event[];
   
       return {
@@ -37,10 +38,38 @@ export const createTemplateRepository = (db: DB) => {
     }
   };
   
+  const create = async (data: TemplateCreate): Promise<Result<string>> => {
+    try {
+      const template = toDb(data);
+
+      const query = db.prepare(`
+        INSERT INTO events_templates (id, event_id)
+        VALUES (?, ?)
+      `);
+
+      query.run(
+        template.id,
+        template.event_id
+      );
+
+      return {
+        success: true,
+        data: template.id,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: {
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Feil med oppretting av template",
+        },
+      };
+    }
+  };
   
 
 
-      return { list }
+      return { list, create }
 }
 
 export const templateRepository = createTemplateRepository(db);

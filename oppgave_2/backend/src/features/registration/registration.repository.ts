@@ -40,7 +40,7 @@ export const createRegistrationRepository = (db: DB) => {
           const registration = toDb(data);
     
           const query = db.prepare(`
-            INSERT INTO courses (id, event_id, email, has_paid, registration_date)
+            INSERT INTO registrations (id, event_id, email, has_paid, registration_date)
             VALUES (?, ?, ?, ?, ?)
           `);
           query.run(
