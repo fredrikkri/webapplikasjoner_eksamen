@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { CourseForm } from './CourseForm';
 import { getCourse, updateCourse } from '../../lib/services/courses';
-import type { CourseFields } from '../../types/types';
+import type { CourseFields, Course } from '../../types/types';
 import Link from 'next/link';
 
 interface EditCourseFormProps {
@@ -20,6 +20,7 @@ export function EditCourseForm({ slug }: EditCourseFormProps) {
     description: '',
     category: '',
   });
+  const [originalCourse, setOriginalCourse] = useState<Course | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
 
@@ -27,6 +28,7 @@ export function EditCourseForm({ slug }: EditCourseFormProps) {
     const fetchCourse = async () => {
       try {
         const course = await getCourse(slug);
+        setOriginalCourse(course);
         setCourseFields({
           id: course.id,
           title: course.title,
@@ -41,7 +43,6 @@ export function EditCourseForm({ slug }: EditCourseFormProps) {
         setLoading(false);
       }
     };
-
     fetchCourse();
   }, [slug]);
 
@@ -51,7 +52,6 @@ export function EditCourseForm({ slug }: EditCourseFormProps) {
       ...prev,
       [name]: value,
     }));
-    // Clear error when field is edited
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -65,7 +65,6 @@ export function EditCourseForm({ slug }: EditCourseFormProps) {
     setError(null);
     setIsSaving(true);
 
-    // Basic validation
     const newErrors: Record<string, string> = {};
     if (!courseFields.title) newErrors.title = 'Tittel er påkrevd';
     if (!courseFields.slug) newErrors.slug = 'Slug er påkrevd';
@@ -79,7 +78,32 @@ export function EditCourseForm({ slug }: EditCourseFormProps) {
     }
 
     try {
-      await updateCourse(slug, courseFields);
+      if (!originalCourse) {
+        throw new Error('Original course data not found');
+      }
+
+      const updatedCourse: Course = {
+        id: originalCourse.id,
+        title: courseFields.title,
+        slug: courseFields.slug,
+        description: courseFields.description,
+        category: courseFields.category,
+        lessons: originalCourse.lessons.map(lesson => ({
+          ...lesson,
+          text: lesson.text.map(t => ({
+            ...t,
+            text: t.text.trim()
+          }))
+        }))
+      };
+
+      console.log('Updating course with data:', {
+        id: updatedCourse.id,
+        originalSlug: slug,
+        newSlug: updatedCourse.slug
+      });
+
+      await updateCourse(slug, updatedCourse);
       router.push(`/kurs/${courseFields.slug}`);
     } catch (error) {
       setError('Kunne ikke oppdatere kurset');

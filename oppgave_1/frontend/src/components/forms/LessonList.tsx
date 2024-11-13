@@ -5,9 +5,10 @@ interface LessonListProps {
   currentLesson: number;
   onSelectLesson: (index: number) => void;
   onAddLesson: () => void;
+  disabled?: boolean;
 }
 
-export function LessonList({ lessons, currentLesson, onSelectLesson, onAddLesson }: LessonListProps) {
+export function LessonList({ lessons, currentLesson, onSelectLesson, onAddLesson, disabled = false }: LessonListProps) {
   return (
     <aside className="rounded-lg border border-slate-200 bg-slate-50 p-4">
       <h3 className="mb-4 text-lg font-bold text-slate-800">Leksjoner</h3>
@@ -19,7 +20,7 @@ export function LessonList({ lessons, currentLesson, onSelectLesson, onAddLesson
                 index === currentLesson
                   ? "bg-emerald-100 shadow-sm"
                   : "hover:bg-white"
-              }`}
+              } ${disabled ? "opacity-50" : ""}`}
               key={lesson.id}
             >
               <button
@@ -27,6 +28,7 @@ export function LessonList({ lessons, currentLesson, onSelectLesson, onAddLesson
                 data-testid="select_lesson_btn"
                 className="w-full p-3 text-left"
                 onClick={() => onSelectLesson(index)}
+                disabled={disabled}
               >
                 <div className="flex items-center gap-3">
                   <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-sm font-medium">
@@ -41,10 +43,13 @@ export function LessonList({ lessons, currentLesson, onSelectLesson, onAddLesson
           ))}
       </ul>
       <button
-        className="w-full rounded-lg border-2 border-dashed border-slate-300 bg-white px-4 py-3 font-medium text-slate-700 transition-all hover:border-emerald-600 hover:text-emerald-600"
+        className={`w-full rounded-lg border-2 border-dashed border-slate-300 bg-white px-4 py-3 font-medium text-slate-700 transition-all hover:border-emerald-600 hover:text-emerald-600 ${
+          disabled ? "cursor-not-allowed opacity-50" : ""
+        }`}
         type="button"
         onClick={onAddLesson}
         data-testid="form_lesson_add"
+        disabled={disabled}
       >
         + Legg til leksjon
       </button>

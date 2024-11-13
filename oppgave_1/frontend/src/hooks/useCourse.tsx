@@ -11,8 +11,9 @@ export const useAllCourses = () => {
     const fetchCourses = async () => {
       try {
         setLoading(true);
+        setError(null);
         const data = await getAllCourses();
-        setCourses(data as Course[]);
+        setCourses(data);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('An error occurred while fetching all courses'));
       } finally {
@@ -35,8 +36,9 @@ export const useCourse = (courseSlug: string) => {
     const fetchCourse = async () => {
       try {
         setLoading(true);
+        setError(null);
         const data = await getCourse(courseSlug);
-        setCourse(data as Course);
+        setCourse(data);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Failed to fetch course'));
       } finally {
@@ -62,20 +64,14 @@ export const useCreateCourse = () => {
       setLoading(true);
       setError(null);
 
-      // Optimistic update
       if (courses) {
         const updatedCourses = [...courses, courseData];
-        // Update local state immediately
-        // This would typically be handled by a global state management solution
       }
 
       await createCourse(courseData);
     } catch (err) {
-      // Rollback optimistic update
       if (courses) {
         const originalCourses = courses.filter(course => course.id !== courseData.id);
-        // Restore original state
-        // This would typically be handled by a global state management solution
       }
 
       let errorMessage = 'Failed to create course';
@@ -96,6 +92,6 @@ export const useCreateCourse = () => {
     addCourse, 
     loading, 
     error,
-    isReady: !coursesLoading // Helper to know when we can safely perform optimistic updates
+    isReady: !coursesLoading
   };
 };

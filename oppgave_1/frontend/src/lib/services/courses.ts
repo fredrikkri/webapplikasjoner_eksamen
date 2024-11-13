@@ -1,78 +1,18 @@
-import { Course, ApiResponse } from "../../types/types";
-import { ENDPOINTS, VALIDATION_RULES, ERROR_MESSAGES } from "../../config/config";
-import { fetchWithRetry, handleApiError, validateResponse } from "../utils/apiUtils";
+import { Course, Lesson, ApiResponse } from "../../types/types";
+import { ENDPOINTS } from "../../config/config";
+import { fetchWithRetry, validateResponse, handleApiError } from "../utils/apiUtils";
 
-// Validate course data against rules
-export const validateCourseData = (data: Course): { isValid: boolean; errors: string[] } => {
-  const errors: string[] = [];
-
-  // Validate course fields
-  if (!data.title || data.title.length < VALIDATION_RULES.title.minLength) {
-    errors.push(`Title must be at least ${VALIDATION_RULES.title.minLength} characters`);
+// Get categories
+export const getCategories = async (): Promise<string[]> => {
+  try {
+    const response = await fetchWithRetry<string[]>(ENDPOINTS.categories);
+    return validateResponse(response);
+  } catch (error) {
+    return handleApiError(error);
   }
-  if (data.title && data.title.length > VALIDATION_RULES.title.maxLength) {
-    errors.push(`Title must be no more than ${VALIDATION_RULES.title.maxLength} characters`);
-  }
-
-  if (!data.slug || !VALIDATION_RULES.slug.pattern.test(data.slug)) {
-    errors.push('Slug must contain only lowercase letters, numbers, and hyphens');
-  }
-  if (data.slug && data.slug.length > VALIDATION_RULES.slug.maxLength) {
-    errors.push(`Slug must be no more than ${VALIDATION_RULES.slug.maxLength} characters`);
-  }
-
-  if (!data.description || data.description.length < VALIDATION_RULES.description.minLength) {
-    errors.push(`Description must be at least ${VALIDATION_RULES.description.minLength} characters`);
-  }
-  if (data.description && data.description.length > VALIDATION_RULES.description.maxLength) {
-    errors.push(`Description must be no more than ${VALIDATION_RULES.description.maxLength} characters`);
-  }
-
-  if (!data.category || !VALIDATION_RULES.category.options.includes(data.category)) {
-    errors.push('Please select a valid category');
-  }
-
-  // Validate lessons
-  if (!data.lessons || data.lessons.length === 0) {
-    errors.push('At least one lesson is required');
-  } else {
-    data.lessons.forEach((lesson, index) => {
-      const lessonRules = VALIDATION_RULES.lesson;
-
-      if (!lesson.title || lesson.title.length < lessonRules.title.minLength) {
-        errors.push(`Lesson ${index + 1}: Title must be at least ${lessonRules.title.minLength} characters`);
-      }
-      if (lesson.title && lesson.title.length > lessonRules.title.maxLength) {
-        errors.push(`Lesson ${index + 1}: Title must be no more than ${lessonRules.title.maxLength} characters`);
-      }
-
-      if (!lesson.slug || !VALIDATION_RULES.slug.pattern.test(lesson.slug)) {
-        errors.push(`Lesson ${index + 1}: Slug must contain only lowercase letters, numbers, and hyphens`);
-      }
-      if (lesson.slug && lesson.slug.length > lessonRules.slug.maxLength) {
-        errors.push(`Lesson ${index + 1}: Slug must be no more than ${lessonRules.slug.maxLength} characters`);
-      }
-
-      if (!lesson.preAmble || lesson.preAmble.length < lessonRules.preAmble.minLength) {
-        errors.push(`Lesson ${index + 1}: Pre-amble must be at least ${lessonRules.preAmble.minLength} characters`);
-      }
-      if (lesson.preAmble && lesson.preAmble.length > lessonRules.preAmble.maxLength) {
-        errors.push(`Lesson ${index + 1}: Pre-amble must be no more than ${lessonRules.preAmble.maxLength} characters`);
-      }
-
-      if (!lesson.text?.[0]?.text || lesson.text[0].text.length < lessonRules.text.minLength) {
-        errors.push(`Lesson ${index + 1}: Content must be at least ${lessonRules.text.minLength} characters`);
-      }
-    });
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors,
-  };
 };
 
-// Fetch a course by slug
+// Get a course by slug
 export const getCourse = async (slug: string): Promise<Course> => {
   try {
     const response = await fetchWithRetry<Course>(`${ENDPOINTS.courses}/${slug}`);
@@ -82,7 +22,7 @@ export const getCourse = async (slug: string): Promise<Course> => {
   }
 };
 
-// Fetch all courses
+// Get all courses
 export const getAllCourses = async (): Promise<Course[]> => {
   try {
     const response = await fetchWithRetry<Course[]>(ENDPOINTS.courses);
@@ -94,12 +34,6 @@ export const getAllCourses = async (): Promise<Course[]> => {
 
 // Create a new course
 export const createCourse = async (data: Course): Promise<Course> => {
-  // Validate course data before making the API call
-  const validation = validateCourseData(data);
-  if (!validation.isValid) {
-    throw new Error(validation.errors.join('\n'));
-  }
-
   try {
     const response = await fetchWithRetry<Course>(ENDPOINTS.courses, {
       method: 'POST',
@@ -116,14 +50,25 @@ export const createCourse = async (data: Course): Promise<Course> => {
 };
 
 // Update an existing course
-export const updateCourse = async (slug: string, data: Partial<Course>): Promise<Course> => {
+export const updateCourse = async (originalSlug: string, data: Partial<Course>): Promise<Course> => {
   try {
-    const response = await fetchWithRetry<Course>(`${ENDPOINTS.courses}/${slug}`, {
-      method: 'PUT',
+    // Get the existing course to ensure we have all the data
+    const existingCourse = await getCourse(originalSlug);
+    
+    // Prepare the update data, maintaining the original ID and merging with existing data
+    const updateData = {
+      ...existingCourse,
+      ...data,
+      id: originalSlug, // Use the original slug as the ID
+      slug: data.slug || originalSlug, // Use new slug if provided, otherwise keep original
+    };
+
+    const response = await fetchWithRetry<Course>(`${ENDPOINTS.courses}/${originalSlug}`, {
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(updateData),
     });
 
     return validateResponse(response);
@@ -136,6 +81,46 @@ export const updateCourse = async (slug: string, data: Partial<Course>): Promise
 export const deleteCourse = async (slug: string): Promise<void> => {
   try {
     const response = await fetchWithRetry<void>(`${ENDPOINTS.courses}/${slug}`, {
+      method: 'DELETE',
+    });
+
+    validateResponse(response);
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// Get a lesson by slug
+export const getLesson = async (courseSlug: string, lessonSlug: string): Promise<Lesson> => {
+  try {
+    const response = await fetchWithRetry<Lesson>(`${ENDPOINTS.courses}/${courseSlug}/${lessonSlug}`);
+    return validateResponse(response);
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// Update a lesson
+export const updateLesson = async (courseSlug: string, lessonSlug: string, data: Partial<Lesson>): Promise<Lesson> => {
+  try {
+    const response = await fetchWithRetry<Lesson>(ENDPOINTS.lessons(courseSlug, lessonSlug), {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    return validateResponse(response);
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// Delete a lesson
+export const deleteLesson = async (courseSlug: string, lessonSlug: string): Promise<void> => {
+  try {
+    const response = await fetchWithRetry<void>(ENDPOINTS.lessons(courseSlug, lessonSlug), {
       method: 'DELETE',
     });
 

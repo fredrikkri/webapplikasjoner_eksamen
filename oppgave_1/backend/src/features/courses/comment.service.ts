@@ -7,11 +7,11 @@ export const createCommentService = (repository: CommentRepository) => {
     return repository.create(data);
   };
 
-  const getCommentsByLessonSlug = async (lessonSlug: string): Promise<Result<Comment[]>> => {
-    return repository.getCommentsByLessonSlug(lessonSlug);
+  const getCommentsByLessonId = async (lessonId: string): Promise<Result<Comment[]>> => {
+    return repository.getCommentsByLessonId(lessonId);
   };
 
-  return { create, getCommentsByLessonSlug };
+  return { create, getCommentsByLessonId };
 };
 
 export const commentService = createCommentService(commentRepository);

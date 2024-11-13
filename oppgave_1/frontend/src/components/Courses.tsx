@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { courses, categories } from "../data/data";
 import Link from "next/link";
-import { useAllCourses } from "@/hooks/useCourse";
+import { useAllCourses } from "../hooks/useCourse";
 
 interface Course {
   id: string;
@@ -35,11 +35,42 @@ function Courses() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-7xl animate-fade-in">
+        <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-3">
+            <div className="h-8 w-48 animate-pulse rounded-lg bg-slate-200"></div>
+            <div className="h-4 w-64 animate-pulse rounded-lg bg-slate-200"></div>
+          </div>
+          <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-200"></div>
+        </div>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((n) => (
+            <div key={n} className="h-64 animate-pulse rounded-2xl bg-slate-200"></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mx-auto max-w-7xl">
+        <div className="rounded-lg border-2 border-red-100 bg-red-50 p-6 text-center">
+          <p className="text-lg font-medium text-red-800">
+            Kunne ikke laste kurs: {error.message}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="mx-auto max-w-7xl">
+    <div className="mx-auto max-w-7xl animate-fade-in">
       <header className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-slate-800" data-testid="title">
+          <h2 className="bg-gradient-to-r from-emerald-600 to-emerald-500 bg-clip-text text-3xl font-bold text-transparent" data-testid="title">
             Alle kurs
           </h2>
           <p className="mt-2 text-slate-600">
@@ -56,7 +87,7 @@ function Courses() {
             data-testid="filter"
             value={value}
             onChange={handleFilter}
-            className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all hover:border-emerald-600 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+            className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all duration-200 hover:border-emerald-600 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-100"
           >
             <option value="">Alle kategorier</option>
             {categories.map((category) => (
@@ -77,19 +108,19 @@ function Courses() {
             <article
               key={course.id}
               data-testid="course_wrapper"
-              className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-lg"
+              className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
             >
               <div className="mb-4 flex items-center justify-between">
-                <span className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-800">
+                <span className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-800 transition-colors group-hover:bg-emerald-200">
                   {course.category}
                 </span>
-                <div className="h-8 w-8 rounded-full bg-emerald-50 p-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 p-2 transition-transform duration-300 group-hover:rotate-12">
                   📚
                 </div>
               </div>
               
               <h3 
-                className="mb-3 text-xl font-bold text-slate-800 group-hover:text-emerald-600" 
+                className="mb-3 text-xl font-bold text-slate-800 transition-colors group-hover:text-emerald-600" 
                 data-testid="courses_title"
               >
                 <Link href={`/kurs/${course.slug}`} className="block">
@@ -105,13 +136,13 @@ function Courses() {
               </p>
               
               <Link
-                className="inline-flex items-center gap-2 font-medium text-emerald-600 transition-colors hover:text-emerald-700"
+                className="inline-flex items-center gap-2 font-medium text-emerald-600 transition-all duration-200 hover:text-emerald-700 group-hover:gap-3"
                 data-testid="courses_url"
                 href={`/kurs/${course.slug}`}
               >
                 Start kurset
                 <svg 
-                  className="h-4 w-4 transition-transform group-hover:translate-x-1" 
+                  className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" 
                   fill="none" 
                   viewBox="0 0 24 24" 
                   stroke="currentColor"
@@ -128,7 +159,7 @@ function Courses() {
           ))
         ) : (
           <div 
-            className="col-span-full rounded-lg border-2 border-dashed border-slate-200 p-12 text-center"
+            className="col-span-full rounded-lg border-2 border-dashed border-slate-200 p-12 text-center transition-all duration-300 hover:border-emerald-600 hover:bg-emerald-50"
             data-testid="empty"
           >
             <div className="mx-auto max-w-sm">

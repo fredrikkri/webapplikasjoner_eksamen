@@ -68,13 +68,11 @@ export async function fetchWithRetry<T>(
       lastError = error instanceof Error ? error : new Error(ERROR_MESSAGES.UNKNOWN_ERROR);
 
       if (error instanceof Error && error.message === ERROR_MESSAGES.TIMEOUT_ERROR) {
-        // Don't retry on timeout
         throw error;
       }
 
       if (attempt < retryAttempts - 1) {
-        // Wait before retrying
-        await wait(retryDelay * Math.pow(2, attempt)); // Exponential backoff
+        await wait(retryDelay * Math.pow(2, attempt));
         continue;
       }
     }

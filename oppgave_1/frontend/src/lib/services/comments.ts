@@ -7,7 +7,7 @@ interface CreatedBy {
 }
 
 interface LessonRef {
-  slug: string;
+  id: string;
 }
 
 export interface Comment {
@@ -17,11 +17,10 @@ export interface Comment {
   lesson: LessonRef;
 }
 
-// Fetch comments for a lesson
-export const getComments = async (lessonSlug: string): Promise<Comment[]> => {
+export const getComments = async (lessonId: string): Promise<Comment[]> => {
   try {
     const response = await fetchWithRetry<Comment[]>(
-      `${BASE_URL}/lessons/${lessonSlug}/comments`
+      `${BASE_URL}/lessons/${lessonId}/comments`
     );
     if (response.success) {
       return response.data;
@@ -33,11 +32,10 @@ export const getComments = async (lessonSlug: string): Promise<Comment[]> => {
   }
 };
 
-// Create a new comment
 export const createComment = async (data: Comment): Promise<void> => {
   try {
     const response = await fetchWithRetry<Comment>(
-      `${BASE_URL}/lessons/${data.lesson.slug}/comments`,
+      `${BASE_URL}/lessons/${data.lesson.id}/comments`,
       {
         method: 'POST',
         headers: {

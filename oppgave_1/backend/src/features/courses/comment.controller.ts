@@ -5,9 +5,9 @@ import { errorResponse, type ErrorCode } from "../../lib/error";
 export const createCommentController = (CommentService: CommentService) => {
   const app = new Hono();
 
-  app.get("/lessons/:lessonSlug/comments", async (c) => {
-    const lessonSlug = c.req.param("lessonSlug");
-    const result = await CommentService.getCommentsByLessonSlug(lessonSlug);
+  app.get("/lessons/:lessonId/comments", async (c) => {
+    const lessonId = c.req.param("lessonId");
+    const result = await CommentService.getCommentsByLessonId(lessonId);
 
     if (!result.success)
       return errorResponse(
@@ -18,8 +18,12 @@ export const createCommentController = (CommentService: CommentService) => {
     return c.json(result);
   });
 
-  app.post("/lessons/:lessonSlug/comments", async (c) => {
+  app.post("/lessons/:lessonId/comments", async (c) => {
     const data = await c.req.json();
+    const lessonId = c.req.param("lessonId");
+    // Ensure the lesson id from the URL is used
+    data.lesson = { id: lessonId };
+    
     const result = await CommentService.create(data);
     
     if (!result.success)

@@ -58,7 +58,9 @@ export interface LoadingState {
   status: 'idle' | 'loading' | 'success' | 'error';
 }
 
-export type FormErrors = Record<string, string>;
+export type FormErrors = {
+  [key: string]: string | undefined;
+};
 
 export interface FormState {
   courseFields: CourseFields;

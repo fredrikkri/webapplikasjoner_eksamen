@@ -1,15 +1,24 @@
 export const BASE_URL = "http://localhost:3999/api/v1";
 
+export const ROUTES = {
+  home: "/home",
+  courses: "/kurs",
+  new: "/ny"
+};
+
 export const ENDPOINTS = {
-  add: `${BASE_URL}/add`,
-  update: `${BASE_URL}/update`,
   courses: `${BASE_URL}/courses`,
+  categories: `${BASE_URL}/categories`,
+  lessons: (courseSlug: string, lessonSlug?: string) => 
+    lessonSlug 
+      ? `${BASE_URL}/courses/${courseSlug}/lessons/${lessonSlug}`
+      : `${BASE_URL}/courses/${courseSlug}`,
 };
 
 export const API_CONFIG = {
-  timeout: 10000, // 10 seconds
+  timeout: 10000,
   retryAttempts: 3,
-  retryDelay: 1000, // 1 second
+  retryDelay: 1000,
 };
 
 export const ERROR_MESSAGES = {
@@ -39,7 +48,6 @@ export const VALIDATION_RULES = {
   },
   category: {
     required: true,
-    options: ['programmering', 'design'],
   },
   lesson: {
     title: {

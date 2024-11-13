@@ -12,7 +12,7 @@ export interface Lesson {
   slug: string;
   preAmble: string;
   text: LessonText[];
-  order?: string; // Made optional since it's not always present
+  order?: string;
 }
 
 export const useLesson = (courseSlug: string, lessonSlug: string) => {

@@ -13,7 +13,7 @@ export const createCommentRepository = (db: DB) => {
       query.run(
         JSON.stringify(data.createdBy),
         data.comment,
-        data.lesson.slug
+        data.lesson.id
       );
 
       return {
@@ -32,20 +32,20 @@ export const createCommentRepository = (db: DB) => {
     }
   };
 
-  const getCommentsByLessonSlug = async (lessonSlug: string): Promise<Result<Comment[]>> => {
+  const getCommentsByLessonId = async (lessonId: string): Promise<Result<Comment[]>> => {
     try {
       const query = db.prepare(`
         SELECT * FROM comments 
         WHERE lesson_id = ?
       `);
       
-      const comments = query.all(lessonSlug) as any[];
+      const comments = query.all(lessonId) as any[];
       
       const formattedComments = comments.map(comment => ({
         id: comment.id.toString(),
         createdBy: JSON.parse(comment.createdBy),
         comment: comment.comment,
-        lesson: { slug: comment.lesson_id }
+        lesson: { id: comment.lesson_id }
       }));
 
       return {
@@ -64,7 +64,7 @@ export const createCommentRepository = (db: DB) => {
     }
   };
 
-  return { create, getCommentsByLessonSlug };
+  return { create, getCommentsByLessonId };
 };
 
 export const commentRepository = createCommentRepository(db);

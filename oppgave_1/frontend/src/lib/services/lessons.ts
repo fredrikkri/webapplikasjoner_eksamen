@@ -15,7 +15,6 @@ export interface Lesson {
   order?: string;
 }
 
-// Get a specific lesson
 export const getLesson = async (courseSlug: string, lessonSlug: string): Promise<Lesson> => {
   try {
     const response = await fetchWithRetry<Lesson>(`${BASE_URL}/courses/${courseSlug}/${lessonSlug}`);
@@ -25,15 +24,19 @@ export const getLesson = async (courseSlug: string, lessonSlug: string): Promise
   }
 };
 
-// Update a lesson
 export const updateLesson = async (courseSlug: string, lessonSlug: string, data: Partial<Lesson>): Promise<Lesson> => {
   try {
+    const formattedData = {
+      ...data,
+      text: Array.isArray(data.text) ? data.text : [{ id: '1', text: data.text }]
+    };
+
     const response = await fetchWithRetry<Lesson>(`${BASE_URL}/courses/${courseSlug}/lessons/${lessonSlug}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(formattedData),
     });
     return validateResponse(response);
   } catch (error) {
@@ -41,7 +44,6 @@ export const updateLesson = async (courseSlug: string, lessonSlug: string, data:
   }
 };
 
-// Delete a lesson
 export const deleteLesson = async (courseSlug: string, lessonSlug: string): Promise<void> => {
   try {
     const response = await fetchWithRetry<void>(`${BASE_URL}/courses/${courseSlug}/lessons/${lessonSlug}`, {

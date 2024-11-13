@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getComments, createComment } from "../lib/services";
 
 interface CreatedBy {
-  id: string | number;  // Keep as union type for flexibility in input
+  id: string | number;
   name: string;
 }
 
 interface LessonRef {
-  slug: string;
+  id: string;
 }
 
 export interface Comment {
   id: string;
   createdBy: {
-    id: string;  // Service expects string
+    id: string;
     name: string;
   };
   comment: string;
@@ -22,35 +22,35 @@ export interface Comment {
 
 export interface CommentData {
   id: string;
-  createdBy: CreatedBy;  // Allow string | number for id in input
+  createdBy: CreatedBy;
   comment: string;
   lesson: LessonRef;
 }
 
-export const useComments = (lessonSlug: string) => {
+export const useComments = (lessonId: string) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        setLoading(true);
-        const data = await getComments(lessonSlug);
-        setComments(data);
-      } catch (err) {
-        setError(err instanceof Error ? err : new Error('An error occurred'));
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchComments = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await getComments(lessonId);
+      setComments(data);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('An error occurred'));
+    } finally {
+      setLoading(false);
+    }
+  }, [lessonId]);
 
-    if (lessonSlug) {
+  useEffect(() => {
+    if (lessonId) {
       fetchComments();
     }
-  }, [lessonSlug]);
+  }, [lessonId, fetchComments]);
 
-  return { comments, loading, error };
+  return { comments, loading, error, refreshComments: fetchComments };
 };
 
 export const useCreateComment = () => {
@@ -71,6 +71,7 @@ export const useCreateComment = () => {
       await createComment(serviceComment);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('An error occurred'));
+      throw err; // Re-throw to handle in the component
     } finally {
       setLoading(false);
     }
