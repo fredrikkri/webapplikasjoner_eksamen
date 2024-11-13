@@ -22,7 +22,7 @@ export default function Home({ children }: HomeProps) {
               <li data-testid="nav_courses">
                 <a 
                   href="/templates" 
-                  className="text-base rounded-full bg-gray-200 py-2 px-6 font-bold text-sky-900 transition-all hover:bg-sky-300 hover:shadow-lg"
+                  className="text-black rounded-full bg-gray-200 py-2 px-6 font-bold text-sky-900 transition-all hover:bg-sky-300 hover:shadow-lg"
                 >
                   Mal
                 </a>
@@ -30,7 +30,7 @@ export default function Home({ children }: HomeProps) {
               <li data-testid="nav_new">
                 <a 
                   href="/opprett" 
-                  className="rounded-full bg-emerald-400 px-6 py-2 text-base font-medium transition-all hover:bg-emerald-300 hover:shadow-lg"
+                  className="rounded-full bg-emerald-400 px-6 py-2 text-black font-medium transition-all hover:bg-emerald-300 hover:shadow-lg"
                 >
                   Opprett arangement
                 </a>
