@@ -9,7 +9,7 @@ function SingleEvent({ slug = "" }: EventProps) {
  
   const { event, loading, error } = useEvent(slug);
 
-  if (loading) return <div>Laster arrangement...</div>;
+  if (loading) return <div className="flex items-center justify-center h-screen text-gray-600 text-lg font-semibold animate-pulse">Laster arrangementer...</div>;
 
   if (error) return (
     <div className="rounded-lg border-2 border-red-100 bg-red-50 p-6 text-center">

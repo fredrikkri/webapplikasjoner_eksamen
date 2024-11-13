@@ -48,7 +48,7 @@ const Events: React.FC<EventsProps> = ({ selectedMonth, selectedYear }) => {
     }
   }, [events, selectedMonth, selectedYear]);
 
-  if (loading) return <div>Laster arrangementer...</div>;
+  if (loading) return <div className="flex items-center justify-center h-screen text-gray-600 text-lg font-semibold animate-pulse">Laster arrangementer...</div>;
   if (error) return <div>Det oppstod en feil ved henting av eventer.</div>;
 
   return (
