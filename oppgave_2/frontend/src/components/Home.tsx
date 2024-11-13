@@ -43,11 +43,11 @@ export default function Home({ children }: HomeProps) {
         </main>
         <footer className="border-t border-slate-200 py-6 bg-gradient-to-r from-blue-500 via-teal-500 to-emerald-500 text-white shadow-inner w-screen left-0 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col justify-between gap-4 text-sm sm:flex-row sm:items-center max-w-7xl mx-auto">
-            <p className="font-medium">Mikro LMS AS, 2024</p>
+            <p className="font-medium">BOOKING ARENA, 2024</p>
             <div className="flex items-center gap-4">
               <a href="tel:99000000" className="hover:text-slate-200 transition-colors">99 00 00 00</a>
               <span>•</span>
-              <a href="mailto:mail@lms.no" className="hover:text-slate-200 transition-colors">mail@lms.no</a>
+              <a href="mailto:mail@lms.no" className="hover:text-slate-200 transition-colors">bookingarena@arena.no</a>
             </div>
           </div>
         </footer>
