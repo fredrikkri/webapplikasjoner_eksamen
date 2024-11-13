@@ -44,7 +44,7 @@ export const createTemplateRepository = (db: DB) => {
       const template = toDb(data);
 
       const query = db.prepare(`
-        INSERT INTO events_templates (id, event_id)
+        INSERT INTO events_template (id, event_id)
         VALUES (?, ?)
       `);
 
