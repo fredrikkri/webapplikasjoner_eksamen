@@ -16,7 +16,7 @@ export const createTemplateResponse = (template: any): Event => {
         price: template.price,
       };
 };
-  
+
   
 export const fromDb = (event: Template) => {
     return {

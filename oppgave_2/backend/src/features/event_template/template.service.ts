@@ -3,7 +3,7 @@ import { templateRepository, TemplateRepository } from "./template.repository";
 import { Result } from "@/types";
 import { Event } from "@/types/event";
 import { createTemplate, createTemplateResponse } from "./template.mapper";
-import { TemplateCreate, validateTemplateCreate } from "@/types/template";
+import { Template, TemplateCreate, validateTemplateCreate } from "../../types/template";
 
 export const createTemplateService = (templateRepository: TemplateRepository) => {
 
@@ -29,8 +29,31 @@ export const createTemplateService = (templateRepository: TemplateRepository) =>
         return templateRepository.create(registration);
       };
 
+      // SRC: kilde: chatgpt.com  || med endringer /
+      const getTemplatesByEventId = async (eventId: string): Promise<Result<Event | undefined>> => {
+        const result = await templateRepository.getEventByTemplateId(eventId);
+        
+        if (!result.success) return result;
+      
+        if (result.data) {
+          const templateResponse = createTemplateResponse(result.data);
+          return {
+            success: true,
+            data: templateResponse,
+          };
+        }
+      
+        return {
+          success: false,
+          error: {
+            code: "NOT_FOUND",
+            message: "No template found for the provided event ID.",
+          },
+        };
+      };
+      
 
-return { list, create };
+return { list, create, getTemplatesByEventId };
 };
 
 export const templateService = createTemplateService(templateRepository);

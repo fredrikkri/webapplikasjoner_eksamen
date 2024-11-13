@@ -68,8 +68,8 @@ export const createRegistrationRepository = (db: DB) => {
       
       const getRegistrationById = async (eventId: string): Promise<Result<Registration[]>> => {
         try {
-        const lessonExists = await eventExist(eventId);
-        if (!lessonExists) {
+        const exists = await eventExist(eventId);
+        if (!exists) {
             return {
             success: false,
             error: { code: "NOT_FOUND", message: "Event not found" },

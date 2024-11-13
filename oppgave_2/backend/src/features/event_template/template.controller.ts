@@ -29,6 +29,20 @@ export const createTemplateController = (templateService: TemplateService) => {
         return c.json(result, { status: 201 });
       });
 
+
+      app.get("/templates/:event_id", async (c) => {
+        const eventId = c.req.param("event_id");
+        const result = await templateService.getTemplatesByEventId(eventId);
+    
+        if (!result.success)
+          return errorResponse(
+            c,
+            result.error.code as ErrorCode,
+            result.error.message
+          );
+        return c.json(result);
+      });
+
     return app;
 }
 
