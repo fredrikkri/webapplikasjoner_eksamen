@@ -6,8 +6,8 @@ import EventsByDate from "@/components/EventsByDate";
 export default function EventsPage() {
     return (
     <Home>
-    <EventsByDate />
-  </Home>
+      <EventsByDate />
+      </Home>
     )
   }
 

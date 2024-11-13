@@ -53,7 +53,6 @@ const Events: React.FC<EventsProps> = ({ selectedMonth, selectedYear }) => {
 
   return (
     <div>
-      <h1>Arrangementer</h1>
       <div>
         {data.length > 0 ? (
           data.map((event) => (
@@ -64,6 +63,7 @@ const Events: React.FC<EventsProps> = ({ selectedMonth, selectedYear }) => {
               date={event.date} 
               location={event.location} 
               slug={event.slug}
+              event_type={event.event_type}
             />
           ))
         ) : (
