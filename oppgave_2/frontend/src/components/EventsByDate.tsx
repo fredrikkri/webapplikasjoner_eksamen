@@ -22,8 +22,10 @@ const EventsByDate = () => {
   };
 
   return (
+    
+
     <div>
-      <h2>Velg måned og år</h2>
+      <h1 className="text-3xl font-bold text-gray-800 my-6 text-center">Arrangementer</h1>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         <select onChange={handleMonthChange} value={month !== null ? month : ""}>
           <option value="">Alle måneder</option>

@@ -15,7 +15,7 @@ interface EventCardProps {
   export default function EventCardExpanded({ title, description, slug, date, location, event_type, total_slots, available_slots, price}: EventCardProps) {
     return (
       <div style={{ padding: '8px', margin: '25px 0', borderRadius: '18px' }}>
-        <h2>{title}</h2>
+        <h2 className="text-2xl font-bold text-gray-800 my-3">{title}</h2>
         <p>{description}</p>
         <p>
           <strong>Dato:</strong> {new Date(date).toLocaleDateString('no-NO', {
@@ -28,7 +28,7 @@ interface EventCardProps {
           <strong>Lokasjon:</strong> {location}
         </p>
         <p>
-            <strong>Event category:</strong> {event_type}
+            <strong>Category:</strong> {event_type}
         </p>
         <p>
             <strong>Total slots:</strong> {total_slots}
