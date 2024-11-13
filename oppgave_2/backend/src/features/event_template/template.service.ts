@@ -3,7 +3,7 @@ import { templateRepository, TemplateRepository } from "./template.repository";
 import { Result } from "@/types";
 import { Event } from "@/types/event";
 import { createTemplate, createTemplateResponse } from "./template.mapper";
-import { TemplateCreate, validateTemplateCreate } from "@/types/template";
+import { TemplateCreate, validateTemplateCreate } from "../../types/template";
 
 export const createTemplateService = (templateRepository: TemplateRepository) => {
 
