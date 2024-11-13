@@ -4,4 +4,5 @@ export const ENDPOINTS = {
   add: `${BASE_URL}/add`,
   update: `${BASE_URL}/update`,
   events: `${BASE_URL}/events`,
+  templates: `${BASE_URL}/templates`,
 };
