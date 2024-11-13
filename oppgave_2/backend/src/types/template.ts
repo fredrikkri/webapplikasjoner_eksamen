@@ -15,3 +15,7 @@ export type TemplateCreate = z.infer<typeof TemplateCreate>
 export const validateTemplate = (data: unknown) => {
     return TemplateSchema.safeParse(data);
 };
+
+export const validateTemplateCreate = (data: unknown) => {
+    return TemplateCreate.safeParse(data);
+};

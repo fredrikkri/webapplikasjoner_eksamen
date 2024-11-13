@@ -2,7 +2,8 @@ import { Query } from "@/lib/query";
 import { templateRepository, TemplateRepository } from "./template.repository";
 import { Result } from "@/types";
 import { Event } from "@/types/event";
-import { createTemplateResponse } from "./template.mapper";
+import { createTemplate, createTemplateResponse } from "./template.mapper";
+import { TemplateCreate, validateTemplateCreate } from "@/types/template";
 
 export const createTemplateService = (templateRepository: TemplateRepository) => {
 
@@ -16,10 +17,20 @@ export const createTemplateService = (templateRepository: TemplateRepository) =>
         };
       };
 
+      const create = async (data: TemplateCreate): Promise<Result<string>> => {
+        const registration = createTemplate(data);
+    
+        if (!validateTemplateCreate(registration).success) {
+          return {
+            success: false,
+            error: { code: "BAD_REQUEST", message: "Invalid Template data" },
+          };
+        }
+        return templateRepository.create(registration);
+      };
 
-return {
-    list,
-  };
+
+return { list, create };
 };
 
 export const templateService = createTemplateService(templateRepository);
