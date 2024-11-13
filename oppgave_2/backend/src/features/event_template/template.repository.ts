@@ -13,6 +13,7 @@ export const createTemplateRepository = (db: DB) => {
     return data.count > 0;
   };
 
+  // SRC: kilde: chatgpt.com  || med endringer /
   const list = async (query?: Record<string, string>): Promise<Result<Event[]>> => {
     try {
       const statement = db.prepare(`
@@ -66,10 +67,40 @@ export const createTemplateRepository = (db: DB) => {
       };
     }
   };
+
+  // SRC: kilde: chatgpt.com  || med endringer /
+  const getEventByTemplateId = async (eventId: string): Promise<Result<Event>> => {
+    try {
+      const query = db.prepare("SELECT e.* FROM events e JOIN events_template et ON e.id = et.event_id WHERE e.id = ?");
+      const eventData = query.get(eventId) as Event;
+  
+      if (!eventData) {
+        return {
+          success: false,
+          error: { code: "NOT_FOUND", message: "Event not found in templates" },
+        };
+      }
+  
+      return {
+        success: true,
+        data: eventData,
+      };
+    } catch (error) {
+      console.error("Error fetching event:", error);
+      return {
+        success: false,
+        error: {
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching event from templates",
+        },
+      };
+    }
+  };
+  
   
 
 
-      return { list, create }
+      return { list, create, getEventByTemplateId }
 }
 
 export const templateRepository = createTemplateRepository(db);
