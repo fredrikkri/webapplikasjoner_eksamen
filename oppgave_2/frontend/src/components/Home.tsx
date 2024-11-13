@@ -9,9 +9,7 @@ interface HomeProps {
 export default function Home({ children }: HomeProps) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
-      <div className="mx-auto grid min-h-screen w-full max-w-7xl grid-rows-[auto_minmax(900px,_1fr)_auto] px-4 sm:px-6 lg:px-8">
-        
-        {/* Full-bredde navigasjonslinje */}
+      <div className="mx-auto grid min-h-screen w-full grid-rows-[auto_minmax(900px,_1fr)_auto] px-4 sm:px-6 lg:px-8">
         <nav className="sticky top-0 z-50 py-6 backdrop-blur-sm bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500 shadow-lg w-screen left-0 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between max-w-7xl mx-auto">
             <h1 className="text-2xl font-bold uppercase tracking-wider text-white transition-colors hover:text-slate-200" data-testid="logo">
@@ -20,15 +18,29 @@ export default function Home({ children }: HomeProps) {
                 Booking Arena
               </a>
             </h1>
+            <ul className="flex gap-8" data-testid="nav">
+              <li data-testid="nav_courses">
+                <a 
+                  href="/templates" 
+                  className="text-base rounded-full bg-gray-200 py-2 px-6 font-bold text-sky-900 transition-all hover:bg-sky-300 hover:shadow-lg"
+                >
+                  Mal
+                </a>
+              </li>
+              <li data-testid="nav_new">
+                <a 
+                  href="/opprett" 
+                  className="rounded-full bg-emerald-400 px-6 py-2 text-base font-medium transition-all hover:bg-emerald-300 hover:shadow-lg"
+                >
+                  Opprett arangement
+                </a>
+              </li>
+            </ul>
           </div>
         </nav>
-
-        {/* Main content */}
         <main className="py-8">
           {children}
         </main>
-        
-        {/* Full-bredde footer */}
         <footer className="border-t border-slate-200 py-6 bg-gradient-to-r from-blue-500 via-teal-500 to-emerald-500 text-white shadow-inner w-screen left-0 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col justify-between gap-4 text-sm sm:flex-row sm:items-center max-w-7xl mx-auto">
             <p className="font-medium">Mikro LMS AS, 2024</p>

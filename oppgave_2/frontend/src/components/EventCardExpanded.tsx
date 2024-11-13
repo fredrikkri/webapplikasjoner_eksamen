@@ -14,7 +14,7 @@ interface EventCardProps {
   
   export default function EventCardExpanded({ title, description, slug, date, location, event_type, total_slots, available_slots, price}: EventCardProps) {
     return (
-      <div style={{ border: '1px solid #cce', padding: '18px', margin: '25px 0', borderRadius: '18px' }}>
+      <div style={{ padding: '8px', margin: '25px 0', borderRadius: '18px' }}>
         <h2>{title}</h2>
         <p>{description}</p>
         <p>
@@ -40,7 +40,7 @@ interface EventCardProps {
             <strong>Price:</strong> {price}
         </p>
         <Link href={`/events/${slug}`}>
-      <button className="px-3 py-3 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 transition my-4 mx-1">
+      <button className="px-3 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 transition my-4 mx-1">
         Meld meg på
       </button>
     </Link>

@@ -12,7 +12,7 @@ export const useAllEvents = () => {
       try {
         setLoading(true);
         const eventdata = await getAllEvents();
-        setEvents(eventdata as EventType[]);
+        setEvents(eventdata as unknown as EventType[]);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('An error occurred while fetching all events'));
       } finally {
@@ -36,7 +36,7 @@ export const useEvent = (eventSlug: string) => {
       try {
         setLoading(true);
         const eventdata = await getEvent(eventSlug);
-        setEvent(eventdata as EventType);
+        setEvent(eventdata as unknown as EventType);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('An error occurred while fetching an event'));
       } finally {
