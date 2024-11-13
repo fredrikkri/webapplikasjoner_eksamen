@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { EventController } from "./features/event/event.controller";
 import { registrationController } from "./features/registration/registration.controller";
+import { templateController } from "./features/event_template/template.controller";
 
 const app = new Hono();
 app.use("/*", cors());
@@ -13,6 +14,7 @@ app.use("/*", cors({
 
 app.route("api/v1", EventController)
 app.route("api/v1", registrationController)
+app.route("api/v1", templateController)
 
 app.onError((err, c) => {
   console.error(err);
