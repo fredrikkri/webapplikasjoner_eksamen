@@ -5,9 +5,10 @@ import { Event as EventData } from '@/types/Event';
 // SRC: kilde: chatgpt.com  / med endringer
 const CreateEvent: React.FC = () => {
   const [eventData, setEventData] = useState<EventData>({
+    id: "",
     title: '',
     description: '',
-    date: '',
+    date: new Date(),
     location: '',
     slug: '',
     event_type: '',
