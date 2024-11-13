@@ -113,9 +113,8 @@ export function EditLessonForm({ courseSlug, lessonSlug }: EditLessonFormProps) 
         }))
       };
 
-      const result = await updateLesson(courseSlug, lessonSlug, formattedData);
-      // Navigate using the returned slug from the backend
-      router.push(`/kurs/${courseSlug}/${result.slug}`);
+      const updatedLesson = await updateLesson(courseSlug, lessonSlug, formattedData);
+      router.push(`/kurs/${courseSlug}/${updatedLesson.slug}`);
     } catch (error) {
       setError('Kunne ikke oppdatere leksjonen');
       console.error('Error updating lesson:', error);

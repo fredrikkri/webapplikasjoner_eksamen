@@ -645,20 +645,24 @@ export const createCourseRepository = (db: DB) => {
           throw new Error("Lesson not found or does not belong to the specified course");
         }
 
+        // Generate new slug if title is being updated
+        const newSlug = data.title ? generateSlug(data.title) : lessonSlug;
+
         const updateLessonQuery = db.prepare(`
           UPDATE lessons
           SET title = COALESCE(?, title),
+              slug = ?,
               preAmble = COALESCE(?, preAmble),
               updated_at = CURRENT_TIMESTAMP
           WHERE id = ?
-          RETURNING *
         `);
 
-        const updatedLessonData = updateLessonQuery.get(
+        updateLessonQuery.run(
           data.title?.trim(),
+          newSlug,
           data.preAmble?.trim(),
           lesson.id
-        ) as Lesson;
+        );
 
         if (data.text && data.text.length > 0) {
           const deleteTextsQuery = db.prepare("DELETE FROM texts WHERE lesson_id = ?");
@@ -674,10 +678,25 @@ export const createCourseRepository = (db: DB) => {
           });
         }
 
+        // Fetch the updated lesson with all its data
+        const getUpdatedLessonQuery = db.prepare(`
+          SELECT l.*, GROUP_CONCAT(t.text) as texts, GROUP_CONCAT(t.id) as text_ids
+          FROM lessons l
+          LEFT JOIN texts t ON l.id = t.lesson_id
+          WHERE l.id = ?
+          GROUP BY l.id
+        `);
+
+        const updatedLessonData = getUpdatedLessonQuery.get(lesson.id) as any;
+        const texts = updatedLessonData.texts ? updatedLessonData.texts.split(',') : [];
+        const textIds = updatedLessonData.text_ids ? updatedLessonData.text_ids.split(',') : [];
+
         const updatedLesson = {
           ...fromDbLession(updatedLessonData),
-          text: db.prepare("SELECT id, text FROM texts WHERE lesson_id = ?")
-            .all(lesson.id) as { id: string; text: string }[],
+          text: texts.map((text: string, index: number) => ({
+            id: textIds[index],
+            text: text
+          }))
         };
 
         return updatedLesson;
