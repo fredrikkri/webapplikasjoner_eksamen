@@ -24,7 +24,6 @@ export interface Course {
 export interface CourseFields {
   id: string;
   title: string;
-  slug: string;
   description: string;
   category: string;
 }
@@ -32,7 +31,6 @@ export interface CourseFields {
 export interface LessonFields {
   id: string;
   title: string;
-  slug: string;
   preAmble: string;
   text: { id: string; text: string; }[];
   order: string;

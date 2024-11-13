@@ -1,5 +1,6 @@
 import type { Course } from "../../types/course";
 import type { Lesson } from "../../types/lesson";
+import { generateSlug } from "../../lib/utils";
 
 const createId = () => {
   return crypto.randomUUID();
@@ -72,44 +73,52 @@ export const fromDbLession = (lesson: Lesson): Lesson => {
 
 export const createCourse = (course: Partial<Course>): Course => {
   const courseId = course.id ?? createId();
+  const title = course.title ?? "";
 
   return {
     id: courseId,
-    title: course.title ?? "",
-    slug: course.slug ?? "",
+    title,
+    slug: generateSlug(title),
     description: course.description ?? "",
     category: course.category ?? "",
-    lessons: Array.isArray(course.lessons) ? course.lessons.map(lesson => ({
-      id: lesson.id ?? createId(),
-      title: lesson.title ?? "",
-      slug: lesson.slug ?? "",
-      preAmble: lesson.preAmble ?? "",
-      text: Array.isArray(lesson.text) ? lesson.text.map(t => ({
-        id: t.id ?? createId(),
-        text: t.text ?? ""
-      })) : []
-    })) : []
+    lessons: Array.isArray(course.lessons) ? course.lessons.map(lesson => {
+      const lessonTitle = lesson.title ?? "";
+      return {
+        id: lesson.id ?? createId(),
+        title: lessonTitle,
+        slug: generateSlug(lessonTitle),
+        preAmble: lesson.preAmble ?? "",
+        text: Array.isArray(lesson.text) ? lesson.text.map(t => ({
+          id: t.id ?? createId(),
+          text: t.text ?? ""
+        })) : []
+      };
+    }) : []
   };
 };
 
 export const toDb = (data: Partial<Course>): Course => {
   const courseId = data.id ?? createId();
+  const title = data.title ?? "";
 
   return {
     id: courseId,
-    title: data.title ?? "",
-    slug: data.slug ?? "",
+    title,
+    slug: generateSlug(title),
     description: data.description ?? "",
     category: data.category ?? "",
-    lessons: Array.isArray(data.lessons) ? data.lessons.map(lesson => ({
-      id: lesson.id ?? createId(),
-      title: lesson.title ?? "",
-      slug: lesson.slug ?? "",
-      preAmble: lesson.preAmble ?? "",
-      text: Array.isArray(lesson.text) ? lesson.text.map(t => ({
-        id: t.id ?? createId(),
-        text: t.text ?? ""
-      })) : []
-    })) : []
+    lessons: Array.isArray(data.lessons) ? data.lessons.map(lesson => {
+      const lessonTitle = lesson.title ?? "";
+      return {
+        id: lesson.id ?? createId(),
+        title: lessonTitle,
+        slug: generateSlug(lessonTitle),
+        preAmble: lesson.preAmble ?? "",
+        text: Array.isArray(lesson.text) ? lesson.text.map(t => ({
+          id: t.id ?? createId(),
+          text: t.text ?? ""
+        })) : []
+      };
+    }) : []
   };
 };

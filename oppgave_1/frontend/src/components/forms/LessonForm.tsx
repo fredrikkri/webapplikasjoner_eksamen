@@ -37,28 +37,6 @@ export function LessonForm({ lesson, onChange, onTextChange, errors, editorConfi
       </div>
 
       <div>
-        <label className="mb-2 block font-medium text-slate-700" htmlFor="slug">
-          Slug<span className="text-emerald-600">*</span>
-        </label>
-        <input
-          className={`w-full rounded-lg border ${
-            errors.slug ? 'border-red-500' : 'border-slate-200'
-          } px-4 py-2.5 transition-colors focus:border-emerald-600 focus:outline-none ${
-            disabled ? 'cursor-not-allowed bg-slate-50' : ''
-          }`}
-          data-testid="form_lesson_slug"
-          type="text"
-          name="slug"
-          id="slug"
-          placeholder="F.eks. intro-til-react"
-          value={lesson.slug}
-          onChange={onChange}
-          disabled={disabled}
-        />
-        {errors.slug && <p className="mt-1 text-sm text-red-500">{errors.slug}</p>}
-      </div>
-
-      <div>
         <label className="mb-2 block font-medium text-slate-700" htmlFor="preAmble">
           Ingress<span className="text-emerald-600">*</span>
         </label>

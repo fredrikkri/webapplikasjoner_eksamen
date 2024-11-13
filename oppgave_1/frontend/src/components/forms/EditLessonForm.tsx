@@ -26,7 +26,6 @@ export function EditLessonForm({ courseSlug, lessonSlug }: EditLessonFormProps) 
   const [lessonFields, setLessonFields] = useState<LessonFields>({
     id: '',
     title: '',
-    slug: '',
     preAmble: '',
     text: [{ id: '1', text: '' }],
     order: '1',
@@ -42,7 +41,6 @@ export function EditLessonForm({ courseSlug, lessonSlug }: EditLessonFormProps) 
           setLessonFields({
             id: lesson.id,
             title: lesson.title,
-            slug: lesson.slug,
             preAmble: lesson.preAmble,
             text: lesson.text && lesson.text.length > 0 ? lesson.text : [{ id: '1', text: '' }],
             order: lesson.order || '1',
@@ -97,7 +95,6 @@ export function EditLessonForm({ courseSlug, lessonSlug }: EditLessonFormProps) 
 
     const newErrors: Record<string, string> = {};
     if (!lessonFields.title) newErrors.title = 'Tittel er påkrevd';
-    if (!lessonFields.slug) newErrors.slug = 'Slug er påkrevd';
     if (!lessonFields.preAmble) newErrors.preAmble = 'Ingress er påkrevd';
     if (!lessonFields.text[0]?.text) newErrors.text = 'Innhold er påkrevd';
 
@@ -116,8 +113,9 @@ export function EditLessonForm({ courseSlug, lessonSlug }: EditLessonFormProps) 
         }))
       };
 
-      await updateLesson(courseSlug, lessonSlug, formattedData);
-      router.push(`/kurs/${courseSlug}/${lessonFields.slug}`);
+      const result = await updateLesson(courseSlug, lessonSlug, formattedData);
+      // Navigate using the returned slug from the backend
+      router.push(`/kurs/${courseSlug}/${result.slug}`);
     } catch (error) {
       setError('Kunne ikke oppdatere leksjonen');
       console.error('Error updating lesson:', error);

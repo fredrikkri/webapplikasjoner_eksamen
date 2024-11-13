@@ -6,7 +6,6 @@ export const initialState: FormState = {
   courseFields: {
     id: uuidv4(),
     title: '',
-    slug: '',
     description: '',
     category: '',
   },
@@ -75,7 +74,6 @@ export function formReducer(state: FormState, action: FormAction): FormState {
           {
             id: uuidv4(), // Unique ID for each new lesson
             title: '',
-            slug: '',
             preAmble: '',
             text: [{
               id: uuidv4(), // Unique ID for text within the lesson
@@ -138,7 +136,6 @@ export function formReducer(state: FormState, action: FormAction): FormState {
   }
 }
 
-
 export function validateForm(state: FormState): Record<string, string> {
   const errors: Record<string, string> = {};
 
@@ -152,14 +149,6 @@ export function validateForm(state: FormState): Record<string, string> {
       errors.title = `Tittel kan ikke være mer enn ${VALIDATION_RULES.title.maxLength} tegn`;
     }
 
-    if (!state.courseFields.slug) {
-      errors.slug = 'Slug er påkrevd';
-    } else if (!VALIDATION_RULES.slug.pattern.test(state.courseFields.slug)) {
-      errors.slug = 'Slug kan kun inneholde små bokstaver, tall og bindestrek';
-    } else if (state.courseFields.slug.length > VALIDATION_RULES.slug.maxLength) {
-      errors.slug = `Slug kan ikke være mer enn ${VALIDATION_RULES.slug.maxLength} tegn`;
-    }
-
     if (!state.courseFields.description) {
       errors.description = 'Beskrivelse er påkrevd';
     } else if (state.courseFields.description.length < VALIDATION_RULES.description.minLength) {
@@ -170,8 +159,6 @@ export function validateForm(state: FormState): Record<string, string> {
 
     if (!state.courseFields.category) {
       errors.category = 'Kategori er påkrevd';
-    } else if (!VALIDATION_RULES.category.options.includes(state.courseFields.category)) {
-      errors.category = 'Velg en gyldig kategori';
     }
   }
 
@@ -191,14 +178,6 @@ export function validateForm(state: FormState): Record<string, string> {
         errors.title = `Leksjonstittel kan ikke være mer enn ${lessonRules.title.maxLength} tegn`;
       }
 
-      if (!currentLesson.slug) {
-        errors.slug = 'Leksjon-slug er påkrevd';
-      } else if (!VALIDATION_RULES.slug.pattern.test(currentLesson.slug)) {
-        errors.slug = 'Leksjon-slug kan kun inneholde små bokstaver, tall og bindestrek';
-      } else if (currentLesson.slug.length > lessonRules.slug.maxLength) {
-        errors.slug = `Leksjon-slug kan ikke være mer enn ${lessonRules.slug.maxLength} tegn`;
-      }
-
       if (!currentLesson.preAmble) {
         errors.preAmble = 'Ingress er påkrevd';
       } else if (currentLesson.preAmble.length < lessonRules.preAmble.minLength) {
@@ -211,12 +190,6 @@ export function validateForm(state: FormState): Record<string, string> {
         errors.text = 'Innhold er påkrevd';
       } else if (currentLesson.text[0].text.length < lessonRules.text.minLength) {
         errors.text = `Innhold må være minst ${lessonRules.text.minLength} tegn`;
-      }
-
-      // Check for duplicate slugs in lessons
-      const slugCount = state.lessons.filter(l => l.slug === currentLesson.slug).length;
-      if (slugCount > 1) {
-        errors.slug = 'Denne leksjon-slugen er allerede i bruk';
       }
     }
   }

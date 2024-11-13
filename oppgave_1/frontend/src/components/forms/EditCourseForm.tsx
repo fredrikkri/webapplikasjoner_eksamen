@@ -16,7 +16,6 @@ export function EditCourseForm({ slug }: EditCourseFormProps) {
   const [courseFields, setCourseFields] = useState<CourseFields>({
     id: '',
     title: '',
-    slug: '',
     description: '',
     category: '',
   });
@@ -32,7 +31,6 @@ export function EditCourseForm({ slug }: EditCourseFormProps) {
         setCourseFields({
           id: course.id,
           title: course.title,
-          slug: course.slug,
           description: course.description,
           category: course.category,
         });
@@ -67,7 +65,6 @@ export function EditCourseForm({ slug }: EditCourseFormProps) {
 
     const newErrors: Record<string, string> = {};
     if (!courseFields.title) newErrors.title = 'Tittel er påkrevd';
-    if (!courseFields.slug) newErrors.slug = 'Slug er påkrevd';
     if (!courseFields.description) newErrors.description = 'Beskrivelse er påkrevd';
     if (!courseFields.category) newErrors.category = 'Kategori er påkrevd';
 
@@ -85,7 +82,7 @@ export function EditCourseForm({ slug }: EditCourseFormProps) {
       const updatedCourse: Course = {
         id: originalCourse.id,
         title: courseFields.title,
-        slug: courseFields.slug,
+        slug: originalCourse.slug, // Keep the original slug, it will be updated in backend based on title
         description: courseFields.description,
         category: courseFields.category,
         lessons: originalCourse.lessons.map(lesson => ({
@@ -100,11 +97,12 @@ export function EditCourseForm({ slug }: EditCourseFormProps) {
       console.log('Updating course with data:', {
         id: updatedCourse.id,
         originalSlug: slug,
-        newSlug: updatedCourse.slug
+        title: updatedCourse.title
       });
 
-      await updateCourse(slug, updatedCourse);
-      router.push(`/kurs/${courseFields.slug}`);
+      const result = await updateCourse(slug, updatedCourse);
+      // Navigate to the new URL using the returned slug from the backend
+      router.push(`/kurs/${result.slug}`);
     } catch (error) {
       setError('Kunne ikke oppdatere kurset');
       console.error('Error updating course:', error);

@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { LessonSchema } from './lesson';
 
-// SRC: kilde: chatgpt.com /
 export const CourseSchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -19,7 +18,7 @@ export const CourseCreateStepsSchema = z.object({
   name: z.string()
 })
 
-export const CourseCreateSchema = CourseSchema.omit({ id: true })
+export const CourseCreateSchema = CourseSchema.omit({ id: true, slug: true })
 export const CourseArraySchema = z.array(CourseSchema)
 
 export type CourseCreate = z.infer<typeof CourseCreateSchema>

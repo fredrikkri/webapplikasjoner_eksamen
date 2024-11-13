@@ -4,6 +4,7 @@ import { type Lesson, type LessonSchema } from "../../types/lesson";
 import type { Result } from "../../types/index";
 import { fromDb, fromDbLession, toDb } from "./course.mapper";
 import type { Query } from "../../lib/query";
+import { generateSlug } from "../../lib/utils";
 
 export const createCourseRepository = (db: DB) => {
   const exist = async (slug: string): Promise<boolean> => {
@@ -236,8 +237,6 @@ export const createCourseRepository = (db: DB) => {
       };
     }
   };
-  
-  
 
   const list = async (params?: Query): Promise<Result<Course[]>> => {
     try {
@@ -372,12 +371,16 @@ export const createCourseRepository = (db: DB) => {
   const create = async (data: CourseCreate): Promise<Result<string>> => {
     const db_transaction = db.transaction(() => {
       try {
-        const slugExists = db.prepare("SELECT COUNT(*) as count FROM courses WHERE slug = ?").get(data.slug) as { count: number };
+        const generatedSlug = generateSlug(data.title);
+        const slugExists = db.prepare("SELECT COUNT(*) as count FROM courses WHERE slug = ?").get(generatedSlug) as { count: number };
         if (slugExists.count > 0) {
-          throw new Error(`Course with slug '${data.slug}' already exists`);
+          throw new Error(`Course with slug '${generatedSlug}' already exists`);
         }
   
-        const course = toDb(data);
+        const course = toDb({
+          ...data,
+          slug: generatedSlug
+        });
   
         console.log('Creating course with data:', JSON.stringify(course, null, 2));
   
@@ -573,7 +576,6 @@ export const createCourseRepository = (db: DB) => {
       };
     }
   };
-  
 
   const remove = async (slug: string): Promise<Result<string>> => {
     const db_transaction = db.transaction(() => {
