@@ -26,16 +26,16 @@ export const useAllEvents = () => {
   return { events, loading, error };
 };
 
-export const useEvent = (eventSlug: string) => {
+export const useEvent = (eventId: string) => {
   const [event, setEvent] = useState<EventType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const fetchCourse = async () => {
+    const fetchEvent = async () => {
       try {
         setLoading(true);
-        const eventdata = await getEvent(eventSlug);
+        const eventdata = await getEvent(eventId);
         setEvent(eventdata as unknown as EventType);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('An error occurred while fetching an event'));
@@ -44,10 +44,10 @@ export const useEvent = (eventSlug: string) => {
       }
     };
 
-    if (eventSlug) {
-      fetchCourse();
+    if (eventId) {
+      fetchEvent();
     }
-  }, [eventSlug]);
+  }, [eventId]);
 
   return { event, loading, error };
 };

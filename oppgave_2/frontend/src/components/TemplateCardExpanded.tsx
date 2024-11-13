@@ -1,6 +1,7 @@
 import Link from "next/link";
 
-type EventCardProps = {
+type TemplateCardProps = {
+    id: string;
     title: string;
     description: string;
     date: Date;
@@ -12,7 +13,7 @@ type EventCardProps = {
     price: number
   }
   
-  export default function EventCardExpanded({ title, description, slug, date, location, event_type, total_slots, available_slots, price}: EventCardProps) {
+  export default function TemplateCardExpanded({slug, title, description, date, location, event_type, total_slots, available_slots, price}: TemplateCardProps) {
     return (
       <div style={{ padding: '8px', margin: '25px 0', borderRadius: '18px' }}>
         <h2 className="text-2xl font-bold text-gray-800 my-3">{title}</h2>
@@ -39,7 +40,7 @@ type EventCardProps = {
         <p>
             <strong>Price:</strong> {price}
         </p>
-        <Link href={`/events/${slug}`}>
+        <Link href={`/templates/${slug}`}>
       <button className="px-3 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 transition my-4 mx-1">
         Meld meg på
       </button>

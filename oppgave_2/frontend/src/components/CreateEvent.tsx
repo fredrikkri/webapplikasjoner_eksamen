@@ -148,9 +148,15 @@ const CreateEvent: React.FC = () => {
         />
       </label>
 
-      <button type="submit" className="w-full bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700">
-        Opprett Event
-      </button>
+      <div className="flex space-x-4 w-full">
+  <button type="button" className="w-2/5 bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500">
+    Lagre som mal
+  </button>
+
+  <button type="submit" className="w-3/5 bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700">
+    Opprett Event
+  </button>
+</div>
     </form>
   );
 };
