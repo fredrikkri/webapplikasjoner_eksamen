@@ -13,8 +13,8 @@ export interface Template {
   price: number;
 }
 
-export const getTemplate = async (id: string): Promise<Template | undefined> => {
-  const response = await fetch(ENDPOINTS.templates + `/${id}`);
+export const getTemplate = async (slug: string): Promise<Template | undefined> => {
+  const response = await fetch(ENDPOINTS.templates + `/${slug}`);
   if (!response.ok) {
     throw new Error("Failed to fetch event");
   }

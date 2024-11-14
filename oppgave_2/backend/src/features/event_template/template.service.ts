@@ -30,8 +30,8 @@ export const createTemplateService = (templateRepository: TemplateRepository) =>
       };
 
       // SRC: kilde: chatgpt.com  || med endringer /
-      const getTemplatesByEventId = async (eventId: string): Promise<Result<Event | undefined>> => {
-        const result = await templateRepository.getEventByTemplateId(eventId);
+      const getTemplatesByEventSlug = async (eventSlug: string): Promise<Result<Event | undefined>> => {
+        const result = await templateRepository.getEventByTemplateSlug(eventSlug);
         
         if (!result.success) return result;
       
@@ -53,7 +53,7 @@ export const createTemplateService = (templateRepository: TemplateRepository) =>
       };
       
 
-return { list, create, getTemplatesByEventId };
+return { list, create, getTemplatesByEventSlug };
 };
 
 export const templateService = createTemplateService(templateRepository);

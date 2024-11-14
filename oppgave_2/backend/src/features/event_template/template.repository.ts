@@ -69,10 +69,10 @@ export const createTemplateRepository = (db: DB) => {
   };
 
   // SRC: kilde: chatgpt.com  || med endringer /
-  const getEventByTemplateId = async (eventId: string): Promise<Result<Event>> => {
+  const getEventByTemplateSlug = async (eventSlug: string): Promise<Result<Event>> => {
     try {
-      const query = db.prepare("SELECT e.* FROM events e JOIN events_template et ON e.id = et.event_id WHERE e.id = ?");
-      const eventData = query.get(eventId) as Event;
+      const query = db.prepare("SELECT e.* FROM events e JOIN events_template et ON e.id = et.event_id WHERE e.slug = ?");
+      const eventData = query.get(eventSlug) as Event;
   
       if (!eventData) {
         return {
@@ -100,7 +100,7 @@ export const createTemplateRepository = (db: DB) => {
   
 
 
-      return { list, create, getEventByTemplateId }
+      return { list, create, getEventByTemplateSlug }
 }
 
 export const templateRepository = createTemplateRepository(db);

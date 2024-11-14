@@ -30,9 +30,9 @@ export const createTemplateController = (templateService: TemplateService) => {
       });
 
 
-      app.get("/templates/:event_id", async (c) => {
-        const eventId = c.req.param("event_id");
-        const result = await templateService.getTemplatesByEventId(eventId);
+      app.get("/templates/:event_slug", async (c) => {
+        const eventSlug = c.req.param("event_slug");
+        const result = await templateService.getTemplatesByEventSlug(eventSlug);
     
         if (!result.success)
           return errorResponse(
