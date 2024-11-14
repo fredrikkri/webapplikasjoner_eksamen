@@ -15,7 +15,7 @@ type TemplateCardProps = {
   
   export default function TemplateCardExpanded({slug, title, description, date, location, event_type, total_slots, available_slots, price}: TemplateCardProps) {
     return (
-      <div style={{ padding: '8px', margin: '25px 0', borderRadius: '18px' }}>
+      <div className="border border-[#cce] p-[18px] my-6 rounded-[18px]">
         <h2 className="text-2xl font-bold text-gray-800 my-3">{title}</h2>
         <p>{description}</p>
         <p>
@@ -41,7 +41,7 @@ type TemplateCardProps = {
             <strong>Price:</strong> {price}
         </p>
         <Link href={`/templates/${slug}`}>
-      <button className="px-3 py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 transition my-4 mx-1">
+      <button type="button" className="px-3 py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 transition my-4 mx-1">
         Bruk mal
       </button>
     </Link>
