@@ -6,10 +6,10 @@ import Home from "@/components/Home";
 
 export default function Event() {
     const params = useParams();
-    const id = params?.id as string;
+    const slug = params?.slug as string;
     return ( 
     <Home>
-      <SingleEvent slug={id}/>
+      <SingleEvent slug={slug}/>
     </Home>
       );
   }

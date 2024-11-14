@@ -14,8 +14,8 @@ export interface Event {
   price: number;
 }
 
-export const getEvent = async (id: string): Promise<Event | undefined> => {
-  const response = await fetch(ENDPOINTS.events + `/${id}`);
+export const getEvent = async (slug: string): Promise<Event | undefined> => {
+  const response = await fetch(ENDPOINTS.events + `/${slug}`);
   if (!response.ok) {
     throw new Error("Failed to fetch event");
   }
