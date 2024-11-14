@@ -6,6 +6,7 @@ import { useCreateEvent } from '@/hooks/useEvent';
 // SRC: kilde: chatgpt.com  / med endringer
 const CreateEvent: React.FC = () => {
   const [eventData, setEventData] = useState<EventData>({
+    // Id settes til å være en random id her, optimalt så vil det ønskes at dette gjøres i backend
     id: crypto.randomUUID(),
     title: '',
     description: '',
