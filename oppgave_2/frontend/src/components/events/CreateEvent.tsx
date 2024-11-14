@@ -5,7 +5,7 @@ import { Event as EventData } from '@/types/Event';
 // SRC: kilde: chatgpt.com  / med endringer
 const CreateEvent: React.FC = () => {
   const [eventData, setEventData] = useState<EventData>({
-    id: "",
+    id: crypto.randomUUID(),
     title: '',
     description: '',
     date: new Date(),
@@ -32,14 +32,14 @@ const CreateEvent: React.FC = () => {
     alert(`Event opprettet:\n${JSON.stringify(eventData, null, 2)}`);
   };
 
-  const onAddTemplate = async ({ id, event_id }: { id: string, event_id: string }) => {
+  const onAddTemplate = async ({ event_id }: { event_id: string }) => {
     try {
-      const response = await fetch("http://localhost:3999/api/v1/add", {
+      const response = await fetch("http://localhost:3999/api/v1/addL", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id, event_id }),
+        body: JSON.stringify({ event_id }),
       });
       const data = await response.json();
       if (!data.success) {
@@ -170,7 +170,7 @@ const CreateEvent: React.FC = () => {
 
       <div className="flex space-x-4 w-full">
   <button type="button" className="w-2/5 bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500" 
-onClick={() => onAddTemplate({ id: crypto.randomUUID(), event_id: eventData.id })}>
+onClick={() => onAddTemplate({ event_id: eventData.id })}>
   Lagre som mal
   </button>
 
