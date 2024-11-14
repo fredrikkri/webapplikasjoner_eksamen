@@ -40,7 +40,7 @@ type EventCardProps = {
             <strong>Price:</strong> {price}
         </p>
         <Link href={`/events/${slug}`}>
-      <button className="my-4 w-1/3 bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700">
+      <button type="button" className="my-4 w-1/3 bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700">
         Opprett event med mal
       </button>
     </Link>
