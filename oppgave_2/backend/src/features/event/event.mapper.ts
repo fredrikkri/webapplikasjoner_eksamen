@@ -24,7 +24,7 @@ export const createEventResponse = (event: Event): Event => {
   
   export const createEvent = (event: Partial<Event>): Event => {
     return {
-        id: event.id ?? createId(),  
+        id: event.id ? "" : createId(),  
         title: event?.title ?? "", 
         description: event?.description ?? "", 
         slug: event?.slug ?? "", 
@@ -32,7 +32,7 @@ export const createEventResponse = (event: Event): Event => {
         location: event.location ?? "",
         event_type: event.event_type ?? "",
         total_slots: event.total_slots ?? 0,
-        available_slots: event.available_slots ?? 10,
+        available_slots: event.total_slots ?? 0,
         price: event.price ?? 0,
     };
   };
@@ -40,15 +40,15 @@ export const createEventResponse = (event: Event): Event => {
 export const toDb = (data: Partial<Event>) => {
   const event = createEvent(data); 
   return {
-    id: event.id ?? createId(),  
-    title: event?.title ?? "", 
-    description: event?.description ?? "", 
-    slug: event?.slug ?? "", 
-    date: event.date ?? "",
-    location: event.location ?? "",
-    event_type: event.event_type ?? "",
-    total_slots: event.total_slots ?? "",
-    avalible_slots: event.available_slots ?? "",
-    price: event.price ?? "",
+    id: event.id,  
+    title: event?.title, 
+    description: event?.description, 
+    slug: event?.slug, 
+    date: event.date,
+    location: event.location,
+    event_type: event.event_type,
+    total_slots: event.total_slots,
+    avalible_slots: event.available_slots ,
+    price: event.price ,
     };
 };

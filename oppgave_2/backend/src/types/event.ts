@@ -1,4 +1,6 @@
+import { parseDate } from '../util/utils';
 import { z } from 'zod';
+
 
 export const EventSchema = z.object({
     id: z.string(),
@@ -14,7 +16,7 @@ export const EventSchema = z.object({
   })
   
   export const EventCreateSchema = EventSchema.omit( {
-    id: true, available_slots: true
+   available_slots: true
   })
 
   export const EventUpdateSchema = EventSchema.omit( {
@@ -27,13 +29,13 @@ export const EventSchema = z.object({
   export type EventResponse = z.infer<typeof EventSchema>
 
   export const validateEvent = (data: unknown) => {
-    return EventSchema.safeParse(data);
+    return EventSchema.safeParse(parseDate(data));
   };
 
   export const validateEventCreate = (data: unknown) => {
-    return EventCreateSchema.safeParse(data);
+    return EventCreateSchema.safeParse(parseDate(data));
   };
 
   export const validateEventUpdate = (data: unknown) => {
-    return EventUpdateSchema.safeParse(data);
+    return EventUpdateSchema.safeParse(parseDate(data));
   };

@@ -108,9 +108,50 @@ const list = async (params?: Query): Promise<Result<Event[]>> => {
     }
   };
 
-  return {list, getById};
+  const create = async (data: EventCreate): Promise<Result<string>> => {
+    try {
+      const event = toDb(data);
+      console.log("evemt",event )
+
+      const query = db.prepare(`
+        INSERT INTO events (id, title, description, slug, date, location, event_type, total_slots, available_slots, price)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+      query.run(
+        event.id,
+        event.title,
+        event.description,
+        event.slug,
+        event.date,
+        event.location,
+        event.event_type,
+        event.total_slots,
+        event.avalible_slots,
+        event.price
+      );
+      return {
+        success: true,
+        data: event.id,
+      };
+    } catch (error) {
+      console.error("Database error:", error);
+      return {
+        success: false,
+        error: {
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Feil med oppretting av event",
+        },
+      };
+    }
+  };
+
+  return {list, getById, create};
 };
 
 export const eventRepository = createEventRepository(db);
 
 export type EventRepository = ReturnType<typeof createEventRepository>;
+
+function uuidv4(): string {
+  throw new Error("Function not implemented.");
+}

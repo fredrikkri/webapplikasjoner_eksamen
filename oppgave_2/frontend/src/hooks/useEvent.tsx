@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getEvent, getAllEvents } from "../lib/services/events";
+import { getEvent, getAllEvents, createEvent } from "../lib/services/events";
 import {Event as EventType} from "../types/Event"
 
 export const useAllEvents = () => {
@@ -50,4 +50,22 @@ export const useEvent = (eventSlug: string) => {
   }, [eventSlug]);
 
   return { event, loading, error };
+};
+
+export const useCreateEvent = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const addEvent = async (eventData: EventType) => {
+    try {
+      setLoading(true);
+      await createEvent(eventData);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('An error occurred'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { addEvent, useAllEvents, loading, error };
 };

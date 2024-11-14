@@ -32,6 +32,19 @@ export const createEventController = (EventService: any) => {
     return c.json(result);
   });
 
+  app.post("/create", async (c) => {
+    const data = await c.req.json();
+    console.log("weewewew")
+    const result = await EventService.create(data);
+    if (!result.success)
+      return errorResponse(
+        c,
+        result.error.code as ErrorCode,
+        result.error.message
+      );
+    return c.json(result, { status: 201 });
+  });
+
   return app;
 }
 
