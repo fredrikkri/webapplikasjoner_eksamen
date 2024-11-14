@@ -14,7 +14,7 @@ export const createCourseController = (CourseService: CourseService) => {
     return !result.success;
   };
 
-  // Add categories endpoint
+  /*
   app.get("/categories", async (c) => {
     try {
       const response: Result<string[]> = {
@@ -31,7 +31,7 @@ export const createCourseController = (CourseService: CourseService) => {
       );
     }
   });
-
+*/
   app.get("/courses", async (c) => {
     const query = validateQuery(c.req.query()).data ?? {};
     const result = await CourseService.list(query);

@@ -1,21 +1,6 @@
 import { fetchWithRetry } from "../utils/apiUtils";
 import { BASE_URL } from "../../config/config";
-
-interface CreatedBy {
-  id: string;
-  name: string;
-}
-
-interface LessonRef {
-  id: string;
-}
-
-export interface Comment {
-  id: string;
-  createdBy: CreatedBy;
-  comment: string;
-  lesson: LessonRef;
-}
+import { Comment } from "@/types/types";
 
 export const getComments = async (lessonId: string): Promise<Comment[]> => {
   try {

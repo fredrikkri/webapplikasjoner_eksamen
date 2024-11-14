@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { courses, categories } from "../data/data";
 import Link from "next/link";
 import { useAllCourses } from "../hooks/useCourse";
+import { useCategories } from "../hooks/useCategories";
 
 interface Course {
   id: string;
@@ -12,7 +12,8 @@ interface Course {
 }
 
 function Courses() {
-  const { courses: allCourses, loading, error } = useAllCourses(); 
+  const { courses: allCourses, loading: coursesLoading, error: coursesError } = useAllCourses();
+  const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
   const [value, setValue] = useState<string>("");
   const [data, setData] = useState<Course[]>([]);
 
@@ -25,17 +26,20 @@ function Courses() {
   const handleFilter = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const category = event.target.value;
     setValue(category);
+    
+    if (!allCourses) return;
+
     if (category && category.length > 0) {
-      const content = courses.filter((course) =>
-        course.category.toLocaleLowerCase().includes(category.toLowerCase())
+      const content = allCourses.filter((course) =>
+        course.category.toLowerCase() === category.toLowerCase()
       );
       setData(content);
     } else {
-      setData(courses);
+      setData(allCourses);
     }
   };
 
-  if (loading) {
+  if (coursesLoading || categoriesLoading) {
     return (
       <div className="mx-auto max-w-7xl animate-fade-in">
         <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -54,12 +58,14 @@ function Courses() {
     );
   }
 
-  if (error) {
+  if (coursesError || categoriesError) {
     return (
       <div className="mx-auto max-w-7xl">
         <div className="rounded-lg border-2 border-red-100 bg-red-50 p-6 text-center">
           <p className="text-lg font-medium text-red-800">
-            Kunne ikke laste kurs: {error.message}
+            {coursesError ? `Kunne ikke laste kurs: ${coursesError.message}` : 
+             categoriesError ? `Kunne ikke laste kategorier: ${categoriesError.message}` : 
+             'En feil har oppstått'}
           </p>
         </div>
       </div>
@@ -87,7 +93,7 @@ function Courses() {
             data-testid="filter"
             value={value}
             onChange={handleFilter}
-            className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all duration-200 hover:border-emerald-600 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-100"
+            className="rounded-lg border border-slate-200 bg-white px-4 pr-8 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all duration-200 hover:border-emerald-600 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-100"
           >
             <option value="">Alle kategorier</option>
             {categories.map((category) => (

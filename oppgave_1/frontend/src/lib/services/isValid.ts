@@ -1,5 +1,3 @@
-// 📁frontend/src/lib/services/isValid.ts
-
 type ValidatableValue = string | number | boolean | null | undefined | object | Array<any>;
 
 export const isValid = (items: ValidatableValue): boolean => {

@@ -36,6 +36,11 @@ export interface LessonFields {
   order: string;
 }
 
+export interface Category {
+  id: string;
+  name: string;
+}
+
 interface CreatedBy {
   id: string | number;
   name: string;

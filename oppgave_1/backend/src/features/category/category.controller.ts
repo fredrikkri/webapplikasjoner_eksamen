@@ -6,7 +6,7 @@ import { categoryService, CategoryService } from "./category.service";
 export const createCategoryController = (categoryService: CategoryService) => {
     const app = new Hono();
   
-    app.get("categories", async (c) => {
+    app.get("/categories", async (c) => {
       const query = validateQuery(c.req.query()).data ?? {};
   
       const result = await categoryService.list(query);
@@ -20,7 +20,7 @@ export const createCategoryController = (categoryService: CategoryService) => {
       return c.json(result);
     });
   
-    app.get("categories/:id", async (c) => {
+    app.get("/categories/:id", async (c) => {
       const id = c.req.param("id");
       const result = await categoryService.getById(id);
   
@@ -37,4 +37,4 @@ export const createCategoryController = (categoryService: CategoryService) => {
     return app;
   };
   
-  export const categoryController = createCategoryController(categoryService);
+  export const CategoryController = createCategoryController(categoryService);

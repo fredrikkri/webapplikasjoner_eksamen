@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { type CourseFields } from '../../types/types';
-import { getCategories } from '../../lib/services/courses';
+import { useCategories } from '../../hooks/useCategories';
 
 interface CourseFormProps {
   courseFields: CourseFields;
@@ -10,23 +10,7 @@ interface CourseFormProps {
 }
 
 export function CourseForm({ courseFields, onChange, errors, disabled = false }: CourseFormProps) {
-  const [categories, setCategories] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const fetchedCategories = await getCategories();
-        setCategories(fetchedCategories);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
+  const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
 
   return (
     <div data-testid="course_step" className="max-w-2xl">
@@ -75,7 +59,7 @@ export function CourseForm({ courseFields, onChange, errors, disabled = false }:
           Kategori<span className="text-emerald-600">*</span>
         </label>
         <select
-          className={`w-full rounded-lg border ${errors.category ? 'border-red-500' : 'border-slate-200'} px-4 py-2.5 transition-colors focus:border-emerald-600 focus:outline-none ${
+          className={`w-full rounded-lg border ${errors.category ? 'border-red-500' : 'border-slate-200'} px-4 pr-8 py-2.5 transition-colors focus:border-emerald-600 focus:outline-none ${
             disabled ? 'cursor-not-allowed bg-slate-50' : ''
           }`}
           data-testid="form_category"
@@ -83,16 +67,21 @@ export function CourseForm({ courseFields, onChange, errors, disabled = false }:
           id="category"
           value={courseFields.category}
           onChange={onChange}
-          disabled={disabled || loading}
+          disabled={disabled || categoriesLoading}
         >
           <option value="">Velg kategori</option>
           {categories.map((category) => (
-            <option key={category} value={category.toLowerCase()}>
+            <option key={category} value={category}>
               {category}
             </option>
           ))}
         </select>
         {errors.category && <p className="mt-1 text-sm text-red-500">{errors.category}</p>}
+        {categoriesError && (
+          <p className="mt-1 text-sm text-red-500">
+            Kunne ikke laste kategorier: {categoriesError.message}
+          </p>
+        )}
       </div>
     </div>
   );

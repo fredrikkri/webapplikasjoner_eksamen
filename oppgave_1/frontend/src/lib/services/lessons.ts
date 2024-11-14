@@ -1,19 +1,6 @@
 import { BASE_URL } from "../../config/config";
 import { fetchWithRetry, validateResponse, handleApiError } from "../utils/apiUtils";
-
-interface LessonText {
-  id: string;
-  text: string;
-}
-
-export interface Lesson {
-  id: string;
-  title: string;
-  slug: string;
-  preAmble: string;
-  text: LessonText[];
-  order?: string;
-}
+import { Lesson } from "@/types/types";
 
 export const getLesson = async (courseSlug: string, lessonSlug: string): Promise<Lesson> => {
   try {

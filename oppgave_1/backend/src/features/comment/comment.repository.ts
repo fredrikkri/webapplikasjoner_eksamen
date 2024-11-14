@@ -1,56 +1,70 @@
-import { Comment } from "@/types/comment";
 import { db, type DB } from "../../features/db";
 import type { Result } from "../../types/index";
-import { fromDb} from "./comment.mapper";
+import type { Comment } from "../../types/comment";
 
 export const createCommentRepository = (db: DB) => {
-
-    const lessonExist = async (slug: string): Promise<boolean> => {
-        const query = db.prepare(
-          "SELECT COUNT(*) as count FROM lessons WHERE slug = ?"
-        );
-        const data = query.get(slug) as { count: number };
-        return data.count > 0;
-      };
-
-    const getCommentsByLessonSlug = async (lessonSlug: string): Promise<Result<Comment[]>> => {
-        try {
-        const lessonExists = await lessonExist(lessonSlug);
-        if (!lessonExists) {
-            return {
-            success: false,
-            error: { code: "NOT_FOUND", message: "Course not found" },
-            };
-        }
-  
-      const query = db.prepare("SELECT * FROM comments WHERE lesson_slug = ?");
-      const comments = query.all(lessonSlug) as Comment[];
-  
-      if (comments.length === 0) {
-        return {
-          success: false,
-          error: { code: "NOT_FOUND", message: "No comments found for this lesson" },
-        };
-      }
+  const create = async (data: Comment): Promise<Result<Comment>> => {
+    try {
+      const query = db.prepare(`
+        INSERT INTO comments (createdBy, comment, lesson_id)
+        VALUES (?, ?, ?)
+      `);
+      
+      query.run(
+        JSON.stringify(data.createdBy),
+        data.comment,
+        data.lesson.id
+      );
 
       return {
-        success: true,
-        data: comments,
+        success: true as const,
+        data: data,
       };
-  
     } catch (error) {
-      console.error("Error fetching lesson:", error);
+      console.error("Error creating comment:", error);
       return {
         success: false,
         error: {
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error fetching lesson",
+          message: "Error creating comment",
         },
       };
     }
-}
+  };
 
-  return { getCommentsByLessonSlug};
+  const getCommentsByLessonId = async (lessonId: string): Promise<Result<Comment[]>> => {
+    try {
+      const query = db.prepare(`
+        SELECT * FROM comments 
+        WHERE lesson_id = ?
+      `);
+      
+      const comments = query.all(lessonId) as any[];
+      
+      const formattedComments = comments.map(comment => ({
+        id: comment.id.toString(),
+        createdBy: JSON.parse(comment.createdBy),
+        comment: comment.comment,
+        lesson: { id: comment.lesson_id }
+      }));
+
+      return {
+        success: true as const,
+        data: formattedComments,
+      };
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      return {
+        success: false,
+        error: {
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error fetching comments",
+        },
+      };
+    }
+  };
+
+  return { create, getCommentsByLessonId };
 };
 
 export const commentRepository = createCommentRepository(db);
