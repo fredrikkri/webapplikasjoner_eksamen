@@ -1,31 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { getComments, createComment } from "../lib/services";
-
-interface CreatedBy {
-  id: string | number;
-  name: string;
-}
-
-interface LessonRef {
-  id: string;
-}
-
-export interface Comment {
-  id: string;
-  createdBy: {
-    id: string;
-    name: string;
-  };
-  comment: string;
-  lesson: LessonRef;
-}
-
-export interface CommentData {
-  id: string;
-  createdBy: CreatedBy;
-  comment: string;
-  lesson: LessonRef;
-}
+import { Comment, CommentData } from "../types/types"
 
 export const useComments = (lessonId: string) => {
   const [comments, setComments] = useState<Comment[]>([]);
@@ -60,18 +35,17 @@ export const useCreateComment = () => {
   const addComment = async (commentData: CommentData) => {
     try {
       setLoading(true);
-      // Convert the commentData to match the service's expected type
       const serviceComment: Comment = {
         ...commentData,
         createdBy: {
           ...commentData.createdBy,
-          id: String(commentData.createdBy.id)  // Convert id to string
+          id: String(commentData.createdBy.id)
         }
       };
       await createComment(serviceComment);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('An error occurred'));
-      throw err; // Re-throw to handle in the component
+      throw err;
     } finally {
       setLoading(false);
     }

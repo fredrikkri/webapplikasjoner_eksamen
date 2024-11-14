@@ -1,4 +1,4 @@
-import { Course, Lesson, ApiResponse } from "../../types/types";
+import { Course, Lesson, CreateCourseData } from "../../types/types";
 import { ENDPOINTS } from "../../config/config";
 import { fetchWithRetry, validateResponse, handleApiError } from "../utils/apiUtils";
 
@@ -33,14 +33,17 @@ export const getAllCourses = async (): Promise<Course[]> => {
 };
 
 // Create a new course
-export const createCourse = async (data: Course): Promise<Course> => {
+export const createCourse = async (data: CreateCourseData): Promise<Course> => {
   try {
     const response = await fetchWithRetry<Course>(ENDPOINTS.courses, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        ...data.courseFields,
+        lessons: data.lessons
+      }),
     });
 
     return validateResponse(response);

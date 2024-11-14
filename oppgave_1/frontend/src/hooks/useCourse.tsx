@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getCourse, createCourse, getAllCourses } from "../lib/services";
-import { Course, ApiResponse } from "../types/types";
+import { Course, CreateCourseData } from "../types/types";
 
 export const useAllCourses = () => {
   const [courses, setCourses] = useState<Course[] | null>(null);
@@ -59,21 +59,18 @@ export const useCreateCourse = () => {
   const [error, setError] = useState<Error | null>(null);
   const { courses, loading: coursesLoading } = useAllCourses();
 
-  const addCourse = async (courseData: Course): Promise<void> => {
+  const addCourse = async (data: CreateCourseData): Promise<void> => {
     try {
       setLoading(true);
       setError(null);
 
+      const createdCourse = await createCourse(data);
+      
       if (courses) {
-        const updatedCourses = [...courses, courseData];
+        const updatedCourses = [...courses, createdCourse];
+        // Note: In a real app, you might want to update some global state here
       }
-
-      await createCourse(courseData);
     } catch (err) {
-      if (courses) {
-        const originalCourses = courses.filter(course => course.id !== courseData.id);
-      }
-
       let errorMessage = 'Failed to create course';
       if (err instanceof Error) {
         errorMessage = err.message;

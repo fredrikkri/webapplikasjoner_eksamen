@@ -6,7 +6,7 @@ import { CourseForm } from "./forms/CourseForm";
 import { LessonForm } from "./forms/LessonForm";
 import { LessonList } from "./forms/LessonList";
 import { formReducer, initialState, validateForm } from "../reducers/formReducer";
-import type { FormErrors } from "../types/types";
+import type { FormErrors, CreateCourseData } from "../types/types";
 
 const steps = [
   { id: 0, name: "Kursdetaljer" },
@@ -37,16 +37,18 @@ function Create() {
 
     try {
       console.log("Submitting course data:", {
-        ...state.courseFields,
+        courseFields: state.courseFields,
         lessons: state.lessons,
       });
 
       dispatch({ type: 'SET_STATUS', status: 'loading' });
 
-      await addCourse({
-        ...state.courseFields,
+      const courseData: CreateCourseData = {
+        courseFields: state.courseFields,
         lessons: state.lessons,
-      });
+      };
+
+      await addCourse(courseData);
 
       dispatch({
         type: 'SET_STATUS',

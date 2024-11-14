@@ -36,6 +36,32 @@ export interface LessonFields {
   order: string;
 }
 
+interface CreatedBy {
+  id: string | number;
+  name: string;
+}
+
+interface LessonRef {
+  id: string;
+}
+
+export interface Comment {
+  id: string;
+  createdBy: {
+    id: string;
+    name: string;
+  };
+  comment: string;
+  lesson: LessonRef;
+}
+
+export interface CommentData {
+  id: string;
+  createdBy: CreatedBy;
+  comment: string;
+  lesson: LessonRef;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T;
@@ -81,3 +107,8 @@ export type FormAction =
   | { type: 'CLEAR_ERRORS' }
   | { type: 'SET_STATUS'; status: FormState['status']; message?: string }
   | { type: 'RESET_FORM' };
+
+export type CreateCourseData = {
+  courseFields: CourseFields;
+  lessons: LessonFields[];
+}

@@ -156,7 +156,7 @@ export const createCourseRepository = (db: DB) => {
       if (!exists) {
         return {
           success: false,
-          error: { code: "NOT_FOUND", message: "Course not found exist" },
+          error: { code: "NOT_FOUND", message: "Course not found" },
         };
       }
 
@@ -200,7 +200,7 @@ export const createCourseRepository = (db: DB) => {
       if (!exists) {
         return {
           success: false,
-          error: { code: "NOT_FOUND", message: "Course not found exist" },
+          error: { code: "NOT_FOUND", message: "Course not found" },
         };
       }
 
@@ -481,7 +481,7 @@ export const createCourseRepository = (db: DB) => {
         console.error(`Course not found with id: ${data.id}`);
         return {
           success: false,
-          error: { code: "NOT_FOUND", message: "Course not found EE" },
+          error: { code: "NOT_FOUND", message: "Course not found" },
         };
       }
   
