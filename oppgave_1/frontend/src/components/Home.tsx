@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
+import { ROUTES } from "../config/config";
 
 interface HomeProps {
   children: ReactNode;
@@ -13,7 +14,7 @@ export default function Home({ children }: HomeProps) {
         <nav className="sticky top-0 z-50 py-6 backdrop-blur-sm">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold uppercase tracking-wider text-emerald-600 transition-colors hover:text-emerald-700" data-testid="logo">
-              <a href="/" className="flex items-center gap-2">
+              <a href={ROUTES.home} className="flex items-center gap-2">
                 <span className="text-3xl">📚</span>
                 Mikro LMS
               </a>
@@ -21,16 +22,16 @@ export default function Home({ children }: HomeProps) {
             <ul className="flex gap-8" data-testid="nav">
               <li data-testid="nav_courses">
                 <a 
-                  href="/kurs" 
-                  className="text-base font-medium text-slate-600 transition-colors hover:text-emerald-600"
+                  href={ROUTES.courses}
+                  className="text-base font-medium text-slate-600 transition-all duration-200 hover:text-emerald-600 hover:underline hover:underline-offset-4 active:text-emerald-800 active:scale-95"
                 >
                   Kurs
                 </a>
               </li>
               <li data-testid="nav_new">
                 <a 
-                  href="/ny" 
-                  className="rounded-full bg-emerald-600 px-6 py-2 text-base font-medium text-white transition-all hover:bg-emerald-700 hover:shadow-lg"
+                  href={ROUTES.new}
+                  className="rounded-full bg-emerald-600 px-6 py-2 text-base font-medium text-white transition-all duration-200 hover:bg-emerald-700 hover:shadow-lg active:bg-emerald-800 active:shadow-sm active:translate-y-0.5"
                 >
                   Nytt kurs
                 </a>

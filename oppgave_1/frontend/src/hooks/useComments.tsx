@@ -1,56 +1,31 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getComments, createComment } from "../lib/services";
+import { Comment, CommentData } from "../types/types"
 
-interface CreatedBy {
-  id: string | number;  // Keep as union type for flexibility in input
-  name: string;
-}
-
-interface LessonRef {
-  slug: string;
-}
-
-export interface Comment {
-  id: string;
-  createdBy: {
-    id: string;  // Service expects string
-    name: string;
-  };
-  comment: string;
-  lesson: LessonRef;
-}
-
-export interface CommentData {
-  id: string;
-  createdBy: CreatedBy;  // Allow string | number for id in input
-  comment: string;
-  lesson: LessonRef;
-}
-
-export const useComments = (lessonSlug: string) => {
+export const useComments = (lessonId: string) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        setLoading(true);
-        const data = await getComments(lessonSlug);
-        setComments(data);
-      } catch (err) {
-        setError(err instanceof Error ? err : new Error('An error occurred'));
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchComments = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await getComments(lessonId);
+      setComments(data);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('An error occurred'));
+    } finally {
+      setLoading(false);
+    }
+  }, [lessonId]);
 
-    if (lessonSlug) {
+  useEffect(() => {
+    if (lessonId) {
       fetchComments();
     }
-  }, [lessonSlug]);
+  }, [lessonId, fetchComments]);
 
-  return { comments, loading, error };
+  return { comments, loading, error, refreshComments: fetchComments };
 };
 
 export const useCreateComment = () => {
@@ -60,17 +35,17 @@ export const useCreateComment = () => {
   const addComment = async (commentData: CommentData) => {
     try {
       setLoading(true);
-      // Convert the commentData to match the service's expected type
       const serviceComment: Comment = {
         ...commentData,
         createdBy: {
           ...commentData.createdBy,
-          id: String(commentData.createdBy.id)  // Convert id to string
+          id: String(commentData.createdBy.id)
         }
       };
       await createComment(serviceComment);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('An error occurred'));
+      throw err;
     } finally {
       setLoading(false);
     }

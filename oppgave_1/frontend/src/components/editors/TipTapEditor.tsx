@@ -2,11 +2,21 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Editor as EditorInterface } from './types';
 
-/**
- * TipTap implementation of the Editor interface
- * Uses the basic starter kit for essential formatting features
- */
-export function TipTapEditor({ value, onChange, placeholder }: EditorInterface) {
+function processEditorContent(html: string): string {
+  const trimmed = html.trim();
+  
+  const singleParagraphMatch = trimmed.match(/^<p>(.*?)<\/p>$/s);
+  if (singleParagraphMatch) {
+    const innerContent = singleParagraphMatch[1];
+    if (!/<[^>]*>/g.test(innerContent)) {
+      return innerContent;
+    }
+  }
+  
+  return trimmed;
+}
+
+export function TipTapEditor({ value, onChange, placeholder, disabled = false }: EditorInterface) {
   const editor = useEditor({
     extensions: [StarterKit],
     content: value,
@@ -16,12 +26,22 @@ export function TipTapEditor({ value, onChange, placeholder }: EditorInterface) 
       },
     },
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      if (!disabled) {
+        const html = editor.getHTML();
+        const processedContent = processEditorContent(html);
+        onChange(processedContent);
+      }
     },
+    editable: !disabled,
+    immediatelyRender: false,
   });
 
   return (
-    <div className="rounded-lg border border-slate-200 focus-within:border-emerald-600 transition-colors">
+    <div className={`rounded-lg border border-slate-200 transition-colors ${
+      disabled 
+        ? 'cursor-not-allowed bg-slate-50' 
+        : 'focus-within:border-emerald-600'
+    }`}>
       <EditorContent editor={editor} />
       {!value && !editor?.isFocused && (
         <div className="absolute top-[1.25rem] left-4 text-slate-400 pointer-events-none">

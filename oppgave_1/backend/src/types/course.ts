@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { LessonSchema } from './lesson';
 
-// SRC: kilde: chatgpt.com /
 export const CourseSchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -18,13 +17,14 @@ export const CourseCreateStepsSchema = z.object({
   name: z.string()
 })
 
-export const CourseCreateSchema = CourseSchema.omit( {id: true} )
+export const CourseCreateSchema = CourseSchema.omit({ id: true, slug: true })
 export const CourseArraySchema = z.array(CourseSchema)
 
 export type CourseCreate = z.infer<typeof CourseCreateSchema>
 export type CourseResponse = z.infer<typeof CourseCreateSchema>
 export type UpdateCourse = z.infer<typeof UpdateCourseSchema>;
 export type Course = z.infer<typeof CourseSchema>
+export type CourseCreateSteps = z.infer<typeof CourseCreateStepsSchema>
 
 export const validateCourseCreateSteps = (data: unknown) => {
   return CourseCreateStepsSchema.safeParse(data);
@@ -34,9 +34,6 @@ export const validateCreateCourse = (data: unknown) => {
   return CourseCreateSchema.safeParse(data);
 };
 
-export type CourseCreateSteps = z.infer<typeof CourseCreateStepsSchema>
-
 export const validateUpdateCourse = (data: unknown) => {
-  return CourseSchema.safeParse(data);
+  return UpdateCourseSchema.safeParse(data);
 };
-
