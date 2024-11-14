@@ -5,6 +5,8 @@ import {
 } from "./event.repository";
 
 import {
+    validateEventCreate,
+    EventCreate,
     type Event,
     type EventResponse,
   } from "../../types/event";
@@ -28,9 +30,23 @@ export const createEventService = (eventRepository: EventRepository) => {
         return eventRepository.getById(slug);
       };
 
+      const create = async (data: Event): Promise<Result<string>> => {
+        console.log("nesten i mål", data)
+        const event = createEvent(data);
+    
+        if (!validateEventCreate(event).success) {
+          return {
+            success: false,
+            error: { code: "BAD_REQUEST", message: "Invalid Event data" },
+          };
+        }
+        return eventRepository.create(event);
+      };
+
 return {
     list,
     getById,
+    create
   };
 };
 
