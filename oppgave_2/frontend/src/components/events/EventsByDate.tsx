@@ -27,14 +27,14 @@ const EventsByDate = () => {
     <div>
       <h1 className="text-3xl font-bold text-gray-800 my-6 text-center">Arrangementer</h1>
       <div className='"flex items-center gap-2"'>
-        <select onChange={handleMonthChange} value={month !== null ? month : ""}>
+        <select onChange={handleMonthChange} value={month !== null ? month : ""} title='måneder'>
           <option value="">Alle måneder</option>
           {Array.from({ length: 12 }, (_, i) => (
             <option key={i} value={i}>{i + 1}</option>
           ))}
         </select>
         
-        <select onChange={handleYearChange} value={year !== null ? year : ""}>
+        <select onChange={handleYearChange} value={year !== null ? year : ""} title='år'>
           <option value="">Alle år</option>
           {Array.from({ length: 10 }, (_, i) => (
             <option key={i} value={2020 + i}>{2020 + i}</option>
