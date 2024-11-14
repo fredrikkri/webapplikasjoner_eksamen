@@ -2,12 +2,12 @@ import TemplateCardExpanded from './EventCardExpanded';
 import { useTemplate } from '@/hooks/useTemplate';
 
 interface TemplateProps {
-  id: string;
+  slug: string;
 }
 
-function SingleTemplate({ id = "" }: TemplateProps) {
+function SingleTemplate({ slug = "" }: TemplateProps) {
  
-  const { template, loading, error } = useTemplate(id);
+  const { template, loading, error } = useTemplate(slug);
 
   if (loading) return <div className="flex items-center justify-center h-screen text-gray-600 text-lg font-semibold animate-pulse">Laster arrangementer...</div>;
 

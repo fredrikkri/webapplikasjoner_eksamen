@@ -69,10 +69,10 @@ export const createActiveEventsRepository = (db: DB) => {
   };
 
   // SRC: kilde: chatgpt.com  || med endringer /
-  const getEventByActiveEventsId = async (eventId: string): Promise<Result<Event>> => {
+  const getEventByActiveEventsSlug = async (eventSlug: string): Promise<Result<Event>> => {
     try {
-      const query = db.prepare("SELECT e.* FROM events e JOIN events_active et ON e.id = et.event_id WHERE e.id = ?");
-      const eventData = query.get(eventId) as Event;
+      const query = db.prepare("SELECT e.* FROM events e JOIN events_active et ON e.id = et.event_id WHERE e.slug = ?");
+      const eventData = query.get(eventSlug) as Event;
   
       if (!eventData) {
         return {
@@ -100,7 +100,7 @@ export const createActiveEventsRepository = (db: DB) => {
   
 
 
-      return { list, create, getEventByActiveEventsId }
+      return { list, create, getEventByActiveEventsSlug }
 }
 
 export const activeEventsRepository = createActiveEventsRepository(db);

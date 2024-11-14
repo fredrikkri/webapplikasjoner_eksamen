@@ -30,9 +30,9 @@ export const createActiveEventsController = (activeEventsService: ActiveEventsSe
       });
 
 
-      app.get("/activeevents/:event_id", async (c) => {
-        const eventId = c.req.param("event_id");
-        const result = await activeEventsService.getActiveEventsByEventId(eventId);
+      app.get("/activeevents/:eventSlug", async (c) => {
+        const eventSlug = c.req.param("eventSlug");
+        const result = await activeEventsService.getActiveEventsByEventSlug(eventSlug);
     
         if (!result.success)
           return errorResponse(

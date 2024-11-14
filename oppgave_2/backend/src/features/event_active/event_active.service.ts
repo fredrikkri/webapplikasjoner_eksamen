@@ -30,8 +30,8 @@ export const createActiveEventsService = (templateRepository: ActiveEventsReposi
       };
 
       // SRC: kilde: chatgpt.com  || med endringer /
-      const getActiveEventsByEventId = async (eventId: string): Promise<Result<Event | undefined>> => {
-        const result = await templateRepository.getEventByActiveEventsId(eventId);
+      const getActiveEventsByEventSlug = async (eventSlug: string): Promise<Result<Event | undefined>> => {
+        const result = await templateRepository.getEventByActiveEventsSlug(eventSlug);
         
         if (!result.success) return result;
       
@@ -53,7 +53,7 @@ export const createActiveEventsService = (templateRepository: ActiveEventsReposi
       };
       
 
-return { list, create, getActiveEventsByEventId };
+return { list, create, getActiveEventsByEventSlug };
 };
 
 export const activeEventsService = createActiveEventsService(activeEventsRepository);

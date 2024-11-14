@@ -26,7 +26,7 @@ export const useAllTemplates = () => {
   return { templates, loading, error };
 };
 
-export const useTemplate = (templateId: string) => {
+export const useTemplate = (templateSlug: string) => {
   const [template, setTemplate] = useState<TemplateType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
@@ -35,7 +35,7 @@ export const useTemplate = (templateId: string) => {
     const fetchTemplate = async () => {
       try {
         setLoading(true);
-        const eventdata = await getTemplate(templateId);
+        const eventdata = await getTemplate(templateSlug);
         setTemplate(eventdata as unknown as TemplateType);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('An error occurred while fetching an template'));
@@ -44,10 +44,10 @@ export const useTemplate = (templateId: string) => {
       }
     };
 
-    if (templateId) {
+    if (templateSlug) {
       fetchTemplate();
     }
-  }, [templateId]);
+  }, [templateSlug]);
 
   return { template, loading, error };
 };
