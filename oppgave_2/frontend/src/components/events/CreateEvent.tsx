@@ -1,11 +1,12 @@
 "use client";
 import React, { useState } from 'react';
 import { Event as EventData } from '@/types/Event';
+import { useCreateEvent } from '@/hooks/useEvent';
 
 // SRC: kilde: chatgpt.com  / med endringer
 const CreateEvent: React.FC = () => {
   const [eventData, setEventData] = useState<EventData>({
-    id: "",
+    id: crypto.randomUUID(),
     title: '',
     description: '',
     date: new Date(),
@@ -16,13 +17,14 @@ const CreateEvent: React.FC = () => {
     available_slots: 0,
     price: 0,
   });
+  const { addEvent, loading, error } = useCreateEvent();
 
     // SRC: kilde: chatgpt.com 
   const generateSlug = (title: string) => {
     return title
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-') // Replace spaces and special characters with hyphens
-      .replace(/^-+|-+$/g, ''); // Remove any trailing hyphens
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
   };
 
   // SRC: kilde: chatgpt.com  / med endringer
@@ -33,13 +35,14 @@ const CreateEvent: React.FC = () => {
       ...prevData,
       [name]: name === 'total_slots' || name === 'available_slots' || name === 'price' ? Number(value) : value,
       slug: name === 'title' ? generateSlug(value) : prevData.slug,
+      available_slots: name == 'available_slots' ? 0 : prevData.total_slots
     }));
   };
 
   // SRC: kilde: chatgpt.com  / med endringer
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Event opprettet:\n${JSON.stringify(eventData, null, 2)}`);
+    await addEvent(eventData);
   };
 
   // SRC: kilde: chatgpt.com  / med endringer
@@ -134,18 +137,6 @@ const CreateEvent: React.FC = () => {
           type="number"
           name="total_slots"
           value={eventData.total_slots}
-          onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-          required
-        />
-      </label>
-
-      <label className="block">
-        Ledige plasser:
-        <input
-          type="number"
-          name="available_slots"
-          value={eventData.available_slots}
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           required

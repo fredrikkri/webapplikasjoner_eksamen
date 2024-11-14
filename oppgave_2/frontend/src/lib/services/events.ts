@@ -1,5 +1,4 @@
 import { BASE_URL, ENDPOINTS } from "@/config/config";
-// import { events } from "../../data/data";
 
 export interface Event {
   id: string;
@@ -9,7 +8,7 @@ export interface Event {
   date: Date;
   location: string;
   event_type: string;
-  total_slots: string;
+  total_slots: number;
   available_slots: number;
   price: number;
 }
@@ -39,4 +38,23 @@ export const getAllEvents = async (): Promise<Event[]> => {
   }
 
   return result.data as Event[];
+};
+
+export const createEvent = async (data: Event): Promise<void> => {
+  console.log("cirrent event", data)
+  try {
+    const response = await fetch(ENDPOINTS.create, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to create event: ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error("Error creating event:", error);
+  }
 };
