@@ -14,7 +14,7 @@ type EventCardProps = {
   
   export default function EventCardExpanded({ title, description, slug, date, location, event_type, total_slots, available_slots, price}: EventCardProps) {
     return (
-      <div style={{ padding: '8px', margin: '25px 0', borderRadius: '18px' }}>
+      <div className="p-2 my-6 rounded-lg" >
         <h2 className="text-2xl font-bold text-gray-800 my-3">{title}</h2>
         <p>{description}</p>
         <p>
