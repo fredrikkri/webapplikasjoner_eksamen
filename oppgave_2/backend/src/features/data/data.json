@@ -35,6 +35,18 @@
       "total_slots": 200,
       "available_slots": 30,
       "price": 1200
+    },
+    {
+      "id": "event-4",
+      "title": "Course in how to cure Covid virus",
+      "description": "This event will teach you how to cure covid",
+      "slug": "course-covid",
+      "date": "2026-07-02",
+      "location": "Fredrikstad, Norway",
+      "event_type": "Kurs",
+      "total_slots": 1340,
+      "available_slots": 90,
+      "price": 6799
     }
   ],
   "events_active": [
@@ -48,6 +60,9 @@
   "events_template": [
     {
       "event_id": "event-1"
+    },
+    {
+      "event_id": "event-3"
     }
   ],
   "registrations": [
@@ -62,6 +77,12 @@
       "email": "jane.smith@example.com",
       "has_paid": "false",
       "registration_date": "2024-11-05"
+    },
+    {
+      "event_id": "event-3",
+      "email": "john.doe@example.com",
+      "has_paid": "false",
+      "registration_date": "2022-10-09"
     }
   ],
   "days": [
