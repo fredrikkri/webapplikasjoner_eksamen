@@ -17,13 +17,23 @@ const CreateEvent: React.FC = () => {
     price: 0,
   });
 
+    // SRC: kilde: chatgpt.com 
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-') // Replace spaces and special characters with hyphens
+      .replace(/^-+|-+$/g, ''); // Remove any trailing hyphens
+  };
+
   // SRC: kilde: chatgpt.com  / med endringer
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setEventData({
-      ...eventData,
+
+    setEventData((prevData) => ({
+      ...prevData,
       [name]: name === 'total_slots' || name === 'available_slots' || name === 'price' ? Number(value) : value,
-    });
+      slug: name === 'title' ? generateSlug(value) : prevData.slug,
+    }));
   };
 
   // SRC: kilde: chatgpt.com  / med endringer
@@ -46,6 +56,19 @@ const CreateEvent: React.FC = () => {
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           required
+        />
+      </label>
+
+      <label className="block">
+        Slug:
+        <input
+          type="text"
+          name="slug"
+          value={eventData.slug}
+          onChange={handleChange}
+          className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+          required
+          readOnly
         />
       </label>
 
@@ -85,18 +108,6 @@ const CreateEvent: React.FC = () => {
       </label>
 
       <label className="block">
-        Slug:
-        <input
-          type="text"
-          name="slug"
-          value={eventData.slug}
-          onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-          required
-        />
-      </label>
-
-      <label className="block">
         Event Type:
         <select
           name="event_type"
@@ -105,10 +116,15 @@ const CreateEvent: React.FC = () => {
           className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           required
         >
-          <option value="">Velg type</option>
-          <option value="workshop">Workshop</option>
-          <option value="seminar">Seminar</option>
-          <option value="webinar">Webinar</option>
+          <option value="">Ingen kategori</option>
+          <option value="Seminar">Seminar</option>
+          <option value="Webinar">Webinar</option>
+          <option value="Kurs">Kurs</option>
+          <option value="Konsert">Konsert</option>
+          <option value="Opplæring">Opplæring</option>
+          <option value="Presentasjon">Presentasjon</option>
+          <option value="Forelesning">Forelesning</option>
+          <option value="Kunngjøring">Kunngjøring</option>
         </select>
       </label>
 
