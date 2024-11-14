@@ -1,7 +1,7 @@
 'use client';
 import { useParams } from "next/navigation";
 import React from "react";
-import SingleEvent from "../../../components/SingleEvent"
+import SingleEvent from "../../../components/events/SingleEvent"
 import Home from "@/components/Home";
 
 export default function Event() {

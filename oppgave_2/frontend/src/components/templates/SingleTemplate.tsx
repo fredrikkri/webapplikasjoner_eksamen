@@ -1,4 +1,4 @@
-import TemplateCardExpanded from './EventCardExpanded';
+import TemplateCardExpanded from './TemplateCardExpanded';
 import { useTemplate } from '@/hooks/useTemplate';
 
 interface TemplateProps {
@@ -29,6 +29,7 @@ function SingleTemplate({ slug = "" }: TemplateProps) {
 
   return (
     <TemplateCardExpanded 
+      id={template.id}
       title={template.title} 
       description={template.description} 
       slug={template.slug}

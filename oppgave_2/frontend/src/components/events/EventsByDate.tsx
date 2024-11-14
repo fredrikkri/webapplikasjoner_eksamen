@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Events from '../../components/Events';
+import Events from './Events';
 
 // SRC: kilde: chatgpt.com
 const EventsByDate = () => {

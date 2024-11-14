@@ -1,7 +1,7 @@
 'use client';
-import { useAllTemplates } from "../../hooks/useTemplate";
+import { useAllTemplates } from "@/hooks/useTemplate";
 import { useEffect, useState } from "react";
-import TemplateCard from "../../components/TemplateCard";
+import TemplateCard from "./TemplateCard";
 import { Template } from "@/types/Template";
 
 function ListTemplates() {
