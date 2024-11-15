@@ -31,3 +31,7 @@ export const validateCreateLesson = (data: unknown) => {
 export const validateUpdateLesson = (data: unknown) => {
   return UpdateLessonSchema.safeParse(data);
 };
+
+const validateLesson = (lessonData: any) => {
+  return LessonSchema.parse(lessonData);
+};

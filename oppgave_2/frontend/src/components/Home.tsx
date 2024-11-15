@@ -19,10 +19,18 @@ export default function Home({ children }: HomeProps) {
               </a>
             </h1>
             <ul className="flex gap-8" data-testid="nav">
-              <li data-testid="nav_courses">
+            <li data-testid="nav_events">
+                <a 
+                  href="/events" 
+                  className="text-black rounded-full bg-gray-200 py-2 px-6 font-bold text-sky-900 transition-all hover:bg-gray-300 hover:shadow-lg"
+                >
+                  Arrangementer
+                </a>
+              </li>
+              <li data-testid="nav_templates">
                 <a 
                   href="/templates" 
-                  className="text-black rounded-full bg-gray-200 py-2 px-6 font-bold text-sky-900 transition-all hover:bg-sky-300 hover:shadow-lg"
+                  className="text-black rounded-full bg-gray-200 py-2 px-6 font-bold text-sky-900 transition-all hover:bg-gray-300 hover:shadow-lg"
                 >
                   Mal
                 </a>
@@ -30,7 +38,7 @@ export default function Home({ children }: HomeProps) {
               <li data-testid="nav_new">
                 <a 
                   href="/opprett" 
-                  className="rounded-full bg-emerald-400 px-6 py-2 text-black font-medium transition-all hover:bg-emerald-300 hover:shadow-lg"
+                  className="rounded-full bg-teal-400 px-6 py-2 text-black font-medium transition-all hover:bg-teal-500 hover:shadow-lg"
                 >
                   Opprett arangement
                 </a>

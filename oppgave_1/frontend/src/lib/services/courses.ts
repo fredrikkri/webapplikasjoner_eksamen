@@ -1,60 +1,134 @@
-import { BASE_URL, ENDPOINTS } from "@/config/config";
-import { courses } from "../../data/data";
+import { Course, Lesson, CreateCourseData } from "../../types/types";
+import { ENDPOINTS } from "../../config/config";
+import { fetchWithRetry, validateResponse, handleApiError } from "../utils/apiUtils";
 
-interface LessonText {
-  id: string;
-  text: string;
-}
-
-interface Lesson {
-  id: string;
-  title: string;
-  slug: string;
-  preAmble: string;
-  text: LessonText[];
-  order?: string;
-}
-
-export interface Course {
-  id: string;
-  title: string;
-  slug: string;
-  description: string;
-  category: string;
-  lessons: Lesson[];
-}
-
-// Henter et kurs basert på slug
-export const getCourse = async (slug: string): Promise<Course | undefined> => {
-  // const course = courses.find((course) => course.slug === slug);
-  // return course;
-  const response = await fetch(ENDPOINTS.courses + `/${slug}`);
-  if (!response.ok) {
-    throw new Error("Failed to fetch course");
+// Get categories
+export const getCategories = async (): Promise<string[]> => {
+  try {
+    const response = await fetchWithRetry<string[]>(ENDPOINTS.categories);
+    return validateResponse(response);
+  } catch (error) {
+    return handleApiError(error);
   }
-  const result = await response.json();
-  if (!result.success) {
-    throw new Error(result.error.message || "Failed to fetch course");
-  }
-
-  return result.data as Course;
 };
 
+// Get a course by slug
+export const getCourse = async (slug: string): Promise<Course> => {
+  try {
+    const response = await fetchWithRetry<Course>(`${ENDPOINTS.courses}/${slug}`);
+    return validateResponse(response);
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// Get all courses
 export const getAllCourses = async (): Promise<Course[]> => {
-  const response = await fetch(ENDPOINTS.courses);
-  if (!response.ok) {
-    throw new Error("Failed to fetch courses");
+  try {
+    const response = await fetchWithRetry<Course[]>(ENDPOINTS.courses);
+    return validateResponse(response);
+  } catch (error) {
+    return handleApiError(error);
   }
-
-  const result = await response.json();
-  if (!result.success) {
-    throw new Error(result.error.message || "Failed to fetch courses");
-  }
-
-  return result.data as Course[];
 };
 
-// Oppretter et nytt kurs og legger det til kurslisten
-export const createCourse = async (data: Course): Promise<void> => {
-  courses.push(data);
+// Create a new course
+export const createCourse = async (data: CreateCourseData): Promise<Course> => {
+  try {
+    const response = await fetchWithRetry<Course>(ENDPOINTS.courses, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...data.courseFields,
+        lessons: data.lessons
+      }),
+    });
+
+    return validateResponse(response);
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// Update an existing course
+export const updateCourse = async (originalSlug: string, data: Partial<Course>): Promise<Course> => {
+  try {
+    // Get the existing course to ensure we have all the data
+    const existingCourse = await getCourse(originalSlug);
+    
+    // Prepare the update data, maintaining the original ID and merging with existing data
+    const updateData = {
+      ...existingCourse,
+      ...data,
+      id: originalSlug, // Use the original slug as the ID
+      slug: data.slug || originalSlug, // Use new slug if provided, otherwise keep original
+    };
+
+    const response = await fetchWithRetry<Course>(`${ENDPOINTS.courses}/${originalSlug}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updateData),
+    });
+
+    return validateResponse(response);
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// Delete a course
+export const deleteCourse = async (slug: string): Promise<void> => {
+  try {
+    const response = await fetchWithRetry<void>(`${ENDPOINTS.courses}/${slug}`, {
+      method: 'DELETE',
+    });
+
+    validateResponse(response);
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// Get a lesson by slug
+export const getLesson = async (courseSlug: string, lessonSlug: string): Promise<Lesson> => {
+  try {
+    const response = await fetchWithRetry<Lesson>(`${ENDPOINTS.courses}/${courseSlug}/${lessonSlug}`);
+    return validateResponse(response);
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// Update a lesson
+export const updateLesson = async (courseSlug: string, lessonSlug: string, data: Partial<Lesson>): Promise<Lesson> => {
+  try {
+    const response = await fetchWithRetry<Lesson>(ENDPOINTS.lessons(courseSlug, lessonSlug), {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    return validateResponse(response);
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// Delete a lesson
+export const deleteLesson = async (courseSlug: string, lessonSlug: string): Promise<void> => {
+  try {
+    const response = await fetchWithRetry<void>(ENDPOINTS.lessons(courseSlug, lessonSlug), {
+      method: 'DELETE',
+    });
+
+    validateResponse(response);
+  } catch (error) {
+    return handleApiError(error);
+  }
 };

@@ -28,16 +28,16 @@ type EventCardProps = {
           <strong>Lokasjon:</strong> {location}
         </p>
         <p>
-            <strong>Category:</strong> {event_type}
+            <strong>kategori:</strong> {event_type}
         </p>
         <p>
-            <strong>Total slots:</strong> {total_slots}
+            <strong>Antall plasser:</strong> {total_slots}
         </p>
         <p>
-            <strong>Available slots:</strong> {available_slots}
+            <strong>Ledige plasser:</strong> {available_slots}
         </p>
         <p>
-            <strong>Price:</strong> {price}
+            <strong>Pris:</strong> {price}
         </p>
         <Link href={`/events/${slug}`}>
       <button type="button" className="my-4 w-1/3 bg-sky-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700">

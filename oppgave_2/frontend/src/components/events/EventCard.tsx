@@ -14,7 +14,7 @@ interface EventCardProps {
       <div style={{ border: '1px solid #cce', padding: '18px', margin: '25px 0', borderRadius: '18px' }}>
         <h2 className="text-2xl font-bold text-gray-800 my-3">{title}</h2>
         <p>{description}</p>
-        <p><strong>Category: </strong>{event_type}</p>
+        <p><strong>Kategori: </strong>{event_type}</p>
         <p>
           <strong>Dato:</strong> {new Date(date).toLocaleDateString('no-NO', {
             year: 'numeric',

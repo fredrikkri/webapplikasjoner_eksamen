@@ -1,37 +1,6 @@
 import { useState, useEffect } from "react";
 import { getCourse, createCourse, getAllCourses } from "../lib/services";
-
-interface LessonText {
-  id: string;
-  text: string;
-}
-
-interface Lesson {
-  id: string;
-  title: string;
-  slug: string;
-  preAmble: string;
-  text: LessonText[];
-  order?: string; // Made optional since it's not always present
-}
-
-export interface Course {
-  id: string;
-  title: string;
-  slug: string;
-  description: string;
-  category: string;
-  lessons: Lesson[];
-}
-
-export interface CourseData {
-  id: string;
-  title: string;
-  slug: string;
-  description: string;
-  category: string;
-  lessons: Lesson[];
-}
+import { Course, CreateCourseData } from "../types/types";
 
 export const useAllCourses = () => {
   const [courses, setCourses] = useState<Course[] | null>(null);
@@ -42,8 +11,9 @@ export const useAllCourses = () => {
     const fetchCourses = async () => {
       try {
         setLoading(true);
+        setError(null);
         const data = await getAllCourses();
-        setCourses(data as Course[]);
+        setCourses(data);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('An error occurred while fetching all courses'));
       } finally {
@@ -66,10 +36,11 @@ export const useCourse = (courseSlug: string) => {
     const fetchCourse = async () => {
       try {
         setLoading(true);
+        setError(null);
         const data = await getCourse(courseSlug);
-        setCourse(data as Course);
+        setCourse(data);
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('An error occurred'));
+        setError(err instanceof Error ? err : new Error('Failed to fetch course'));
       } finally {
         setLoading(false);
       }
@@ -86,17 +57,38 @@ export const useCourse = (courseSlug: string) => {
 export const useCreateCourse = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
+  const { courses, loading: coursesLoading } = useAllCourses();
 
-  const addCourse = async (courseData: CourseData) => {
+  const addCourse = async (data: CreateCourseData): Promise<void> => {
     try {
       setLoading(true);
-      await createCourse(courseData);
+      setError(null);
+
+      const createdCourse = await createCourse(data);
+      
+      if (courses) {
+        const updatedCourses = [...courses, createdCourse];
+        // Note: In a real app, you might want to update some global state here
+      }
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('An error occurred'));
+      let errorMessage = 'Failed to create course';
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'object' && err !== null && 'message' in err) {
+        errorMessage = String(err.message);
+      }
+
+      setError(new Error(errorMessage));
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
-  return { addCourse, useAllCourses, loading, error };
+  return { 
+    addCourse, 
+    loading, 
+    error,
+    isReady: !coursesLoading
+  };
 };
