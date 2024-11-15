@@ -51,6 +51,7 @@ const CreateEvent: React.FC = () => {
     const action = e.currentTarget.getElementsByTagName("button").namedItem("action")?.getAttribute("value");
   
     if (action === "addTemplate") {
+      eventData.id = crypto.randomUUID();
       await addEvent(eventData);
       await onAddTemplate({ event_id: eventData.id });
     } else if (action === "addEvent") {
