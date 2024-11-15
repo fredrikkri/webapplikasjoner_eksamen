@@ -48,7 +48,9 @@ const CreateEvent: React.FC = () => {
   // SRC: kilde: chatgpt.com  / med endringer
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Gull",eventData)
     await addEvent(eventData);
+    eventData.id = crypto.randomUUID()
   };
 
   // SRC: kilde: chatgpt.com  / med endringer
