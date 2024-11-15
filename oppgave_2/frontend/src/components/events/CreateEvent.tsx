@@ -41,14 +41,22 @@ const CreateEvent: React.FC = () => {
       [name]: name === 'total_slots' || name === 'available_slots' || name === 'price' ? Number(value) : value,
       slug: name === 'title' ? generateSlug(value, prevData.id) : prevData.slug,
       available_slots: name == 'available_slots' ? 0 : prevData.total_slots
-    }));
+      }));
   };
 
   // SRC: kilde: chatgpt.com  / med endringer
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await addEvent(eventData);
-    eventData.id = crypto.randomUUID()
+  
+    const action = e.currentTarget.getElementsByTagName("button").namedItem("action")?.getAttribute("value");
+  
+    if (action === "addTemplate") {
+      await addEvent(eventData);
+      await onAddTemplate({ event_id: eventData.id });
+    } else if (action === "addEvent") {
+      eventData.id = crypto.randomUUID();
+      await addEvent(eventData);
+    }
   };
 
   const onAddTemplate = async ({ event_id }: { event_id: string }) => {
@@ -182,12 +190,21 @@ const CreateEvent: React.FC = () => {
       </label>
 
       <div className="flex space-x-4 w-full">
-  <button type="submit" className="w-2/5 bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500" 
-    onClick={() => onAddTemplate({ event_id: eventData.id })}> Lagre som mal </button>
 
-  <button type="submit" className="w-3/5 bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700">
-    Opprett Event
-  </button>
+      <button
+      name="action"
+      value="addTemplate"
+      type="submit"
+      className="w-2/5 bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500"
+    > Lagre som mal </button>
+
+    <button
+      name="action"
+      value="addEvent"
+      type="submit"
+      className="w-3/5 bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700"
+    > Opprett Event </button>
+
 </div>
     </form>
   );
