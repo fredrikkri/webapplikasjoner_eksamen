@@ -6,7 +6,7 @@ import { useCreateEvent } from '@/hooks/useEvent';
 // SRC: kilde: chatgpt.com  / med endringer
 const CreateEvent: React.FC = () => {
   const [eventData, setEventData] = useState<EventData>({
-    id: "",
+    id: crypto.randomUUID(),
     title: '',
     description: '',
     date: new Date(),
@@ -176,7 +176,7 @@ const CreateEvent: React.FC = () => {
       </label>
 
       <div className="flex space-x-4 w-full">
-  <button type="button" className="w-2/5 bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500" 
+  <button type="submit" className="w-2/5 bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500" 
 onClick={() => onAddTemplate({ event_id: eventData.id })}>
   Lagre som mal
   </button>
