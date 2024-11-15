@@ -64,7 +64,7 @@ const CreateEvent: React.FC = () => {
       </label>
 
       <label className="block">
-        Slug:
+        URL-Slug:
         <input
           type="text"
           name="slug"
@@ -112,7 +112,7 @@ const CreateEvent: React.FC = () => {
       </label>
 
       <label className="block">
-        Event Type:
+        Kategori:
         <select
           name="event_type"
           value={eventData.event_type}
@@ -133,7 +133,7 @@ const CreateEvent: React.FC = () => {
       </label>
 
       <label className="block">
-        Totale plasser:
+        Antall plasser:
         <input
           type="number"
           name="total_slots"
