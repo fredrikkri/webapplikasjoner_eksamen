@@ -13,6 +13,12 @@ export interface Template {
   price: number;
 }
 
+export interface TemplateBase {
+  id: string;
+  event_id: string;
+}
+
+
 export const getTemplate = async (slug: string): Promise<Template | undefined> => {
   const response = await fetch(ENDPOINTS.templates + `/${slug}`);
   if (!response.ok) {
@@ -39,3 +45,4 @@ export const getAllTemplates = async (): Promise<Template[]> => {
 
   return result.data as Template[];
 };
+
