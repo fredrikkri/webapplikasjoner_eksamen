@@ -5,7 +5,7 @@ export interface Event {
   title: string;
   description: string;
   slug: string;
-  date: Date;
+  date: string;
   location: string;
   event_type: string;
   total_slots: number;
@@ -41,7 +41,7 @@ export const getAllEvents = async (): Promise<Event[]> => {
 };
 
 export const createEvent = async (data: Event): Promise<void> => {
-  console.log("cirrent event", data)
+  console.log("current event", data)
   try {
     const response = await fetch(ENDPOINTS.create, {
       method: 'POST',

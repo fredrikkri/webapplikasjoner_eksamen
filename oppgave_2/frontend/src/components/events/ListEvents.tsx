@@ -7,7 +7,7 @@ interface Event {
   title: string;
   description: string;
   slug: string;
-  date: Date;
+  date: string;
   location: string;
   event_type: string;
   total_slots: number;

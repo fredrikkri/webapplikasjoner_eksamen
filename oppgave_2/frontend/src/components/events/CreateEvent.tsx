@@ -11,7 +11,7 @@ const CreateEvent: React.FC = () => {
     id: crypto.randomUUID(),
     title: '',
     description: '',
-    date: new Date(),
+    date: new Date().toISOString(),
     location: '',
     slug: '',
     event_type: '',
@@ -51,12 +51,13 @@ const CreateEvent: React.FC = () => {
     const action = e.currentTarget.getElementsByTagName("button").namedItem("action")?.getAttribute("value");
   
     if (action === "addTemplate") {
-      eventData.id = crypto.randomUUID();
       await addEvent(eventData);
       await onAddTemplate({ event_id: eventData.id });
+      eventData.id = crypto.randomUUID();
     } else if (action === "addEvent") {
       eventData.id = crypto.randomUUID();
       await addEvent(eventData);
+      eventData.id = crypto.randomUUID();
     }
   };
 
