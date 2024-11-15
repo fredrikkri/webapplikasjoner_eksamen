@@ -47,7 +47,6 @@ const CreateEvent: React.FC = () => {
   };
 
   const onAddTemplate = async ({ event_id }: { event_id: string }) => {
-    console.log("onAddTemplate: ",event_id)
     try {
       const response = await fetch("http://localhost:3999/api/v1/addL", {
         method: "POST",

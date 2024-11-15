@@ -40,7 +40,6 @@ export const createTemplateRepository = (db: DB) => {
   };
   
   const create = async (data: TemplateCreate): Promise<Result<string>> => {
-    console.log(data.event_id)
     try {
       const eventExists = db.prepare("SELECT 1 FROM events WHERE id = ? LIMIT 1").get(data.event_id);
       if (!eventExists) {
