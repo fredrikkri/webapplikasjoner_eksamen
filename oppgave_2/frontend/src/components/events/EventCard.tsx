@@ -3,7 +3,7 @@ import Link from "next/link";
 interface EventCardProps {
     title: string;
     description: string;
-    date: string | Date;
+    date: Date;
     location: string;
     slug: string;
     event_type: string;
@@ -28,9 +28,9 @@ interface EventCardProps {
           <strong>Lokasjon:</strong> {location}
         </p>
         {available_slots > 0 ? 
-          <p className="bg-emerald-500 text-white border border-emerald-700 rounded p-2 w-40">Ledige plasser</p> 
+          <p className="my-2 text-center bg-emerald-500 text-white border border-emerald-700 rounded p-2 w-40">Ledige plasser</p> 
         :
-          <p className="bg-red-500 text-white border border-emerald-700 rounded p-2 w-48">Ingen ledige plasser</p>
+          <p className="my-2 text-center bg-red-500 text-white border border-emerald-700 rounded p-2 w-48">Ingen ledige plasser</p>
         }
         <Link href={`/events/${slug}`}>
       <button className="px-3 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 transition my-4 mx-1">

@@ -5,6 +5,8 @@ import { useCreateEvent } from '@/hooks/useEvent';
 
 // SRC: kilde: chatgpt.com  / med endringer
 const CreateEvent: React.FC = () => {
+
+
   const [eventData, setEventData] = useState<EventData>({
     // Id settes til å være en random id her, optimalt så vil det ønskes at dette gjøres i backend
     id: crypto.randomUUID(),
@@ -21,11 +23,14 @@ const CreateEvent: React.FC = () => {
   const { addEvent, loading, error } = useCreateEvent();
 
     // SRC: kilde: chatgpt.com 
-  const generateSlug = (title: string) => {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
+    const generateSlug = (title: string, id: string) => {
+      const titleSlug = title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    
+      const uniquePart = id.slice(0, 6);
+      return `${titleSlug}-${uniquePart}`;
   };
 
   // SRC: kilde: chatgpt.com  / med endringer
@@ -35,7 +40,7 @@ const CreateEvent: React.FC = () => {
     setEventData((prevData) => ({
       ...prevData,
       [name]: name === 'total_slots' || name === 'available_slots' || name === 'price' ? Number(value) : value,
-      slug: name === 'title' ? generateSlug(value) : prevData.slug,
+      slug: name === 'title' ? generateSlug(value, prevData.id) : prevData.slug,
       available_slots: name == 'available_slots' ? 0 : prevData.total_slots
     }));
   };
