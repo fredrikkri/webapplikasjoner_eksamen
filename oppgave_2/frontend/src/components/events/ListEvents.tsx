@@ -18,35 +18,30 @@ interface Event {
 interface EventsProps {
   selectedMonth?: number | null;
   selectedYear?: number | null;
+  selectedCategory?: string | null;
 }
 
-const Events: React.FC<EventsProps> = ({ selectedMonth, selectedYear }) => {
+const ListEvents: React.FC<EventsProps> = ({ selectedMonth, selectedYear, selectedCategory }) => {
   const { events, loading, error } = useAllEvents(); 
   const [data, setData] = useState<Event[]>([]);
 
   // SRC: kilde: chatgpt.com  / med endringer
-  useEffect(() => {
-    if (events && events.length) {
-      const filteredEvents = events.filter(event => {
-        const eventDate = new Date(event.date);
-        if (isNaN(eventDate.getTime())) return false;
+ useEffect(() => {
+  if (events && events.length) {
+    const filteredEvents = events.filter(event => {
+      const eventDate = new Date(event.date);
+      if (isNaN(eventDate.getTime())) return false;
+      const matchesMonth = selectedMonth === null || eventDate.getMonth() === selectedMonth;
+      const matchesYear = selectedYear === null || eventDate.getFullYear() === selectedYear;
+      const matchesCategory = selectedCategory === null || event.event_type === selectedCategory;
 
-        if (selectedMonth !== null && selectedYear !== null) {
-          return (
-            eventDate.getMonth() === selectedMonth &&
-            eventDate.getFullYear() === selectedYear
-          );
-        } else if (selectedMonth !== null) {
-          return eventDate.getMonth() === selectedMonth;
-        } else if (selectedYear !== null) {
-          return eventDate.getFullYear() === selectedYear;
-        }
-        return true;
-      });
+      return matchesMonth && matchesYear && matchesCategory;
+    });
 
-      setData(filteredEvents);
-    }
-  }, [events, selectedMonth, selectedYear]);
+    setData(filteredEvents);
+  }
+}, [events, selectedMonth, selectedYear, selectedCategory]);
+
 
   if (loading) return <div className="flex items-center justify-center h-screen text-gray-600 text-lg font-semibold animate-pulse">Laster arrangementer...</div>;
   if (error) return <div>Det oppstod en feil ved henting av eventer.</div>;
@@ -64,6 +59,8 @@ const Events: React.FC<EventsProps> = ({ selectedMonth, selectedYear }) => {
               location={event.location} 
               slug={event.slug}
               event_type={event.event_type}
+              total_slots={event.total_slots}
+              available_slots={event.available_slots}
             />
           ))
         ) : (
@@ -74,4 +71,4 @@ const Events: React.FC<EventsProps> = ({ selectedMonth, selectedYear }) => {
   );
 };
 
-export default Events;
+export default ListEvents;
