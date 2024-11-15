@@ -41,7 +41,7 @@ const EventsByDate = () => {
           ))}
         </select>
         
-        <button onClick={handleClear}>Clear</button>
+        <button className='ml-4' onClick={handleClear}>Clear</button>
       </div>
 
       <Events selectedMonth={month} selectedYear={year} />
