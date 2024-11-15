@@ -42,10 +42,12 @@ const CreateEvent: React.FC = () => {
   // SRC: kilde: chatgpt.com  / med endringer
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("handleSubmit: ",eventData.id)
     await addEvent(eventData);
   };
 
   const onAddTemplate = async ({ event_id }: { event_id: string }) => {
+    console.log("onAddTemplate: ",event_id)
     try {
       const response = await fetch("http://localhost:3999/api/v1/addL", {
         method: "POST",
@@ -60,9 +62,9 @@ const CreateEvent: React.FC = () => {
       }
       setEventData(data.data);
     } catch (error) {
-      console.log("e")
+      console.log("fail catch")
     } finally {
-      console.log("e")    }
+      console.log("finally")    }
   };
 
   // SRC: kilde: chatgpt.com  / med endringer
@@ -177,9 +179,7 @@ const CreateEvent: React.FC = () => {
 
       <div className="flex space-x-4 w-full">
   <button type="submit" className="w-2/5 bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500" 
-onClick={() => onAddTemplate({ event_id: eventData.id })}>
-  Lagre som mal
-  </button>
+    onClick={() => onAddTemplate({ event_id: eventData.id })}> Lagre som mal </button>
 
   <button type="submit" className="w-3/5 bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700">
     Opprett Event
