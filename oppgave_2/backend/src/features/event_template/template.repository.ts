@@ -41,23 +41,33 @@ export const createTemplateRepository = (db: DB) => {
   
   const create = async (data: TemplateCreate): Promise<Result<string>> => {
     try {
+      const eventExists = db.prepare("SELECT 1 FROM events WHERE id = ? LIMIT 1").get(data.event_id);
+      if (!eventExists) {
+        return {
+          success: false,
+          error: {
+            code: "NOT_FOUND",
+            message: `Event with ID ${data.event_id} does not exist.`,
+          },
+        };
+      }
       const template = toDb(data);
-
+      
       const query = db.prepare(`
-        INSERT INTO events_template (id, event_id)
-        VALUES (?, ?)
+        INSERT INTO events_template (event_id)
+        VALUES (?)
       `);
 
       query.run(
-        template.id,
         template.event_id
       );
 
       return {
         success: true,
-        data: template.id,
+        data: template.event_id,
       };
     } catch (error) {
+      console.error("Error creating template:", error);
       return {
         success: false,
         error: {
@@ -67,6 +77,7 @@ export const createTemplateRepository = (db: DB) => {
       };
     }
   };
+  
 
   // SRC: kilde: chatgpt.com  || med endringer /
   const getEventByTemplateSlug = async (eventSlug: string): Promise<Result<Event>> => {

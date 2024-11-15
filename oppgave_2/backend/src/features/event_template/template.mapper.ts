@@ -28,7 +28,7 @@ export const fromDb = (event: Template) => {
 
 export const createTemplate = (event: Partial<Template>): Template => {
     return {
-        id: event.id ?? createId(),  
+        id: event.id ?? "",  
         event_id: event?.event_id ?? ""
     };
 };
@@ -36,7 +36,6 @@ export const createTemplate = (event: Partial<Template>): Template => {
 export const toDb = (data: Partial<Template>) => {
   const event = createTemplate(data); 
   return {
-    id: event.id ?? createId(),  
-    event_id: event?.event_id ?? ""
+    event_id: event.event_id
     };
 };

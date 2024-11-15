@@ -24,7 +24,7 @@ export const createEventResponse = (event: Event): Event => {
   
   export const createEvent = (event: Partial<Event>): Event => {
     return {
-        id: event.id ? "" : createId(),  
+        id: event.id ?? createId(),  
         title: event?.title ?? "", 
         description: event?.description ?? "", 
         slug: event?.slug ?? "", 
