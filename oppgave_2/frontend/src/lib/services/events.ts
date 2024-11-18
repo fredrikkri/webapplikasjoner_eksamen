@@ -1,17 +1,5 @@
 import { BASE_URL, ENDPOINTS } from "@/config/config";
-
-export interface Event {
-  id: string;
-  title: string;
-  description: string;
-  slug: string;
-  date: string;
-  location: string;
-  event_type: string;
-  total_slots: number;
-  available_slots: number;
-  price: number;
-}
+import { Event } from "../../types/Event"
 
 export const getEvent = async (slug: string): Promise<Event | undefined> => {
   const response = await fetch(ENDPOINTS.events + `/${slug}`);

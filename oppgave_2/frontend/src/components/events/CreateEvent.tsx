@@ -6,7 +6,6 @@ import { useCreateEvent } from '@/hooks/useEvent';
 // SRC: kilde: chatgpt.com  / med endringer
 const CreateEvent: React.FC = () => {
 
-
   const [eventData, setEventData] = useState<EventData>({
     id: crypto.randomUUID(),
     title: '',
