@@ -6,7 +6,7 @@ export const createTables = (db: DB) => {
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
         description TEXT NOT NULL,
-        slug TEXT UNIQUE NOT NULL,
+        slug TEXT NOT NULL,
         date TEXT NOT NULL,
         location TEXT NOT NULL,
         event_type TEXT NOT NULL,
