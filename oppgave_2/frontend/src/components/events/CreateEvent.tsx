@@ -1,12 +1,10 @@
 "use client";
+
 import React, { useState } from 'react';
 import { Event as EventData } from '@/types/Event';
 import { useCreateEvent } from '@/hooks/useEvent';
 
-// SRC: kilde: chatgpt.com  / med endringer
 const CreateEvent: React.FC = () => {
-
-
   const [eventData, setEventData] = useState<EventData>({
     id: crypto.randomUUID(),
     title: '',
@@ -21,35 +19,38 @@ const CreateEvent: React.FC = () => {
   });
   const { addEvent, loading, error } = useCreateEvent();
 
-    // SRC: kilde: chatgpt.com 
-    const generateSlug = (title: string, id: string) => {
-      const titleSlug = title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-    
-      const uniquePart = id.slice(0, 6);
-      return `${titleSlug}-${uniquePart}`;
+  const generateSlug = (title: string, id: string) => {
+    const titleSlug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  
+    // Ensure id is a valid string, fall back to a random UUID if undefined
+    const validId = id || crypto.randomUUID();
+    const uniquePart = validId.slice(0, 6);  // Slice the first 6 characters
+    return `${titleSlug}-${uniquePart}`;
   };
 
-  // SRC: kilde: chatgpt.com  / med endringer
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+
+  
+   // SRC: kilde: chatgpt.com  / med endringer
+   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     setEventData((prevData) => ({
       ...prevData,
-      [name]: name === 'total_slots' || name === 'available_slots' || name === 'price' ? Number(value) : value,
+      [name]: name === 'total_slots'  || name === 'available_slots' || name === 'price' ? Number(value) : name === 'date'
+          ? new Date(value) : value,
       slug: name === 'title' ? generateSlug(value, prevData.id) : prevData.slug,
       available_slots: name == 'available_slots' ? 0 : prevData.total_slots
       }));
   };
 
-  // SRC: kilde: chatgpt.com  / med endringer
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
+
     const action = e.currentTarget.getElementsByTagName("button").namedItem("action")?.getAttribute("value");
-  
+
     if (action === "addTemplate") {
       eventData.id = crypto.randomUUID();
       await addEvent(eventData);
@@ -75,12 +76,12 @@ const CreateEvent: React.FC = () => {
       }
       setEventData(data.data);
     } catch (error) {
-      console.log("fail catch")
+      console.log("fail catch");
     } finally {
-      console.log("finally")    }
+      console.log("finally");
+    }
   };
 
-  // SRC: kilde: chatgpt.com  / med endringer
   return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4 rounded-lg space-y-4">
       <h2 className="text-2xl font-bold mb-4">Opprett et nytt arrangement</h2>
@@ -124,13 +125,14 @@ const CreateEvent: React.FC = () => {
       <label className="block">
         Dato:
         <input
-          type="date"
-          name="date"
-          value={eventData.date.toString()}
-          onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-          required
-        />
+  type="date"
+  name="date"
+  value={eventData.date ? eventData.date.toISOString().split('T')[0] : ''}  // Ensure it's always a string, not undefined
+  onChange={handleChange}
+  className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+  required
+/>
+
       </label>
 
       <label className="block">
@@ -191,22 +193,24 @@ const CreateEvent: React.FC = () => {
       </label>
 
       <div className="flex space-x-4 w-full">
+        <button
+          name="action"
+          value="addTemplate"
+          type="submit"
+          className="w-2/5 bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500"
+        >
+          Lagre som mal
+        </button>
 
-      <button
-      name="action"
-      value="addTemplate"
-      type="submit"
-      className="w-2/5 bg-gray-400 text-white py-2 px-4 rounded-md hover:bg-gray-500"
-    > Lagre som mal </button>
-
-    <button
-      name="action"
-      value="addEvent"
-      type="submit"
-      className="w-3/5 bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700"
-    > Opprett Event </button>
-
-</div>
+        <button
+          name="action"
+          value="addEvent"
+          type="submit"
+          className="w-3/5 bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700"
+        >
+          Opprett Event
+        </button>
+      </div>
     </form>
   );
 };
