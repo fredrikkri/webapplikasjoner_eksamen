@@ -2,6 +2,7 @@
 import React, { FormEvent, useState } from 'react';
 import { Event as EventData } from '@/types/Event';
 import { useCreateEvent } from '@/hooks/useEvent';
+import { ENDPOINTS } from '@/config/config';
 
 // SRC: kilde: chatgpt.com  / med endringer
 const CreateEvent: React.FC = () => {
@@ -63,7 +64,7 @@ const CreateEvent: React.FC = () => {
 
   const onAddTemplate = async ({ event_id }: { event_id: string }) => {
     try {
-      const response = await fetch("http://localhost:3999/api/v1/addL", {
+      const response = await fetch(ENDPOINTS.createTemplate, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
