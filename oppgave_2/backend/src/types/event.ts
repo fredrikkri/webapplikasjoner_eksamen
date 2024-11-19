@@ -6,9 +6,9 @@ export const EventSchema = z.object({
     id: z.string(),
     title: z.string(),
     description: z.string(),
-    slug: z.string(),
-    date: z.date(),
+    date: z.string(),
     location: z.string(),
+    slug: z.string(),
     event_type: z.string(),
     total_slots: z.number(),
     available_slots: z.number(),
@@ -33,7 +33,7 @@ export const EventSchema = z.object({
   };
 
   export const validateEventCreate = (data: unknown) => {
-    return EventCreateSchema.safeParse(parseDate(data));
+    return EventCreateSchema.safeParse(data);
   };
 
   export const validateEventUpdate = (data: unknown) => {

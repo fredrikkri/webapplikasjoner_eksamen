@@ -8,7 +8,7 @@ export const createTemplateResponse = (template: any): Event => {
         title: template.title,
         description: template.description,
         slug: template.slug,
-        date: new Date(template.date),
+        date: template.date,
         location: template.location,
         event_type: template.event_type,
         total_slots: template.total_slots,

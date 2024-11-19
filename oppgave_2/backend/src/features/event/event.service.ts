@@ -31,6 +31,7 @@ export const createEventService = (eventRepository: EventRepository) => {
       };
 
       const create = async (data: Event): Promise<Result<string>> => {
+        console.log("this is the data: ",)
         const event = createEvent(data);
     
         if (!validateEventCreate(event).success) {

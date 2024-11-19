@@ -7,7 +7,7 @@ import { useCreateEvent } from '@/hooks/useEvent';
 const CreateEvent: React.FC = () => {
 
   const [eventData, setEventData] = useState<EventData>({
-    id: crypto.randomUUID(),
+    id: '',
     title: '',
     description: '',
     date: new Date().toISOString(),
@@ -21,13 +21,14 @@ const CreateEvent: React.FC = () => {
   const { addEvent, loading, error } = useCreateEvent();
 
     // SRC: kilde: chatgpt.com 
-    const generateSlug = (title: string, id: string) => {
+    const generateSlug = (title: string) => {
+      const randomId = crypto.randomUUID()
       const titleSlug = title
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
     
-      const uniquePart = id.slice(0, 6);
+      const uniquePart = randomId.slice(0, 6);
       return `${titleSlug}-${uniquePart}`;
   };
 
@@ -38,7 +39,7 @@ const CreateEvent: React.FC = () => {
     setEventData((prevData) => ({
       ...prevData,
       [name]: name === 'total_slots' || name === 'available_slots' || name === 'price' ? Number(value) : value,
-      slug: name === 'title' ? generateSlug(value, prevData.id) : prevData.slug,
+      slug: name === 'title' ? generateSlug(value) : prevData.slug,
       available_slots: name == 'available_slots' ? 0 : prevData.total_slots
       }));
   };
@@ -52,11 +53,8 @@ const CreateEvent: React.FC = () => {
     if (action === "addTemplate") {
       await addEvent(eventData);
       await onAddTemplate({ event_id: eventData.id });
-      eventData.id = crypto.randomUUID();
     } else if (action === "addEvent") {
-      eventData.id = crypto.randomUUID();
       await addEvent(eventData);
-      eventData.id = crypto.randomUUID();
     }
   };
 
@@ -90,7 +88,7 @@ const CreateEvent: React.FC = () => {
         <input
           type="text"
           name="title"
-          value={eventData.title}
+          value={eventData.title || ""}
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           required
@@ -102,7 +100,7 @@ const CreateEvent: React.FC = () => {
         <input
           type="text"
           name="slug"
-          value={eventData.slug}
+          value={eventData.slug || ""}
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           required
@@ -114,7 +112,7 @@ const CreateEvent: React.FC = () => {
         Beskrivelse:
         <textarea
           name="description"
-          value={eventData.description}
+          value={eventData.description || ""}
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           required
@@ -126,7 +124,7 @@ const CreateEvent: React.FC = () => {
         <input
           type="date"
           name="date"
-          value={eventData.date.toString()}
+          value={eventData.date || ""}
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           required
@@ -138,7 +136,7 @@ const CreateEvent: React.FC = () => {
         <input
           type="text"
           name="location"
-          value={eventData.location}
+          value={eventData.location || ""}
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           required
@@ -149,7 +147,7 @@ const CreateEvent: React.FC = () => {
         Kategori:
         <select
           name="event_type"
-          value={eventData.event_type}
+          value={eventData.event_type || ""}
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           required
@@ -171,7 +169,7 @@ const CreateEvent: React.FC = () => {
         <input
           type="number"
           name="total_slots"
-          value={eventData.total_slots}
+          value={eventData.total_slots || 0}
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           required
@@ -183,7 +181,7 @@ const CreateEvent: React.FC = () => {
         <input
           type="number"
           name="price"
-          value={eventData.price}
+          value={eventData.price || 0}
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           required
