@@ -33,7 +33,7 @@ export const EventSchema = z.object({
   };
 
   export const validateEventCreate = (data: unknown) => {
-    return EventCreateSchema.safeParse(data);
+    return EventCreateSchema.safeParse(parseDate(data));
   };
 
   export const validateEventUpdate = (data: unknown) => {
