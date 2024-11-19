@@ -34,6 +34,7 @@ export const createEventController = (EventService: any) => {
 
   app.post("/create", async (c) => {
     const data = await c.req.json();
+    console.log("Received data on server:", data);
     const result = await EventService.create(data);
     if (!result.success)
       return errorResponse(

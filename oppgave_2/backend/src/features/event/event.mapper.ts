@@ -23,32 +23,36 @@ export const createEventResponse = (event: Event): Event => {
   };
   
   export const createEvent = (event: Partial<Event>): Event => {
-    return {
-        id: event.id ?? createId(),  
+    const newEvent = {
+        id: createId(),
         title: event?.title ?? "", 
         description: event?.description ?? "", 
         slug: event?.slug ?? "", 
-        date: event.date ?? new Date(),
+        date: event.date?? "",
         location: event.location ?? "",
         event_type: event.event_type ?? "",
         total_slots: event.total_slots ?? 0,
         available_slots: event.total_slots ?? 0,
         price: event.price ?? 0,
-    };
+    }
+    console.log("Mapped event, createEvent:", newEvent);
+    return newEvent;
   };
   
 export const toDb = (data: Partial<Event>) => {
   const event = createEvent(data); 
-  return {
-    id: event.id,  
+  const newEvent = {
+    id: event?.id,  
     title: event?.title, 
     description: event?.description, 
     slug: event?.slug, 
-    date: event.date,
+    date: new Date(event.date).toISOString().split('T')[0],
     location: event.location,
     event_type: event.event_type,
     total_slots: event.total_slots,
-    avalible_slots: event.available_slots ,
+    avalible_slots: event.available_slots,
     price: event.price ,
-    };
+    }
+    console.log("Mapped event, toDb:", newEvent);
+    return newEvent;
 };

@@ -1,23 +1,5 @@
 import { BASE_URL, ENDPOINTS } from "@/config/config";
-
-export interface Template {
-  id: string;
-  title: string;
-  description: string;
-  slug: string;
-  date: Date;
-  location: string;
-  event_type: string;
-  total_slots: string;
-  available_slots: number;
-  price: number;
-}
-
-export interface TemplateBase {
-  id: string;
-  event_id: string;
-}
-
+import { Template } from "../../types/Template"
 
 export const getTemplate = async (slug: string): Promise<Template | undefined> => {
   const response = await fetch(ENDPOINTS.templates + `/${slug}`);
