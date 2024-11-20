@@ -22,6 +22,7 @@ export const createTemplateService = (templateRepository: TemplateRepository) =>
         const registration = createTemplate(data);
     
         if (!validateTemplateCreate(registration).success) {
+          console.log("OGOGOGOGO1")
           return {
             success: false,
             error: { code: "BAD_REQUEST", message: "Invalid Template data" },

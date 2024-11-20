@@ -52,9 +52,10 @@ const CreateEvent: React.FC = () => {
 
     console.log(`Button clicked: ${action}`);
     const action2 = e.currentTarget.getElementsByTagName("button")
+    console.log("pre-sub ", eventData.slug)
     eventData.id = crypto.randomUUID();
     if (action === "addTemplate") {
-      console.log("handlesubmit: \n",eventData.id)
+      console.log("handlesubmit: \n",eventData.slug)
       await addEvent(eventData);
       await onAddTemplate({ event_id: eventData.slug });
     } else if (action === "addEvent") {
@@ -73,9 +74,11 @@ const CreateEvent: React.FC = () => {
       });
       const data = await response.json();
       if (!data.success) {
+        console.log("FAIL: ", data.data)
         return;
       }
       setEventData(data.data);
+      console.log("setData: ", data.data)
     } catch (error) {
       console.log("fail catch")
     } finally {
