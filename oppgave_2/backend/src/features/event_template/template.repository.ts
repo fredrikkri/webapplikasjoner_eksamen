@@ -42,7 +42,7 @@ export const createTemplateRepository = (db: DB) => {
   const create = async (data: TemplateCreate): Promise<Result<string>> => {
     console.log("egg \n", data.event_id)
     try {
-      const eventExists = db.prepare("SELECT 1 FROM events WHERE slug = ? LIMIT 1").get(data.event_id);
+      const eventExists = db.prepare("SELECT * FROM events WHERE slug = ? LIMIT 1").get(data.event_id);
       console.log("events googog: ", eventExists)
       if (!eventExists) {
         console.log("fiedfmfeiojejiffjifrjifei")
@@ -53,9 +53,20 @@ export const createTemplateRepository = (db: DB) => {
             message: `Event with ID ${data.event_id} does not exist.`,
           },
         };
-      }
-      const template = toDb(data);
+      }    
+      const event = db.prepare("SELECT id FROM events WHERE slug = ? LIMIT 1").get(data.event_id);
+      console.log("eventEEE: ", event)
+      const eventId: string = (event as { id: string }).id;
+      const e: TemplateCreate = { event_id: eventId }
+      console.log("eID:", e)
+      //const eventId: TemplateCreate = { event_id: event.id };
+      //console.log("KEEKKEKEK ",eventId)
       
+
+      const template = toDb(e);
+      console.log("template REAL: ", template)
+      //todo: lag en spørring som henter events sin id basert på slugen
+
       const query = db.prepare(`
         INSERT INTO events_template (event_id)
         VALUES (?)
