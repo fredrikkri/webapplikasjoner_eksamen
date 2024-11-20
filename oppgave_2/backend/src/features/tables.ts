@@ -1,12 +1,14 @@
 import { DB } from "./db";
 export const createTables = (db: DB) => {
+
+    db.exec(`PRAGMA foreign_keys = ON;`);
   db.exec(`
 
     CREATE TABLE IF NOT EXISTS events (
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
         description TEXT NOT NULL,
-        slug TEXT UNIQUE NOT NULL,
+        slug TEXT NOT NULL,
         date TEXT NOT NULL,
         location TEXT NOT NULL,
         event_type TEXT NOT NULL,
