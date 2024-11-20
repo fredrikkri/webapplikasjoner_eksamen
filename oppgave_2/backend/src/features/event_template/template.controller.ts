@@ -17,7 +17,7 @@ export const createTemplateController = (templateService: TemplateService) => {
         return c.json(result);
       });
 
-      app.post("/addL", async (c) => {
+      app.post("/templates/add", async (c) => {
         const data = await c.req.json();
         const result = await templateService.create(data);
         if (!result.success)

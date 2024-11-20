@@ -18,6 +18,7 @@ export const createTemplateService = (templateRepository: TemplateRepository) =>
       };
 
       const create = async (data: TemplateCreate): Promise<Result<string>> => {
+        console.log("creat service: \n", data.event_id)
         const registration = createTemplate(data);
     
         if (!validateTemplateCreate(registration).success) {

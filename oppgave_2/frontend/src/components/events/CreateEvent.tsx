@@ -52,12 +52,12 @@ const CreateEvent: React.FC = () => {
 
     console.log(`Button clicked: ${action}`);
     const action2 = e.currentTarget.getElementsByTagName("button")
+    eventData.id = crypto.randomUUID();
     if (action === "addTemplate") {
-      eventData.id = crypto.randomUUID();
+      console.log("handlesubmit: \n",eventData.id)
       await addEvent(eventData);
-      await onAddTemplate({ event_id: eventData.id });
+      await onAddTemplate({ event_id: eventData.slug });
     } else if (action === "addEvent") {
-      eventData.id = crypto.randomUUID();
       await addEvent(eventData);
     }
   };
