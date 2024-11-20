@@ -72,11 +72,13 @@ const CreateEvent: React.FC = () => {
         },
         body: JSON.stringify({ event_id }),
       });
+
       const data = await response.json();
       if (!data.success) {
         console.log("FAIL: ", data.data)
         return;
       }
+      
       setEventData(data.data);
       console.log("setData: ", data.data)
     } catch (error) {
