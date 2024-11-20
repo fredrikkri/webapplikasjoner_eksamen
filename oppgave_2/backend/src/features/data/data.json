@@ -57,6 +57,38 @@
       "event_id": "event-2"
     }
   ],
+  
+  "event_rules": [
+    {
+      "event_id": "event-1",
+      "is_private": "false",
+      "restricted_days": null,
+      "allow_multiple_events_same_day": "true",
+      "waitlist": "false"
+    },
+    {
+      "event_id": "event-2",
+      "is_private": "false",
+      "restricted_days": null,
+      "allow_multiple_events_same_day": "true",
+      "waitlist": "false"
+    },
+    {
+      "event_id": "event-3",
+      "is_private": "false",
+      "restricted_days": null,
+      "allow_multiple_events_same_day": "true",
+      "waitlist": "true"
+    },
+    {
+      "event_id": "event-4",
+      "is_private": "false",
+      "restricted_days": null,
+      "allow_multiple_events_same_day": "true",
+      "waitlist": "true"
+    }
+  ],
+  
   "events_template": [
     {
       "event_id": "event-1"
