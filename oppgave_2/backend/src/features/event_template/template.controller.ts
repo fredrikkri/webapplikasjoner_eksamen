@@ -21,6 +21,7 @@ export const createTemplateController = (templateService: TemplateService) => {
         const data = await c.req.json();
         const result = await templateService.create(data);
         if (!result.success)
+          console.log("FAILGOOGOGOGOGOG")
           return errorResponse(
             c,
             result.error.code as ErrorCode,
