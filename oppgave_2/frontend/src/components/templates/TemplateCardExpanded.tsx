@@ -1,3 +1,4 @@
+import { onAddActiveEvent } from "@/lib/services/activeEvents";
 import Link from "next/link";
 
 type TemplateCardProps = {
@@ -13,6 +14,15 @@ type TemplateCardProps = {
     price: number
   }
   
+  const handleActivateEvent = async (event_slug: string) => {
+    try {
+      await onAddActiveEvent({ event_id: event_slug })
+
+    } catch (error) {
+      console.error("Error handling submit:", error);
+    }
+  };
+
   export default function TemplateCardExpanded({slug, title, description, date, location, event_type, total_slots, available_slots, price}: TemplateCardProps) {
     return (
       <div className="border border-[#cce] p-[18px] my-6 rounded-[18px]">
@@ -41,7 +51,9 @@ type TemplateCardProps = {
             <strong>Price:</strong> {price}
         </p>
         <Link href={`/templates/${slug}`}>
-      <button type="button" className="px-3 py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 transition my-4 mx-1">
+      <button type="button" className="px-3 py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 transition my-4 mx-1"
+      onClick={() => handleActivateEvent(slug)}
+      >
         Bruk mal
       </button>
     </Link>
