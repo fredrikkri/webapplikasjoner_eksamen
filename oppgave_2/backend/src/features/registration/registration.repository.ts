@@ -1,6 +1,6 @@
 import { Result } from "@/types";
 import db, { DB } from "../db";
-import { CreateRegistration, Registration } from "@/types/registration";
+import { CreateRegistration, Registration } from "../../types/registration";
 import { toDb } from "./registration.mapper";
 
 
@@ -37,12 +37,21 @@ export const createRegistrationRepository = (db: DB) => {
 
       const create = async (data: CreateRegistration): Promise<Result<string>> => {
         try {
-          const registration = toDb(data);
-    
+
+
+      const event = db.prepare("SELECT id FROM events WHERE slug = ? LIMIT 1").get(data.event_id);
+      const eventId: string = (event as { id: string }).id;
+      const e: Registration = { ...data, event_id: eventId }
+
+
+          const registration = toDb(e);
+          console.log("Prepared registration data for DB insert:", registration);
+      
           const query = db.prepare(`
             INSERT INTO registrations (id, event_id, email, has_paid, registration_date)
             VALUES (?, ?, ?, ?, ?)
           `);
+      
           query.run(
             registration.id,
             registration.event_id,
@@ -50,11 +59,13 @@ export const createRegistrationRepository = (db: DB) => {
             registration.has_paid,
             registration.registration_date
           );
+      
           return {
             success: true,
             data: registration.id,
           };
         } catch (error) {
+          console.error("Error during creation of registration:", error);
           return {
             success: false,
             error: {

@@ -6,14 +6,10 @@ export const RegistrationSchema = z.object({
     event_id: z.string(),
     email: z.string(),
     has_paid: z.string(),
-    registration_date: z.date()
+    registration_date: z.string()
   });
 
-export const RegistrationCreateSchema = RegistrationSchema.omit({ 
-    id: true, 
-    registration_date: true, 
-    event_id: true 
-});
+export const RegistrationCreateSchema = RegistrationSchema;
 
 export const RegistrationArraySchema = z.array(RegistrationSchema);
 export type CreateRegistration = z.infer<typeof RegistrationCreateSchema>;
