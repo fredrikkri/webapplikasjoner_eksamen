@@ -1,4 +1,4 @@
-import { BASE_URL, ENDPOINTS } from "@/config/config";
+import { ENDPOINTS } from "@/config/config";
 import { Event } from "../../types/Event"
 
 export const getEvent = async (slug: string): Promise<Event | undefined> => {
