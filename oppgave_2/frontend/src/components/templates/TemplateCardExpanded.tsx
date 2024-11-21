@@ -2,6 +2,7 @@ import { onAddActiveEvent } from "@/lib/services/activeEvents";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { Event as EventData } from "../../types/Event";
+import { createEvent } from "@/lib/services/events";
 
 type TemplateCardProps = {
     id: string;
@@ -29,21 +30,24 @@ type TemplateCardProps = {
   export default function TemplateCardExpanded({slug, title, description, date, location, event_type, total_slots, available_slots, price}: TemplateCardProps) {
 
     const [eventData, setEventData] = useState<EventData>({
-      id: '',
+      id: crypto.randomUUID(),
       title: title,
       description: description,
       date: date,
       location: location,
-      slug: slug,
+      slug: generateSlug(title),
       event_type: event_type,
       total_slots: total_slots,
       available_slots: available_slots,
       price: price,
     });
   
-    const handleActivateEvent = async (e: FormEvent<HTMLFormElement>, event_slug: string) => {
+    const handleActivateEvent = async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
       try {
-        await onAddActiveEvent({ event_id: event_slug })
+        console.log(eventData)
+        await createEvent(eventData)
+        await onAddActiveEvent({ event_id: eventData.slug })
   
       } catch (error) {
         console.error("Error handling submit:", error);
@@ -52,6 +56,7 @@ type TemplateCardProps = {
   
       // SRC: kilde: chatgpt.com  / med endringer
       const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        e.preventDefault()
         const { name, value } = e.target;
     
         setEventData((prevData) => ({
@@ -61,7 +66,7 @@ type TemplateCardProps = {
       };
 
     return (
-      <form onSubmit={(e) => handleActivateEvent(e, slug)} className="max-w-md mx-auto p-4 rounded-lg space-y-4">
+      <form onSubmit={(e) => handleActivateEvent(e)} className="max-w-md mx-auto p-4 rounded-lg space-y-4">
         <h2 className="text-2xl font-bold mb-4">Mal for {title}</h2>
   
         <label className="block">
