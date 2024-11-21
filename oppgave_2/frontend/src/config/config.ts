@@ -6,6 +6,5 @@ export const ENDPOINTS = {
   events: `${BASE_URL}/activeevents`,
   templates: `${BASE_URL}/templates`,
   create: `${BASE_URL}/create`,
-  createTemplate: `${BASE_URL}/templates/add`,
   createRegistration: `${BASE_URL}/registrer`
 };
