@@ -53,7 +53,7 @@ export const createTemplateRepository = (db: DB) => {
             message: `Event with ID ${data.event_id} does not exist.`,
           },
         };
-      }    
+      }
       const event = db.prepare("SELECT id FROM events WHERE slug = ? LIMIT 1").get(data.event_id);
       console.log("eventEEE: ", event)
       const eventId: string = (event as { id: string }).id;

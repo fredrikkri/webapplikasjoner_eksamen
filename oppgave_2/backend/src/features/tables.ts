@@ -43,5 +43,16 @@ export const createTables = (db: DB) => {
         day TEXT NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS event_rules (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        event_id INTEGER NOT NULL,
+        is_private TEXT,
+        restricted_days TEXT,
+        allow_multiple_events_same_day TEXT,
+        waitlist TEXT,
+        FOREIGN KEY (event_id) REFERENCES events(id)
+    );
+
+
   `);
 };
