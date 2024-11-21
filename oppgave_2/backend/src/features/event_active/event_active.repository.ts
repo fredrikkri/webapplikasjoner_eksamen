@@ -41,21 +41,25 @@ export const createActiveEventsRepository = (db: DB) => {
   
   const create = async (data: ActiveEventsCreate): Promise<Result<string>> => {
     try {
-      const events = toDb(data);
+      
+      const event = db.prepare("SELECT id FROM events WHERE slug = ? LIMIT 1").get(data.event_id);
+      const eventId: string = (event as { id: string }).id;
+      const e: ActiveEventsCreate = { event_id: eventId }
+
+      const events = toDb(e);
 
       const query = db.prepare(`
-        INSERT INTO events_active (id, event_id)
-        VALUES (?, ?)
+        INSERT INTO events_active (event_id)
+        VALUES (?)
       `);
 
       query.run(
-        events.id,
         events.event_id
       );
 
       return {
         success: true,
-        data: events.id,
+        data: events.event_id,
       };
     } catch (error) {
       return {
