@@ -30,7 +30,7 @@ export const createTables = (db: DB) => {
     );
 
     CREATE TABLE IF NOT EXISTS registrations (
-        id TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         event_id TEXT NOT NULL,
         email TEXT NOT NULL,
         has_paid TEXT NOT NULL,

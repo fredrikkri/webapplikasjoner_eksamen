@@ -17,10 +17,9 @@ export const createRegistrationController = (registrationService: RegistrationSe
         return c.json(result);
       });
 
-      app.post("/registrer", async (c) => {
+      app.post("/add", async (c) => {
         const data = await c.req.json();
         const result = await registrationService.create(data);
-        console.log("Geir: ", result)
         if (!result.success)
           return errorResponse(
             c,
