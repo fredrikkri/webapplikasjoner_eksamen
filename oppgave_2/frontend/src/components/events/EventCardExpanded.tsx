@@ -20,14 +20,14 @@ export default function EventCardExpanded({title, description, slug, date, locat
   const { addRegistration, loading, error } = useCreateRegistration();
 
   const [registrations, setRegistrations] = useState<RegistrationType[]>([
-    { id: "", event_id: slug, email: "", has_paid: "false", registration_date: "" },
+    { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "" },
   ]);
 
   // SRC: kilde: chatgpt.com
   const handleAddEmailField = () => {
     setRegistrations([
       ...registrations,
-      { id: "", event_id: slug, email: "", has_paid: "false", registration_date: "" },
+      { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "" },
     ]);
   };
 
