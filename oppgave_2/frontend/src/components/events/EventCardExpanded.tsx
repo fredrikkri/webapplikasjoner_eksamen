@@ -6,7 +6,7 @@ import { Registration as RegistrationType } from "@/types/Registration";
 type EventCardProps = {
   title: string;
   description: string;
-  date: Date;
+  date: string;
   location: string;
   slug: string;
   event_type: string;
