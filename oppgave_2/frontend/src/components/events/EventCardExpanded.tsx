@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Registration as RegistrationType } from "../../types/Registration";
 import { useCreateRegistration } from "@/hooks/useRegistration";
+import Link from "next/link";
+import { useState } from "react";
+import { Registration as RegistrationType } from "@/types/Registration";
 
 type EventCardProps = {
   title: string;
