@@ -34,7 +34,7 @@ type TemplateCardProps = {
       description: description,
       date: date,
       location: location,
-      slug: generateSlug(slug),
+      slug: slug,
       event_type: event_type,
       total_slots: total_slots,
       available_slots: available_slots,
@@ -81,7 +81,7 @@ type TemplateCardProps = {
           <input
             type="text"
             name="slug"
-            value={eventData.slug || ""}
+            value={generateSlug(eventData.title)}
             onChange={handleChange}
             className="mt-1 block w-full border border-gray-300 rounded-md p-2"
             required
