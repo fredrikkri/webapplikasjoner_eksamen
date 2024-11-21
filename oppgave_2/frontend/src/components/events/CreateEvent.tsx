@@ -1,12 +1,13 @@
 "use client";
-import React, { FormEvent, useState } from 'react';
-import { Event as EventData } from '@/types/Event';
-import { useCreateEvent } from '@/hooks/useEvent';
-import { ENDPOINTS } from '@/config/config';
+import React, { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Event as EventData } from "../../types/Event";
+import { useCreateEvent } from "../../hooks/useEvent";
+import { ENDPOINTS } from "../../config/config";
 
 // SRC: kilde: chatgpt.com  / med endringer
 const CreateEvent: React.FC = () => {
-
+  const router = useRouter();
   const [eventData, setEventData] = useState<EventData>({
     id: '',
     title: '',
@@ -19,18 +20,17 @@ const CreateEvent: React.FC = () => {
     available_slots: 0,
     price: 0,
   });
+
   const { addEvent, loading, error } = useCreateEvent();
 
-    // SRC: kilde: chatgpt.com 
-    const generateSlug = (title: string) => {
-      const randomId = crypto.randomUUID()
-      const titleSlug = title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-    
-      const uniquePart = randomId.slice(0, 6);
-      return `${titleSlug}-${uniquePart}`;
+  const generateSlug = (title: string) => {
+    const randomId = crypto.randomUUID();
+    const titleSlug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    const uniquePart = randomId.slice(0, 6);
+    return `${titleSlug}-${uniquePart}`;
   };
 
   // SRC: kilde: chatgpt.com  / med endringer
@@ -39,9 +39,9 @@ const CreateEvent: React.FC = () => {
 
     setEventData((prevData) => ({
       ...prevData,
-      [name]: name === 'total_slots' || name === 'available_slots' || name === 'price' ? Number(value) : value,
-      slug: name === 'title' ? generateSlug(value) : prevData.slug,
-      available_slots: name == 'available_slots' ? 0 : prevData.total_slots
+      [name]: name === "total_slots" || name === "available_slots" || name === "price" ? Number(value) : value,
+      slug: name === "title" ? generateSlug(value) : prevData.slug,
+      available_slots: name === "available_slots" ? 0 : prevData.total_slots,
       }));
   };
 
@@ -54,12 +54,19 @@ const CreateEvent: React.FC = () => {
     const action2 = e.currentTarget.getElementsByTagName("button")
     console.log("pre-sub ", eventData.slug)
     eventData.id = crypto.randomUUID();
-    if (action === "addTemplate") {
-      console.log("handlesubmit: \n",eventData.slug)
-      await addEvent(eventData);
-      await onAddTemplate({ event_id: eventData.slug });
-    } else if (action === "addEvent") {
-      await addEvent(eventData);
+
+    try {
+      if (action === "addTemplate") {
+        console.log("handlesubmit: \n", eventData.slug);
+        await addEvent(eventData);
+        await onAddTemplate({ event_id: eventData.slug });
+        router.push(`/templates/${eventData.slug}`);
+      } else if (action === "addEvent") {
+        await addEvent(eventData);
+        router.push(`/events/${eventData.slug}`);
+      }
+    } catch (error) {
+      console.error("Error handling submit:", error);
     }
   };
 
@@ -75,16 +82,17 @@ const CreateEvent: React.FC = () => {
 
       const data = await response.json();
       if (!data.success) {
-        console.log("FAIL: ", data.data)
+        console.log("FAIL: ", data.data);
         return;
       }
-      
+
       setEventData(data.data);
-      console.log("setData: ", data.data)
+      console.log("setData: ", data.data);
     } catch (error) {
-      console.log("fail catch")
+      console.log("fail catch");
     } finally {
-      console.log("finally")    }
+      console.log("finally");
+    }
   };
 
   // SRC: kilde: chatgpt.com  / med endringer
@@ -178,7 +186,7 @@ const CreateEvent: React.FC = () => {
         <input
           type="number"
           name="total_slots"
-          value={eventData.total_slots || 0}
+          value={eventData.total_slots || 0}
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           required
@@ -216,7 +224,6 @@ const CreateEvent: React.FC = () => {
           Opprett Event
         </button>
       </div>
-
     </form>
   );
 };
