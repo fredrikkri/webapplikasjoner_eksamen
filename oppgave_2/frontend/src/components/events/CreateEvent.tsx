@@ -3,7 +3,7 @@ import React, { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Event as EventData } from "../../types/Event";
 import { useCreateEvent } from "../../hooks/useEvent";
-import { ENDPOINTS } from "../../config/config";
+import { onAddTemplate } from "@/lib/services/templates";
 
 // SRC: kilde: chatgpt.com  / med endringer
 const CreateEvent: React.FC = () => {
@@ -50,48 +50,28 @@ const CreateEvent: React.FC = () => {
     e.preventDefault();
     //const action = e.currentTarget.getElementsByTagName("button").namedItem("action")?.getAttribute("value"); 
 
-    console.log(`Button clicked: ${action}`);
-    const action2 = e.currentTarget.getElementsByTagName("button")
-    console.log("pre-sub ", eventData.slug)
     eventData.id = crypto.randomUUID();
 
     try {
       if (action === "addTemplate") {
-        console.log("handlesubmit: \n", eventData.slug);
+        console.log("Creating template with slug: ", eventData);
+
         await addEvent(eventData);
-        await onAddTemplate({ event_id: eventData.slug });
-        router.push(`/templates/${eventData.slug}`);
+        const templateResponse = await onAddTemplate({ event_id: eventData.slug });
+  
+        if (templateResponse) {
+          setEventData(eventData);
+          router.push(`/templates/${eventData.slug}`);
+        } else {
+          console.error("Failed to create template");
+        }
       } else if (action === "addEvent") {
+        console.log("Creating event with slug: ", eventData.slug);
         await addEvent(eventData);
         router.push(`/events/${eventData.slug}`);
       }
     } catch (error) {
       console.error("Error handling submit:", error);
-    }
-  };
-
-  const onAddTemplate = async ({ event_id }: { event_id: string }) => {
-    try {
-      const response = await fetch(ENDPOINTS.createTemplate, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ event_id }),
-      });
-
-      const data = await response.json();
-      if (!data.success) {
-        console.log("FAIL: ", data.data);
-        return;
-      }
-
-      setEventData(data.data);
-      console.log("setData: ", data.data);
-    } catch (error) {
-      console.log("fail catch");
-    } finally {
-      console.log("finally");
     }
   };
 
