@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Event as EventData } from "../../types/Event";
 import { useCreateEvent } from "../../hooks/useEvent";
 import { onAddTemplate } from "@/lib/services/templates";
+import { onAddActiveEvent } from "@/lib/services/activeEvents";
 
 // SRC: kilde: chatgpt.com  / med endringer
 const CreateEvent: React.FC = () => {
@@ -54,7 +55,6 @@ const CreateEvent: React.FC = () => {
 
     try {
       if (action === "addTemplate") {
-        console.log("Creating template with slug: ", eventData);
 
         await addEvent(eventData);
         const templateResponse = await onAddTemplate({ event_id: eventData.slug });
@@ -66,9 +66,13 @@ const CreateEvent: React.FC = () => {
           console.error("Failed to create template");
         }
       } else if (action === "addEvent") {
-        console.log("Creating event with slug: ", eventData.slug);
         await addEvent(eventData);
-        router.push(`/events/${eventData.slug}`);
+        const activeEventResponse = await onAddActiveEvent({ event_id: eventData.slug })
+        if(activeEventResponse){
+          setEventData(eventData)
+          router.push(`/events/${eventData.slug}`);
+        }
+
       }
     } catch (error) {
       console.error("Error handling submit:", error);
