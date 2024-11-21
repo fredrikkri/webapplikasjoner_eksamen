@@ -17,7 +17,7 @@ export const createActiveEventsController = (activeEventsService: ActiveEventsSe
         return c.json(result);
       });
 
-      app.post("/add", async (c) => {
+      app.post("/activeevents/add", async (c) => {
         const data = await c.req.json();
         const result = await activeEventsService.create(data);
         if (!result.success)
