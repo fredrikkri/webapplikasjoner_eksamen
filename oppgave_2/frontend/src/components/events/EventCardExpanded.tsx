@@ -98,9 +98,9 @@ export default function EventCardExpanded({title, description, slug, date, locat
         <strong>Ledige plasser:</strong> {availableSlots}
       </p>
       <p>
-        <strong>Pris:</strong> {price}
+        <strong>Pris:</strong> {price}kr
       </p>
-
+      {availableSlots !== undefined && availableSlots > 0 ? (
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         {registrations.map((registration, index) => (
           <div key={registration.id} className="flex flex-col space-y-2">
@@ -153,6 +153,11 @@ export default function EventCardExpanded({title, description, slug, date, locat
           </button>
         </div>
       </form>
+) : (
+  <p>Gå til venteliste</p>
+)}
+
+      
     </div>
   );
 }
