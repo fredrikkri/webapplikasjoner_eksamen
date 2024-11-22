@@ -19,6 +19,13 @@ export const createRegistrationController = (registrationService: RegistrationSe
 
       app.post("/registrer", async (c) => {
         const data = await c.req.json();
+        const result2 = await registrationService.bookSlot(data)
+        if (!result2.success)
+          return errorResponse(
+            c,
+            result2.error.code as ErrorCode,
+            result2.error.message
+          );
         console.log("Raw data: ", data)
         const result = await registrationService.create(data);
         console.log("Geir: ", result)
@@ -28,7 +35,7 @@ export const createRegistrationController = (registrationService: RegistrationSe
             result.error.code as ErrorCode,
             result.error.message
           );
-          const result2 = await registrationService.bookSlot(data)
+         
         return c.json(result, { status: 201 });
       });
 
