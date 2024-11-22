@@ -2,6 +2,7 @@ import { Result } from "@/types";
 import db, { DB } from "../db";
 import { CreateRegistration, Registration } from "../../types/registration";
 import { toDb } from "./registration.mapper";
+import {type EventCreate, type Event} from "../../types/event";
 
 
 export const createRegistrationRepository = (db: DB) => {
@@ -37,8 +38,6 @@ export const createRegistrationRepository = (db: DB) => {
 
       const create = async (data: CreateRegistration): Promise<Result<string>> => {
         try {
-
-
       const event = db.prepare("SELECT id FROM events WHERE slug = ? LIMIT 1").get(data.event_id);
       const eventId: string = (event as { id: string }).id;
       const e: Registration = { ...data, event_id: eventId }
@@ -75,6 +74,46 @@ export const createRegistrationRepository = (db: DB) => {
           };
         }
       };
+
+      // SRC: kilde: chatgpt.com  || med endringer /
+      const bookSlot = async (event_id: string): Promise<Result<string>> => {
+        try {
+          const event = db.prepare("SELECT * FROM events WHERE slug = ? LIMIT 1").get(event_id) as Event | undefined;;
+      
+          if (!event) {
+            return { success: false, error: {
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Error decreasing available slots",
+            },
+          };
+          }
+          console.log("Final event yoyoyoy; ", event)
+      
+          if (event.available_slots <= 0) {
+            return { success: false, error: {
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Error, there are none avalible slots"} };
+          }
+
+          const updateResult = db
+            .prepare("UPDATE events SET available_slots = available_slots - 1 WHERE slug = ?")
+            .run(event_id);
+      
+          if (updateResult.changes === 0) {
+            return { success: false, error: {
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Error, failed to update avalible slots"}  };
+          }
+      
+          return { success: true, data: "Slot successfully booked" };
+        } catch (error) {
+          console.error("Error booking slot:", error);
+          return { success: false, error: {
+            code: "INTERNAL_SERVER_ERROR",
+            message: "An unexpected error happend"}  };
+        }
+      };
+      
 
       
       const getRegistrationById = async (eventId: string): Promise<Result<Registration[]>> => {
@@ -114,7 +153,7 @@ export const createRegistrationRepository = (db: DB) => {
     }
 }
 
-      return { list, create, getRegistrationById }
+      return { list, create, getRegistrationById, bookSlot }
 }
 
 export const registrationRepository = createRegistrationRepository(db);
