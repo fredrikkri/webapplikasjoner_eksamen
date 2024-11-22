@@ -1,5 +1,4 @@
 import { useCreateRegistration } from "@/hooks/useRegistration";
-import Link from "next/link";
 import { useState } from "react";
 import { Registration as RegistrationType } from "@/types/Registration";
 
@@ -17,7 +16,7 @@ type EventCardProps = {
 
 export default function EventCardExpanded({title, description, slug, date, location, event_type, total_slots, available_slots, price,}: EventCardProps) {
 
-
+  const [availableSlots, setAvailableSlots] = useState<number>(available_slots);
   const { addRegistration, loading, error } = useCreateRegistration();
 
   const [registrations, setRegistrations] = useState<RegistrationType[]>([
@@ -65,6 +64,7 @@ export default function EventCardExpanded({title, description, slug, date, locat
     try {
       for (const registration of registrationData) {
         await addRegistration(registration);
+        setAvailableSlots((prevAvailableSlots) => Math.max(prevAvailableSlots - 1, 0));
       }
 
     } catch (error) {
@@ -95,7 +95,7 @@ export default function EventCardExpanded({title, description, slug, date, locat
         <strong>Antall plasser:</strong> {total_slots}
       </p>
       <p>
-        <strong>Ledige plasser:</strong> {available_slots}
+        <strong>Ledige plasser:</strong> {availableSlots}
       </p>
       <p>
         <strong>Pris:</strong> {price}
