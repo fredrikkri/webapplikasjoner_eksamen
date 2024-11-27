@@ -14,6 +14,10 @@ interface RegCardProps {
   waitlist: WaitlistItem[];
 }
 
+const handleClick = () => {
+  
+};
+
 export default function RegCard(props: RegCardProps) {
   const { event, waitlist } = props;
   const firstWaitlistItem = waitlist[0];
@@ -33,11 +37,13 @@ export default function RegCard(props: RegCardProps) {
         ))}
       </ul>
       <div className="flex space-x-4 p-1">
-        <button className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        onClick={handleClick}>
           {waitlist.length > 1 ? 'Aksepter påmeldinger' : 'Aksepter påmelding'}
         </button>
 
-        <button className="bg-red-500 text-white py-2 px-4 pl-6 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">
+        <button className="bg-red-500 text-white py-2 px-4 pl-6 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+        onClick={handleClick}>
           {waitlist.length > 1 ? 'Avslå påmeldinger' : 'Avslå påmelding'}
         </button>
       </div>
