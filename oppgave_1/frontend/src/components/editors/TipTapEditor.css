@@ -1,0 +1,170 @@
+.editor-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.editor-wrapper {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.menu-bar {
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.menu-group {
+  display: flex;
+  gap: 0.35rem;
+  padding: 0.35rem;
+  border-right: 1px solid #dee2e6;
+  align-items: center;
+}
+
+.menu-group:last-child {
+  border-right: none;
+}
+
+.menu-bar button {
+  border: none;
+  background: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #495057;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  min-width: 32px;
+  height: 32px;
+  position: relative;
+}
+
+.menu-bar button:hover {
+  background-color: #e9ecef;
+  color: #228be6;
+}
+
+.menu-bar button.is-active {
+  background-color: #e9ecef;
+  color: #228be6;
+}
+
+.menu-bar button:focus {
+  outline: 2px solid #228be6;
+  outline-offset: 2px;
+}
+
+.menu-bar button:active {
+  transform: translateY(1px);
+}
+
+/* Material Icons specific styling */
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'liga';
+}
+
+.ProseMirror {
+  padding: 1.5rem;
+  min-height: 200px;
+  outline: none;
+}
+
+.ProseMirror p {
+  margin: 1em 0;
+}
+
+.ProseMirror h1 {
+  font-size: 2em;
+  margin: 1em 0 0.5em;
+  font-weight: bold;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5em;
+  margin: 1em 0 0.5em;
+  font-weight: bold;
+}
+
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  margin: 1em 0;
+  border-radius: 4px;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 2rem;
+  margin: 1em 0;
+}
+
+.ProseMirror li {
+  margin: 0.5em 0;
+}
+
+.ProseMirror a {
+  color: #228be6;
+  text-decoration: none;
+}
+
+.ProseMirror a:hover {
+  text-decoration: underline;
+}
+
+.ProseMirror mark {
+  background-color: #ffd43b;
+  padding: 0.1em 0.3em;
+  border-radius: 2px;
+}
+
+/* Tooltip styles */
+.menu-bar button::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background-color: #333;
+  color: white;
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.menu-bar button:hover::after {
+  opacity: 1;
+  visibility: visible;
+}

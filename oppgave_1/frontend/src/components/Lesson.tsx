@@ -1,13 +1,24 @@
 import { useState } from "react";
 import { useLesson } from "../hooks/useLessons";
-import { useComments, useCreateComment, type Comment, type CommentData } from "../hooks/useComments";
+import { useComments, useCreateComment} from "../hooks/useComments";
+import { type Comment, type CommentData } from "../types/types";
+import { useRouter } from "next/navigation";
+import { deleteLesson } from "../lib/services/lessons";
+import Link from "next/link";
 
 interface LessonProps {
   courseSlug: string;
   lessonSlug: string;
 }
 
+// Helper function to check if content contains HTML
+const containsHTML = (text: string): boolean => {
+  const doc = new DOMParser().parseFromString(text, 'text/html');
+  return Array.from(doc.body.childNodes).some(node => node.nodeType === 1);
+};
+
 function Lesson({ courseSlug, lessonSlug }: LessonProps) {
+  const router = useRouter();
   const { lesson, loading: lessonLoading, error: lessonError } = useLesson(
     courseSlug,
     lessonSlug
@@ -20,6 +31,8 @@ function Lesson({ courseSlug, lessonSlug }: LessonProps) {
   const [name, setName] = useState("");
   const [success, setSuccess] = useState(false);
   const [formError, setFormError] = useState(false);
+  const [showEditButtons, setShowEditButtons] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -46,6 +59,21 @@ function Lesson({ courseSlug, lessonSlug }: LessonProps) {
     }
   };
 
+  const handleDeleteLesson = async () => {
+    if (!courseSlug || !lessonSlug || !confirm("Er du sikker på at du vil slette denne leksjonen?")) return;
+    
+    try {
+      setIsDeleting(true);
+      await deleteLesson(courseSlug, lessonSlug);
+      router.push(`/kurs/${courseSlug}`);
+    } catch (error) {
+      console.error("Error deleting lesson:", error);
+      alert("Kunne ikke slette leksjonen");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   if (lessonLoading || commentsLoading) return (
     <div className="animate-fade-in space-y-4">
       <div className="h-8 w-2/3 animate-pulse rounded-lg bg-slate-200"></div>
@@ -68,12 +96,53 @@ function Lesson({ courseSlug, lessonSlug }: LessonProps) {
 
   return (
     <div className="animate-fade-in">
-      <h2 
-        className="bg-gradient-to-r from-emerald-600 to-emerald-500 bg-clip-text text-2xl font-bold text-transparent" 
-        data-testid="lesson_title"
-      >
-        {lesson?.title}
-      </h2>
+      <div className="relative mb-6">
+        <button
+          onClick={() => setShowEditButtons(!showEditButtons)}
+          className="absolute right-0 top-0 group flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700 transition-all duration-200 hover:bg-slate-200"
+        >
+          <svg className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+          Rediger
+        </button>
+        <h2 
+          className="bg-gradient-to-r from-emerald-600 to-emerald-500 bg-clip-text text-2xl font-bold text-transparent" 
+          data-testid="lesson_title"
+        >
+          {lesson?.title}
+        </h2>
+        {showEditButtons && (
+          <div className="absolute right-0 top-12 flex flex-col gap-2 rounded-lg border border-slate-200 bg-white p-2 shadow-lg">
+            <Link
+              href={`/kurs/${courseSlug}/${lessonSlug}/rediger`}
+              className="group flex items-center gap-2 rounded-lg bg-emerald-50 px-4 py-2 font-medium text-emerald-700 transition-all duration-200 hover:bg-emerald-100"
+            >
+              <svg className="h-5 w-5 transition-transform duration-200 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Endre leksjon
+            </Link>
+            <button
+              onClick={handleDeleteLesson}
+              disabled={isDeleting}
+              className="group flex items-center gap-2 rounded-lg bg-red-50 px-4 py-2 font-medium text-red-700 transition-all duration-200 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-red-50"
+            >
+              <svg className="h-5 w-5 transition-transform duration-200 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              {isDeleting ? (
+                <span className="flex items-center gap-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-700 border-t-transparent"></div>
+                  Sletter...
+                </span>
+              ) : (
+                "Slett leksjon"
+              )}
+            </button>
+          </div>
+        )}
+      </div>
       <p 
         data-testid="lesson_preAmble" 
         className="mt-4 font-semibold leading-relaxed text-slate-700"
@@ -82,13 +151,22 @@ function Lesson({ courseSlug, lessonSlug }: LessonProps) {
       </p>
       {lesson?.text && lesson.text.length > 0 &&
         lesson.text.map((text) => (
-          <p 
-            data-testid="lesson_text" 
-            className="mt-4 leading-relaxed text-slate-600" 
-            key={text.id}
-          >
-            {text.text}
-          </p>
+          <div key={text.id}>
+            {containsHTML(text.text) ? (
+              <div 
+                data-testid="lesson_text"
+                className="mt-4 leading-relaxed text-slate-600 prose prose-slate max-w-none"
+                dangerouslySetInnerHTML={{ __html: text.text }}
+              />
+            ) : (
+              <p 
+                data-testid="lesson_text" 
+                className="mt-4 leading-relaxed text-slate-600"
+              >
+                {text.text}
+              </p>
+            )}
+          </div>
         ))}
       <section data-testid="comments" className="mt-12">
         <h4 className="mb-6 text-lg font-bold text-slate-800">

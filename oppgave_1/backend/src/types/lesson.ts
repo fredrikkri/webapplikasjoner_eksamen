@@ -1,20 +1,19 @@
 import { z } from 'zod';
 
-// SRC: kilde: chatgpt.com /
 export const LessonSchema = z.object({
   id: z.string(),
   title: z.string(),
   slug: z.string(),
   preAmble: z.string(),
+  course_id: z.string().optional(), // Added course_id as optional since it's set during creation
   text: z.array(z.object({
     id: z.string(),
     text: z.string(),
   })),
 });
 
-// SRC: kilde: chatgpt.com || .extend/
-export const LessonCreateSchema = LessonSchema.omit({ id: true, slug: true,})
-  .extend({text: z.array(z.object({id: z.string(),}))});
+export const LessonCreateSchema = LessonSchema.omit({ id: true, slug: true, course_id: true });
+
 export const UpdateLessonSchema = LessonSchema.partial();
 
 export const LessonArraySchema = z.array(LessonSchema);

@@ -26,10 +26,6 @@ export function formReducer(state: FormState, action: FormAction): FormState {
           ...state.courseFields,
           [action.field]: action.value,
         },
-        errors: {
-          ...state.errors,
-          [action.field]: undefined,
-        },
       };
 
     case 'SET_LESSON_FIELD':
@@ -40,10 +36,6 @@ export function formReducer(state: FormState, action: FormAction): FormState {
             ? { ...lesson, [action.field]: action.value }
             : lesson
         ),
-        errors: {
-          ...state.errors,
-          [`lesson_${action.index}_${action.field}`]: undefined,
-        },
       };
 
     case 'SET_LESSON_TEXT':
@@ -54,16 +46,12 @@ export function formReducer(state: FormState, action: FormAction): FormState {
             ? {
                 ...lesson,
                 text: [{
-                  id: lesson.text[0]?.id || uuidv4(), // Ensure unique ID generation
+                  id: lesson.text[0]?.id || uuidv4(),
                   text: action.value,
                 }],
               }
             : lesson
         ),
-        errors: {
-          ...state.errors,
-          text: undefined,
-        },
       };
 
     case 'ADD_LESSON':
@@ -72,32 +60,76 @@ export function formReducer(state: FormState, action: FormAction): FormState {
         lessons: [
           ...state.lessons,
           {
-            id: uuidv4(), // Unique ID for each new lesson
+            id: uuidv4(),
             title: '',
             preAmble: '',
             text: [{
-              id: uuidv4(), // Unique ID for text within the lesson
+              id: uuidv4(),
               text: '',
             }],
             order: `${state.lessons.length}`,
           },
         ],
         currentLesson: state.lessons.length,
-        errors: {},
+        errors: {}, // Clear errors when adding new lesson
+      };
+
+    case 'REMOVE_LESSON':
+      if (state.lessons.length <= 1) {
+        return {
+          ...state,
+          currentLesson: 0,
+          lessons: [],
+        };
+      }
+      
+      const newLessons = state.lessons.filter((_, index) => index !== action.index);
+      return {
+        ...state,
+        lessons: newLessons,
+        currentLesson: Math.min(state.currentLesson, newLessons.length - 1),
+        errors: {}, // Clear errors when removing lesson
       };
 
     case 'SET_CURRENT_STEP':
-      return {
+      // Only validate when moving forward
+      if (action.step > state.currentStep) {
+        const validationErrors = validateForm({
+          ...state,
+          currentStep: state.currentStep // Validate current step before moving
+        });
+
+        if (Object.keys(validationErrors).length > 0) {
+          return {
+            ...state,
+            errors: validationErrors,
+          };
+        }
+      }
+
+      const newStepState = {
         ...state,
         currentStep: action.step,
         errors: {},
       };
 
+      // Show "no lessons" error immediately when entering step 2
+      if (action.step === 1 && state.lessons.length === 0) {
+        return {
+          ...newStepState,
+          errors: {
+            lessons: 'Minst én leksjon er påkrevd',
+          },
+        };
+      }
+
+      return newStepState;
+
     case 'SET_CURRENT_LESSON':
       return {
         ...state,
         currentLesson: action.lesson,
-        errors: {},
+        errors: {}, // Clear errors when switching lessons
       };
 
     case 'SET_ERROR':
@@ -136,6 +168,51 @@ export function formReducer(state: FormState, action: FormAction): FormState {
   }
 }
 
+function validateLessonField(
+  lesson: any,
+  field: string,
+  index: number
+): Record<string, string> {
+  const errors: Record<string, string> = {};
+  const lessonRules = VALIDATION_RULES.lesson;
+
+  switch (field) {
+    case 'title':
+      if (!lesson.title) {
+        errors[`lesson_${index}_title`] = 'Leksjonstittel er påkrevd';
+      } else if (lesson.title.length < lessonRules.title.minLength) {
+        errors[`lesson_${index}_title`] = `Leksjonstittel må være minst ${lessonRules.title.minLength} tegn`;
+      } else if (lesson.title.length > lessonRules.title.maxLength) {
+        errors[`lesson_${index}_title`] = `Leksjonstittel kan ikke være mer enn ${lessonRules.title.maxLength} tegn`;
+      }
+      break;
+
+    case 'preAmble':
+      if (!lesson.preAmble) {
+        errors[`lesson_${index}_preAmble`] = 'Ingress er påkrevd';
+      } else if (lesson.preAmble.length < lessonRules.preAmble.minLength) {
+        errors[`lesson_${index}_preAmble`] = `Ingress må være minst ${lessonRules.preAmble.minLength} tegn`;
+      } else if (lesson.preAmble.length > lessonRules.preAmble.maxLength) {
+        errors[`lesson_${index}_preAmble`] = `Ingress kan ikke være mer enn ${lessonRules.preAmble.maxLength} tegn`;
+      }
+      break;
+
+    case 'text':
+      const lessonText = lesson.text[0]?.text || '';
+      // Strip HTML tags for length validation
+      const strippedText = lessonText.replace(/<[^>]*>/g, '').trim();
+      
+      if (!strippedText) {
+        errors[`lesson_${index}_text`] = 'Innhold er påkrevd';
+      } else if (strippedText.length < lessonRules.text.minLength) {
+        errors[`lesson_${index}_text`] = `Innhold må være minst ${lessonRules.text.minLength} tegn`;
+      }
+      break;
+  }
+
+  return errors;
+}
+
 export function validateForm(state: FormState): Record<string, string> {
   const errors: Record<string, string> = {};
 
@@ -162,40 +239,22 @@ export function validateForm(state: FormState): Record<string, string> {
     }
   }
 
-  // Validate lesson fields
-  if (state.currentStep === 1) {
-    if (state.lessons.length === 0) {
-      errors.lessons = 'Minst én leksjon er påkrevd';
-    } else {
-      const currentLesson = state.lessons[state.currentLesson];
-      const lessonRules = VALIDATION_RULES.lesson;
+  // Validate lesson fields when on step 1
+  if (state.currentStep === 1 && state.lessons.length > 0) {
+    state.lessons.forEach((lesson, index) => {
+      // Validate title
+      const titleErrors = validateLessonField(lesson, 'title', index);
+      Object.assign(errors, titleErrors);
 
-      if (!currentLesson.title) {
-        errors.title = 'Leksjonstittel er påkrevd';
-      } else if (currentLesson.title.length < lessonRules.title.minLength) {
-        errors.title = `Leksjonstittel må være minst ${lessonRules.title.minLength} tegn`;
-      } else if (currentLesson.title.length > lessonRules.title.maxLength) {
-        errors.title = `Leksjonstittel kan ikke være mer enn ${lessonRules.title.maxLength} tegn`;
-      }
+      // Validate preAmble
+      const preAmbleErrors = validateLessonField(lesson, 'preAmble', index);
+      Object.assign(errors, preAmbleErrors);
 
-      if (!currentLesson.preAmble) {
-        errors.preAmble = 'Ingress er påkrevd';
-      } else if (currentLesson.preAmble.length < lessonRules.preAmble.minLength) {
-        errors.preAmble = `Ingress må være minst ${lessonRules.preAmble.minLength} tegn`;
-      } else if (currentLesson.preAmble.length > lessonRules.preAmble.maxLength) {
-        errors.preAmble = `Ingress kan ikke være mer enn ${lessonRules.preAmble.maxLength} tegn`;
-      }
-
-      if (!currentLesson.text[0]?.text) {
-        errors.text = 'Innhold er påkrevd';
-      } else if (currentLesson.text[0].text.length < lessonRules.text.minLength) {
-        errors.text = `Innhold må være minst ${lessonRules.text.minLength} tegn`;
-      }
-    }
+      // Validate text
+      const textErrors = validateLessonField(lesson, 'text', index);
+      Object.assign(errors, textErrors);
+    });
   }
-
-  // Log validation errors for debugging
-  console.log("Validation errors:", errors);
 
   return errors;
 }

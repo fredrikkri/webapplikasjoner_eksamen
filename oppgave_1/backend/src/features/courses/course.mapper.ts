@@ -42,7 +42,7 @@ export const createLessonResponse = (lesson: Lesson): Lesson => {
     preAmble,
     text: Array.isArray(text) ? text.map(t => ({
       id: t.id ?? createId(),
-      text: t.text
+      text: t.text ?? ""
     })) : []
   };
 };
@@ -71,23 +71,24 @@ export const fromDbLession = (lesson: Lesson): Lesson => {
   };
 };
 
-export const createCourse = (course: Partial<Course>): Course => {
-  const courseId = course.id ?? createId();
-  const title = course.title ?? "";
+export const createCourse = (data: Partial<Course>): Course => {
+  const courseId = data.id ?? createId();
+  const title = data.title ?? "";
 
   return {
     id: courseId,
     title,
     slug: generateSlug(title),
-    description: course.description ?? "",
-    category: course.category ?? "",
-    lessons: Array.isArray(course.lessons) ? course.lessons.map(lesson => {
+    description: data.description ?? "",
+    category: data.category ?? "",
+    lessons: Array.isArray(data.lessons) ? data.lessons.map(lesson => {
       const lessonTitle = lesson.title ?? "";
       return {
         id: lesson.id ?? createId(),
         title: lessonTitle,
         slug: generateSlug(lessonTitle),
         preAmble: lesson.preAmble ?? "",
+        course_id: courseId,
         text: Array.isArray(lesson.text) ? lesson.text.map(t => ({
           id: t.id ?? createId(),
           text: t.text ?? ""
@@ -114,6 +115,7 @@ export const toDb = (data: Partial<Course>): Course => {
         title: lessonTitle,
         slug: generateSlug(lessonTitle),
         preAmble: lesson.preAmble ?? "",
+        course_id: courseId,
         text: Array.isArray(lesson.text) ? lesson.text.map(t => ({
           id: t.id ?? createId(),
           text: t.text ?? ""

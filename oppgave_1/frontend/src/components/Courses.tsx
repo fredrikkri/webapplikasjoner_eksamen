@@ -12,13 +12,24 @@ interface Course {
 }
 
 function Courses() {
-  const { courses: allCourses, loading: coursesLoading, error: coursesError } = useAllCourses();
+  const { 
+    courses: allCourses, 
+    loading: coursesLoading, 
+    error: coursesError,
+    currentPage,
+    totalPages,
+    hasNextPage,
+    hasPreviousPage,
+    nextPage,
+    previousPage
+  } = useAllCourses();
   const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
   const [value, setValue] = useState<string>("");
   const [data, setData] = useState<Course[]>([]);
 
   useEffect(() => {
     if (allCourses) {
+      console.log('Setting data with courses:', allCourses);
       setData(allCourses);
     }
   }, [allCourses]);
@@ -96,7 +107,7 @@ function Courses() {
             className="rounded-lg border border-slate-200 bg-white px-4 pr-8 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all duration-200 hover:border-emerald-600 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-100"
           >
             <option value="">Alle kategorier</option>
-            {categories.map((category) => (
+            {categories?.map((category) => (
               <option key={category} value={category}>
                 {category}
               </option>
@@ -179,6 +190,34 @@ function Courses() {
           </div>
         )}
       </section>
+
+      {totalPages > 1 && (
+        <div className="mt-8 flex items-center justify-center gap-4">
+          <button
+            onClick={previousPage}
+            disabled={!hasPreviousPage}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200
+              ${hasPreviousPage 
+                ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' 
+                : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}
+          >
+            Forrige side
+          </button>
+          <span className="text-sm font-medium text-slate-600">
+            Side {currentPage} av {totalPages}
+          </span>
+          <button
+            onClick={nextPage}
+            disabled={!hasNextPage}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200
+              ${hasNextPage 
+                ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' 
+                : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}
+          >
+            Neste side
+          </button>
+        </div>
+      )}
     </div>
   );
 }

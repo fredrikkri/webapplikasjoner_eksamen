@@ -14,24 +14,6 @@ export const createCourseController = (CourseService: CourseService) => {
     return !result.success;
   };
 
-  /*
-  app.get("/categories", async (c) => {
-    try {
-      const response: Result<string[]> = {
-        success: true,
-        data: data.categories
-      };
-      return c.json(response);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-      return errorResponse(
-        c,
-        'INTERNAL_SERVER_ERROR',
-        error instanceof Error ? error.message : 'Failed to fetch categories'
-      );
-    }
-  });
-*/
   app.get("/courses", async (c) => {
     const query = validateQuery(c.req.query()).data ?? {};
     const result = await CourseService.list(query);
@@ -76,9 +58,19 @@ export const createCourseController = (CourseService: CourseService) => {
         );
       }
 
-      const response: Result<string> = {
+      // After successful creation, fetch the complete course data
+      const courseResult = await CourseService.getBySlug(result.data);
+      if (isFailure(courseResult) || !courseResult.data) {
+        return errorResponse(
+          c,
+          'INTERNAL_SERVER_ERROR',
+          'Failed to fetch created course'
+        );
+      }
+
+      const response: Result<Course> = {
         success: true,
-        data: result.data
+        data: courseResult.data
       };
       return c.json(response, { status: 201 });
     } catch (error) {

@@ -1,15 +1,11 @@
 import { DB } from "./db";
-import { fileURLToPath } from "url";
 import { join } from "path";
 import { promises } from "fs";
 
-const __filename = fileURLToPath(import.meta.url);
-
 export const seed = async (db: DB) => {
-
-const path = join(".", "src", "features", "data", "data.json");
-const file = await promises.readFile(path, "utf-8");
-const { courses, comments, users, categories, courseCreateSteps} = JSON.parse(file);
+  const path = join(process.cwd(), "src", "features", "data", "data.json");
+  const file = await promises.readFile(path, "utf8");
+  const { courses, comments, users, categories, courseCreateSteps } = JSON.parse(file);
 
   const insertCourse = db.prepare(`
     INSERT INTO courses (id, title, slug, description, category)
@@ -22,13 +18,13 @@ const { courses, comments, users, categories, courseCreateSteps} = JSON.parse(fi
   `);
 
   const insertText = db.prepare(`
-    INSERT INTO texts (text, lesson_id)
-    VALUES (?, ?)
+    INSERT INTO texts (id, text, lesson_id)
+    VALUES (?, ?, ?)
   `);
 
   const insertComment = db.prepare(`
-    INSERT INTO comments (createdBy, comment, lesson_slug)
-    VALUES (?, ?, ?)
+    INSERT INTO comments (createdBy, comment, lesson_id)
+    VALUES (?, ?, (SELECT id FROM lessons WHERE slug = ?))
   `);
 
   const insertUser = db.prepare(`
@@ -41,34 +37,50 @@ const { courses, comments, users, categories, courseCreateSteps} = JSON.parse(fi
     VALUES (?, ?)
   `);
 
-  // SRC: kilde: chatgpt.com /
   const insertCategory = db.prepare(`
     INSERT INTO categories (name) VALUES (?);
   `);
 
-  // SRC: kilde: chatgpt.com || delvis /
+  // Use a transaction to ensure all-or-nothing insertion
   db.transaction(() => {
+    // Clear existing data
+    db.prepare('DELETE FROM texts').run();
+    db.prepare('DELETE FROM comments').run();
+    db.prepare('DELETE FROM lessons').run();
+    db.prepare('DELETE FROM courses').run();
+    db.prepare('DELETE FROM users').run();
+    db.prepare('DELETE FROM categories').run();
+    db.prepare('DELETE FROM courseCreateSteps').run();
+
+    // Insert users
     for (const user of users) {
       insertUser.run(user.id, user.name, user.email);
     }
 
+    // Insert categories
     for (const category of categories) {
-        insertCategory.run(category);
+      const normalizedCategory = category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+      insertCategory.run(normalizedCategory);
     }
 
-    for (const create of courseCreateSteps) {
-        insertCourseCreateSteps.run(create.id, create.name);
+    // Insert course create steps
+    for (const step of courseCreateSteps) {
+      insertCourseCreateSteps.run(step.id, step.name);
     }
 
+    // Insert courses and their lessons
     for (const course of courses) {
+      const normalizedCategory = course.category.charAt(0).toUpperCase() + course.category.slice(1).toLowerCase();
+      
       insertCourse.run(
         course.id,
         course.title,
         course.slug,
         course.description,
-        course.category
-    );
+        normalizedCategory
+      );
 
+      // Insert lessons for this course
       for (const lesson of course.lessons) {
         insertLesson.run(
           lesson.id,
@@ -78,12 +90,16 @@ const { courses, comments, users, categories, courseCreateSteps} = JSON.parse(fi
           course.id
         );
 
-
-        for (const text of lesson.text) {
-          insertText.run(text.text, lesson.id);
+        // Insert texts for this lesson
+        if (lesson.text && lesson.text.length > 0) {
+          for (const text of lesson.text) {
+            insertText.run(text.id, text.text, lesson.id);
+          }
         }
       }
     }
+
+    // Insert comments (after lessons are inserted so we can look up lesson_id)
     for (const comment of comments) {
       insertComment.run(
         comment.createdBy.name,

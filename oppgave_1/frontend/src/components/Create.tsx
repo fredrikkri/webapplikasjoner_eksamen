@@ -1,4 +1,4 @@
-import { useReducer, useState } from "react";
+import { useReducer, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCreateCourse } from "../hooks/useCourse";
 import { defaultEditorConfig, tiptapEditorConfig, type EditorConfig } from "./editors";
@@ -17,14 +17,41 @@ function Create() {
   const router = useRouter();
   const [state, dispatch] = useReducer(formReducer, initialState);
   const [editorConfig, setEditorConfig] = useState<EditorConfig>(tiptapEditorConfig);
-  const { addCourse, loading } = useCreateCourse();
+  const { addCourse, loading, success } = useCreateCourse();
+
+  // Handle success state
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        router.push('/kurs');
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [success, router]);
+
+  const handleStepChange = (step: number) => {
+    const validationErrors = validateForm({
+      ...state,
+      currentStep: state.currentStep
+    });
+
+    if (Object.keys(validationErrors).length > 0) {
+      Object.entries(validationErrors).forEach(([field, message]) => {
+        if (message) {
+          dispatch({ type: 'SET_ERROR', field, message });
+        }
+      });
+      return;
+    }
+
+    dispatch({ type: 'SET_CURRENT_STEP', step });
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     dispatch({ type: 'CLEAR_ERRORS' });
 
     const validationErrors = validateForm(state);
-    console.log("Form validation errors:", validationErrors);
 
     if (Object.keys(validationErrors).length > 0) {
       Object.entries(validationErrors).forEach(([field, message]) => {
@@ -36,11 +63,6 @@ function Create() {
     }
 
     try {
-      console.log("Submitting course data:", {
-        courseFields: state.courseFields,
-        lessons: state.lessons,
-      });
-
       dispatch({ type: 'SET_STATUS', status: 'loading' });
 
       const courseData: CreateCourseData = {
@@ -56,9 +78,6 @@ function Create() {
         message: 'Kurset er opprettet!',
       });
 
-      setTimeout(() => {
-        router.push('/kurs');
-      }, 1500);
     } catch (error) {
       console.error("Error creating course:", error);
       const errorMessage =
@@ -74,10 +93,42 @@ function Create() {
     }
   };
 
+  const handleLessonFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // Clear any existing errors
+    dispatch({ type: 'CLEAR_ERRORS' });
+    
+    // Update the field value
+    dispatch({ 
+      type: 'SET_LESSON_FIELD', 
+      index: state.currentLesson, 
+      field: event.target.name as keyof typeof state.lessons[0],
+      value: event.target.value 
+    });
+  };
+
+  const handleLessonTextChange = (value: string) => {
+    // Clear any existing errors
+    dispatch({ type: 'CLEAR_ERRORS' });
+    
+    // Update the text value
+    dispatch({ 
+      type: 'SET_LESSON_TEXT', 
+      index: state.currentLesson, 
+      value 
+    });
+  };
+
+  const handleRemoveLesson = (index: number) => {
+    dispatch({ type: 'REMOVE_LESSON', index });
+  };
+
+  const isFormDisabled = loading || state.status === 'loading';
+  const canSubmit = state.currentStep === 1 && state.lessons.length > 0;
+
   return (
     <div className="mx-auto max-w-5xl animate-fade-in">
       <div className="mb-12 text-center">
-        <h2 className="bg-gradient-to-r from-emerald-600 to-emerald-500 bg-clip-text text-3xl font-bold text-transparent" data-testid="title">
+        <h2 className="py-2 bg-gradient-to-r from-emerald-600 to-emerald-500 bg-clip-text text-3xl font-bold text-transparent" data-testid="title">
           Lag nytt kurs
         </h2>
         <p className="mt-2 text-slate-600">
@@ -97,14 +148,14 @@ function Create() {
             {steps.map((step, index) => (
               <button
                 key={step.id}
-                onClick={() => index <= state.currentStep && dispatch({ type: 'SET_CURRENT_STEP', step: index })}
-                disabled={index > state.currentStep || loading}
+                onClick={() => index <= state.currentStep && !isFormDisabled && handleStepChange(index)}
+                disabled={index > state.currentStep || isFormDisabled}
                 className={`group flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 ${
                   index <= state.currentStep
                     ? "border-emerald-600 bg-emerald-600 text-white hover:shadow-lg"
                     : "border-slate-300 bg-white text-slate-500"
                 } ${
-                  index <= state.currentStep && !loading ? "cursor-pointer" : "cursor-not-allowed opacity-50"
+                  index <= state.currentStep && !isFormDisabled ? "cursor-pointer" : "cursor-not-allowed opacity-50"
                 }`}
               >
                 <span className="transition-transform duration-200 group-hover:scale-110">
@@ -132,12 +183,16 @@ function Create() {
         {state.currentStep === 0 ? (
           <CourseForm
             courseFields={state.courseFields}
-            onChange={(e) => dispatch({
-               type: 'SET_COURSE_FIELD', 
-               field: e.target.name as keyof typeof state.courseFields,
-               value: e.target.value })}
+            onChange={(e) => {
+              dispatch({ type: 'CLEAR_ERRORS' });
+              dispatch({
+                type: 'SET_COURSE_FIELD', 
+                field: e.target.name as keyof typeof state.courseFields,
+                value: e.target.value 
+              });
+            }}
             errors={state.errors}
-            disabled={loading}
+            disabled={isFormDisabled}
           />
         ) : null}
 
@@ -145,10 +200,21 @@ function Create() {
           <>
             <div className="mb-4 flex justify-end">
               <select
-                className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm shadow-sm transition-all duration-200 hover:border-emerald-600 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-100 disabled:opacity-50"
+                className="min-w-[160px] rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm shadow-sm transition-all duration-200 hover:border-emerald-600 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-100 disabled:opacity-50"
                 value={editorConfig.type}
-                onChange={(e) => setEditorConfig(e.target.value === 'textarea' ? defaultEditorConfig : tiptapEditorConfig)}
-                disabled={loading}
+                onChange={(e) => {
+                  // Preserve editor content when switching
+                  const currentContent = state.lessons[state.currentLesson]?.text[0]?.text || '';
+                  setEditorConfig(e.target.value === 'textarea' ? defaultEditorConfig : tiptapEditorConfig);
+                  if (currentContent) {
+                    dispatch({ 
+                      type: 'SET_LESSON_TEXT', 
+                      index: state.currentLesson, 
+                      value: currentContent 
+                    });
+                  }
+                }}
+                disabled={isFormDisabled}
               >
                 <option value="textarea">Simple Editor</option>
                 <option value="tiptap">Rich Text Editor</option>
@@ -160,21 +226,23 @@ function Create() {
                 currentLesson={state.currentLesson}
                 onSelectLesson={(index) => dispatch({ type: 'SET_CURRENT_LESSON', lesson: index })}
                 onAddLesson={() => dispatch({ type: 'ADD_LESSON' })}
-                disabled={loading}
+                onRemoveLesson={handleRemoveLesson}
+                disabled={isFormDisabled}
+                errors={state.errors}
               />
 
               {state.lessons.length > 0 ? (
                 <LessonForm
                   lesson={state.lessons[state.currentLesson]}
-                  onChange={(e) => dispatch({ 
-                    type: 'SET_LESSON_FIELD', 
-                    index: state.currentLesson, 
-                    field: e.target.name as keyof typeof state.lessons[0],
-                    value: e.target.value })}
-                  onTextChange={(value) => dispatch({ type: 'SET_LESSON_TEXT', index: state.currentLesson, value })}
-                  errors={state.errors}
+                  onChange={handleLessonFieldChange}
+                  onTextChange={handleLessonTextChange}
+                  errors={{
+                    title: state.errors[`lesson_${state.currentLesson}_title`],
+                    preAmble: state.errors[`lesson_${state.currentLesson}_preAmble`],
+                    text: state.errors[`lesson_${state.currentLesson}_text`]
+                  }}
                   editorConfig={editorConfig}
-                  disabled={loading}
+                  disabled={isFormDisabled}
                 />
               ) : (
                 <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-slate-200 p-8 transition-all duration-300 hover:border-emerald-600 hover:bg-emerald-50">
@@ -185,6 +253,11 @@ function Create() {
                     <p className="text-slate-600">
                       Klikk på "Legg til leksjon" for å komme i gang
                     </p>
+                    {state.errors.lessons && (
+                      <p className="mt-2 text-sm text-red-500" role="alert">
+                        {state.errors.lessons}
+                      </p>
+                    )}
                   </div>
                 </div>
               )}
@@ -210,12 +283,12 @@ function Create() {
               state.currentStep === 1
                 ? "bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-emerald-600 focus:ring-offset-2"
                 : "bg-slate-800 text-white hover:bg-slate-900 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-slate-800 focus:ring-offset-2"
-            } ${loading ? "cursor-not-allowed opacity-50" : ""}`}
+            } ${isFormDisabled || (state.currentStep === 1 && !canSubmit) ? "cursor-not-allowed opacity-50" : ""}`}
             type={state.currentStep === 1 ? "submit" : "button"}
-            onClick={() => state.currentStep === 0 && dispatch({ type: 'SET_CURRENT_STEP', step: 1 })}
-            disabled={loading}
+            onClick={() => state.currentStep === 0 && handleStepChange(1)}
+            disabled={isFormDisabled || (state.currentStep === 1 && !canSubmit)}
           >
-            {loading ? (
+            {isFormDisabled ? (
               <>
                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
                 <span>Lagrer...</span>

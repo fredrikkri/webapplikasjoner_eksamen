@@ -7,7 +7,7 @@ import { CategoryController } from "./features/category/category.controller";
 const app = new Hono();
 
 app.use("/*", cors({
-  origin: "http://localhost:4000",
+  origin: ["http://localhost:4000", "http://localhost:3999"],
   credentials: true,
 }));
 

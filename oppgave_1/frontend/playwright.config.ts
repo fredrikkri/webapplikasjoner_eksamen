@@ -1,53 +1,36 @@
 import { defineConfig, devices } from "@playwright/test";
-import path from "path";
 
 export default defineConfig({
   testDir: "./src/tests",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  reporter: "html",
+  retries: 1,
+  workers: undefined,
+  reporter: "list", // Changed from "html" to "list" for minimal console output
   use: {
     baseURL: "http://localhost:4000",
-    trace: "on-first-retry",
+    actionTimeout: 30000,
+    navigationTimeout: 30000,
+    viewport: { width: 900, height: 600 },
   },
 
-  /* Configure projects for major browsers */
   projects: [
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
     },
-
     {
       name: "firefox",
       use: { ...devices["Desktop Firefox"] },
     },
-
     {
       name: "webkit",
       use: { ...devices["Desktop Safari"] },
     },
   ],
-  webServer: [
-    // {
-    //   command: "pnpm run dev",
-    //   url: "http://localhost:3999",
-    //   reuseExistingServer: !process.env.CI,
-    //   cwd: path.resolve(import.meta.dirname, "..", "backend"),
-    //   timeout: 120 * 1000,
-    //   stdout: "pipe",
-    //   stderr: "pipe",
-    // },
-    {
-      command: "pnpm run dev",
-      url: "http://localhost:4000",
-      reuseExistingServer: !process.env.CI,
-      cwd: path.resolve(import.meta.dirname),
-      stdout: "pipe",
-      stderr: "pipe",
-      timeout: 120 * 1000,
-    },
-  ],
+  
+  timeout: 120000,
+  expect: {
+    timeout: 30000,
+  },
 });

@@ -1,16 +1,6 @@
-import { Course, Lesson, CreateCourseData } from "../../types/types";
+import { Course, Lesson, CreateCourseData, ApiResponse } from "../../types/types";
 import { ENDPOINTS } from "../../config/config";
 import { fetchWithRetry, validateResponse, handleApiError } from "../utils/apiUtils";
-
-// Get categories
-export const getCategories = async (): Promise<string[]> => {
-  try {
-    const response = await fetchWithRetry<string[]>(ENDPOINTS.categories);
-    return validateResponse(response);
-  } catch (error) {
-    return handleApiError(error);
-  }
-};
 
 // Get a course by slug
 export const getCourse = async (slug: string): Promise<Course> => {
@@ -22,33 +12,73 @@ export const getCourse = async (slug: string): Promise<Course> => {
   }
 };
 
-// Get all courses
-export const getAllCourses = async (): Promise<Course[]> => {
+// Get all courses with pagination
+export const getAllCourses = async (page: number = 0, pageSize: number = 9): Promise<{
+  courses: Course[];
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}> => {
   try {
-    const response = await fetchWithRetry<Course[]>(ENDPOINTS.courses);
-    return validateResponse(response);
+    console.log('Fetching courses with pagination:', { page, pageSize });
+    const url = `${ENDPOINTS.courses}?page=${page}&pageSize=${pageSize}`;
+    console.log('Courses API URL:', url);
+    
+    const response = await fetchWithRetry<Course[]>(url);
+    console.log('Raw courses API response:', response);
+
+    if (!response.success) {
+      throw new Error('Failed to fetch courses');
+    }
+
+    return {
+      courses: response.data,
+      total: response.total || 0,
+      totalPages: response.totalPages || 1,
+      hasNextPage: response.hasNextPage || false,
+      hasPreviousPage: response.hasPreviousPage || false
+    };
   } catch (error) {
-    return handleApiError(error);
+    console.error('Error fetching courses:', error);
+    throw error;
   }
 };
 
 // Create a new course
 export const createCourse = async (data: CreateCourseData): Promise<Course> => {
   try {
+    // Transform the data to match the backend's expected structure
+    const transformedData = {
+      title: data.courseFields.title,
+      description: data.courseFields.description,
+      category: data.courseFields.category,
+      lessons: data.lessons.map(lesson => ({
+        title: lesson.title,
+        preAmble: lesson.preAmble,
+        text: lesson.text.map(t => ({
+          id: t.id,
+          text: t.text
+        }))
+      }))
+    };
+
     const response = await fetchWithRetry<Course>(ENDPOINTS.courses, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        ...data.courseFields,
-        lessons: data.lessons
-      }),
+      body: JSON.stringify(transformedData),
     });
 
-    return validateResponse(response);
+    if (!response.success || !response.data) {
+      throw new Error(response.error?.message || 'Failed to create course');
+    }
+
+    return response.data;
   } catch (error) {
-    return handleApiError(error);
+    console.error('Error creating course:', error);
+    throw error;
   }
 };
 

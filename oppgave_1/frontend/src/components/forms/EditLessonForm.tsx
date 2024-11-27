@@ -4,6 +4,7 @@ import { LessonForm } from './LessonForm';
 import { getLesson, updateLesson } from '../../lib/services/lessons';
 import type { LessonFields } from '../../types/types';
 import type { EditorConfig } from '../editors';
+import { validateForm } from '../../reducers/formReducer';
 import Link from 'next/link';
 
 interface EditLessonFormProps {
@@ -14,8 +15,7 @@ interface EditLessonFormProps {
 const editorConfig: EditorConfig = {
   type: 'tiptap',
   options: {
-    placeholder: 'Skriv leksjonsinnholdet her...',
-    initialContent: ''
+    placeholder: 'Skriv leksjonsinnholdet her...'
   }
 };
 
@@ -46,8 +46,7 @@ export function EditLessonForm({ courseSlug, lessonSlug }: EditLessonFormProps) 
             order: lesson.order || '1',
           });
           editorConfig.options = {
-            ...editorConfig.options,
-            initialContent: lesson.text[0]?.text || ''
+            ...editorConfig.options
           };
         }
       } catch (error) {
@@ -67,11 +66,13 @@ export function EditLessonForm({ courseSlug, lessonSlug }: EditLessonFormProps) 
       ...prev,
       [name]: value,
     }));
+    // Clear error for the changed field
     if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: '',
-      }));
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
     }
   };
 
@@ -80,11 +81,13 @@ export function EditLessonForm({ courseSlug, lessonSlug }: EditLessonFormProps) 
       ...prev,
       text: [{ id: prev.text[0]?.id || '1', text: value }],
     }));
+    // Clear error for text field
     if (errors.text) {
-      setErrors(prev => ({
-        ...prev,
-        text: '',
-      }));
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.text;
+        return newErrors;
+      });
     }
   };
 
@@ -93,13 +96,32 @@ export function EditLessonForm({ courseSlug, lessonSlug }: EditLessonFormProps) 
     setError(null);
     setIsSaving(true);
 
-    const newErrors: Record<string, string> = {};
-    if (!lessonFields.title) newErrors.title = 'Tittel er påkrevd';
-    if (!lessonFields.preAmble) newErrors.preAmble = 'Ingress er påkrevd';
-    if (!lessonFields.text[0]?.text) newErrors.text = 'Innhold er påkrevd';
+    // Use the same validation as LessonForm by creating a form state
+    const validationErrors = validateForm({
+      courseFields: {
+        id: '',
+        title: '',
+        description: '',
+        category: '',
+      },
+      lessons: [lessonFields],
+      currentStep: 1,
+      currentLesson: 0,
+      errors: {},
+      status: 'idle',
+      message: '',
+    });
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    // Extract only the lesson-related errors
+    const lessonErrors: Record<string, string> = {};
+    Object.entries(validationErrors).forEach(([key, value]) => {
+      if (key.startsWith('lesson_0_')) {
+        lessonErrors[key.replace('lesson_0_', '')] = value;
+      }
+    });
+
+    if (Object.keys(lessonErrors).length > 0) {
+      setErrors(lessonErrors);
       setIsSaving(false);
       return;
     }

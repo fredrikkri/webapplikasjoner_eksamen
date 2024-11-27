@@ -21,6 +21,11 @@ export async function fetchWithTimeout(
   try {
     const response = await fetch(resource, {
       ...options,
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
       signal: controller.signal,
     });
     clearTimeout(id);
@@ -50,9 +55,17 @@ export async function fetchWithRetry<T>(
 
   for (let attempt = 0; attempt < retryAttempts; attempt++) {
     try {
-      const response = await fetchWithTimeout(resource, fetchOptions);
+      const response = await fetchWithTimeout(resource, {
+        ...fetchOptions,
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          ...fetchOptions.headers,
+        },
+      });
       
-      if (!response.ok) {
+      // Consider both 200 and 201 as successful responses
+      if (![200, 201].includes(response.status)) {
         const errorData = await response.json();
         throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
       }
@@ -65,6 +78,7 @@ export async function fetchWithRetry<T>(
 
       return data;
     } catch (error) {
+      console.error('Fetch error:', error);
       lastError = error instanceof Error ? error : new Error(ERROR_MESSAGES.UNKNOWN_ERROR);
 
       if (error instanceof Error && error.message === ERROR_MESSAGES.TIMEOUT_ERROR) {

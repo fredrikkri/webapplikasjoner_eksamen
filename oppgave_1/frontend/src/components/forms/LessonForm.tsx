@@ -1,6 +1,7 @@
 import { type LessonFields } from '../../types/types';
 import { type EditorConfig } from '../editors';
 import { EditorWrapper } from '../editors/EditorWrapper';
+import { useEffect, useRef } from 'react';
 
 interface LessonFormProps {
   lesson: LessonFields;
@@ -11,9 +12,65 @@ interface LessonFormProps {
   disabled?: boolean;
 }
 
-export function LessonForm({ lesson, onChange, onTextChange, errors, editorConfig, disabled = false }: LessonFormProps) {
+export function LessonForm({ 
+  lesson, 
+  onChange, 
+  onTextChange, 
+  errors, 
+  editorConfig, 
+  disabled = false 
+}: LessonFormProps) {
+  const formRef = useRef<HTMLDivElement>(null);
+  const isFirstRender = useRef(true);
+
+  // Force update disabled state on first render and when disabled changes
+  useEffect(() => {
+    if (formRef.current) {
+      const inputs = formRef.current.querySelectorAll('input, textarea, [contenteditable="true"]');
+      inputs.forEach(input => {
+        if (input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement) {
+          input.disabled = disabled;
+        }
+        if (input.hasAttribute('contenteditable')) {
+          input.setAttribute('contenteditable', (!disabled).toString());
+        }
+      });
+    }
+  }, [disabled]);
+
+  // Handle initial render
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      if (formRef.current && disabled) {
+        const inputs = formRef.current.querySelectorAll('input, textarea, [contenteditable="true"]');
+        inputs.forEach(input => {
+          if (input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement) {
+            input.disabled = true;
+          }
+          if (input.hasAttribute('contenteditable')) {
+            input.setAttribute('contenteditable', 'false');
+          }
+        });
+      }
+    }
+  }, [disabled]);
+
+  const handleEditorChange = (value: string) => {
+    // Preserve editor content when switching types
+    const preservedContent = value;
+    onTextChange(preservedContent);
+  };
+
+  const currentText = lesson.text?.[0]?.text || '';
+
   return (
-    <div className="space-y-6">
+    <div 
+      ref={formRef}
+      className="space-y-6" 
+      data-testid="lesson_form"
+      aria-disabled={disabled}
+    >
       <div>
         <label className="mb-2 block font-medium text-slate-700" htmlFor="title">
           Tittel<span className="text-emerald-600">*</span>
@@ -32,8 +89,14 @@ export function LessonForm({ lesson, onChange, onTextChange, errors, editorConfi
           value={lesson.title}
           onChange={onChange}
           disabled={disabled}
+          aria-invalid={errors.title ? 'true' : 'false'}
+          aria-describedby={errors.title ? 'title-error' : undefined}
         />
-        {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
+        {errors.title && (
+          <p id="title-error" className="mt-1 text-sm text-red-500" role="alert">
+            {errors.title}
+          </p>
+        )}
       </div>
 
       <div>
@@ -54,21 +117,43 @@ export function LessonForm({ lesson, onChange, onTextChange, errors, editorConfi
           value={lesson.preAmble}
           onChange={onChange}
           disabled={disabled}
+          aria-invalid={errors.preAmble ? 'true' : 'false'}
+          aria-describedby={errors.preAmble ? 'preamble-error' : undefined}
         />
-        {errors.preAmble && <p className="mt-1 text-sm text-red-500">{errors.preAmble}</p>}
+        {errors.preAmble && (
+          <p id="preamble-error" className="mt-1 text-sm text-red-500" role="alert">
+            {errors.preAmble}
+          </p>
+        )}
       </div>
 
       <div>
-        <label className="mb-2 block font-medium text-slate-700" htmlFor="text">
+        <label className="mb-2 block font-medium text-slate-700" htmlFor="lesson-content">
           Innhold<span className="text-emerald-600">*</span>
         </label>
-        <EditorWrapper
-          config={editorConfig}
-          value={lesson.text?.[0]?.text ?? ''}
-          onChange={onTextChange}
-          disabled={disabled}
-        />
-        {errors.text && <p className="mt-1 text-sm text-red-500">{errors.text}</p>}
+        <div 
+          className={`rounded-lg border ${
+            errors.text ? 'border-red-500' : 'border-slate-200'
+          } transition-colors focus-within:border-emerald-600 ${
+            disabled ? 'cursor-not-allowed bg-slate-50' : ''
+          }`}
+        >
+          <EditorWrapper
+            config={editorConfig}
+            value={currentText}
+            onChange={handleEditorChange}
+            disabled={disabled}
+            aria-invalid={errors.text ? 'true' : 'false'}
+            aria-describedby={errors.text ? 'text-error' : undefined}
+            placeholder="Skriv leksjonens innhold her..."
+            data-testid="lesson-content-editor"
+          />
+        </div>
+        {errors.text && (
+          <p id="text-error" className="mt-1 text-sm text-red-500" role="alert">
+            {errors.text}
+          </p>
+        )}
       </div>
     </div>
   );

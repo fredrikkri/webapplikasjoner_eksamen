@@ -37,7 +37,7 @@ export interface LessonFields {
 }
 
 export interface Category {
-  id: string;
+  id: number;  // Changed from string to number to match API response
   name: string;
 }
 
@@ -67,6 +67,15 @@ export interface CommentData {
   lesson: LessonRef;
 }
 
+export interface PaginationMetadata {
+  total: number;
+  pageSize: number;
+  page: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T;
@@ -75,6 +84,12 @@ export interface ApiResponse<T> {
     code?: string;
     details?: unknown;
   };
+  total?: number;
+  pageSize?: number;
+  page?: number;
+  totalPages?: number;
+  hasNextPage?: boolean;
+  hasPreviousPage?: boolean;
 }
 
 export interface FormError {
@@ -106,6 +121,7 @@ export type FormAction =
   | { type: 'SET_LESSON_FIELD'; index: number; field: keyof LessonFields; value: string }
   | { type: 'SET_LESSON_TEXT'; index: number; value: string }
   | { type: 'ADD_LESSON' }
+  | { type: 'REMOVE_LESSON'; index: number }
   | { type: 'SET_CURRENT_STEP'; step: number }
   | { type: 'SET_CURRENT_LESSON'; lesson: number }
   | { type: 'SET_ERROR'; field: string; message: string }

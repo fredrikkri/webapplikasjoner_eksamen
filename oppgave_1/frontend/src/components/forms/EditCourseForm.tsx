@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { CourseForm } from './CourseForm';
 import { getCourse, updateCourse } from '../../lib/services/courses';
 import type { CourseFields, Course } from '../../types/types';
+import { validateForm } from '../../reducers/formReducer';
 import Link from 'next/link';
 
 interface EditCourseFormProps {
@@ -50,11 +51,13 @@ export function EditCourseForm({ slug }: EditCourseFormProps) {
       ...prev,
       [name]: value,
     }));
+    // Clear error for the changed field
     if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: '',
-      }));
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
     }
   };
 
@@ -63,13 +66,19 @@ export function EditCourseForm({ slug }: EditCourseFormProps) {
     setError(null);
     setIsSaving(true);
 
-    const newErrors: Record<string, string> = {};
-    if (!courseFields.title) newErrors.title = 'Tittel er påkrevd';
-    if (!courseFields.description) newErrors.description = 'Beskrivelse er påkrevd';
-    if (!courseFields.category) newErrors.category = 'Kategori er påkrevd';
+    // Use the same validation as CourseForm by creating a form state
+    const validationErrors = validateForm({
+      courseFields,
+      lessons: [],
+      currentStep: 0,
+      currentLesson: 0,
+      errors: {},
+      status: 'idle',
+      message: '',
+    });
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       setIsSaving(false);
       return;
     }
@@ -82,7 +91,7 @@ export function EditCourseForm({ slug }: EditCourseFormProps) {
       const updatedCourse: Course = {
         id: originalCourse.id,
         title: courseFields.title,
-        slug: originalCourse.slug, // Keep the original slug, it will be updated in backend based on title
+        slug: originalCourse.slug,
         description: courseFields.description,
         category: courseFields.category,
         lessons: originalCourse.lessons.map(lesson => ({
@@ -94,14 +103,7 @@ export function EditCourseForm({ slug }: EditCourseFormProps) {
         }))
       };
 
-      console.log('Updating course with data:', {
-        id: updatedCourse.id,
-        originalSlug: slug,
-        title: updatedCourse.title
-      });
-
       const result = await updateCourse(slug, updatedCourse);
-      // Navigate to the new URL using the returned slug from the backend
       router.push(`/kurs/${result.slug}`);
     } catch (error) {
       setError('Kunne ikke oppdatere kurset');

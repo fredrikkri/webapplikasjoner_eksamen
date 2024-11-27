@@ -17,7 +17,11 @@ export const createCategoryController = (categoryService: CategoryService) => {
           result.error.code as ErrorCode,
           result.error.message
         );
-      return c.json(result);
+
+      return c.json({
+        success: true,
+        data: result.data
+      });
     });
   
     app.get("/categories/:id", async (c) => {
@@ -30,9 +34,12 @@ export const createCategoryController = (categoryService: CategoryService) => {
           result.error.code as ErrorCode,
           result.error.message
         );
-      return c.json(result);
+
+      return c.json({
+        success: true,
+        data: result.data
+      });
     });
-  
   
     return app;
   };

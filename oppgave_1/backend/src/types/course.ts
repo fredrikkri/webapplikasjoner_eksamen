@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { LessonSchema } from './lesson';
+import { LessonSchema, LessonCreateSchema } from './lesson';
 
 export const CourseSchema = z.object({
   id: z.string(),
@@ -17,7 +17,14 @@ export const CourseCreateStepsSchema = z.object({
   name: z.string()
 })
 
-export const CourseCreateSchema = CourseSchema.omit({ id: true, slug: true })
+// Modified to use LessonCreateSchema for course creation
+export const CourseCreateSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  category: z.string(),
+  lessons: z.array(LessonCreateSchema)
+});
+
 export const CourseArraySchema = z.array(CourseSchema)
 
 export type CourseCreate = z.infer<typeof CourseCreateSchema>
@@ -31,7 +38,11 @@ export const validateCourseCreateSteps = (data: unknown) => {
 };
 
 export const validateCreateCourse = (data: unknown) => {
-  return CourseCreateSchema.safeParse(data);
+  const result = CourseCreateSchema.safeParse(data);
+  if (!result.success) {
+    console.error('Course validation failed:', result.error);
+  }
+  return result;
 };
 
 export const validateUpdateCourse = (data: unknown) => {

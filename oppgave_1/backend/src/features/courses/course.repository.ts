@@ -240,9 +240,11 @@ export const createCourseRepository = (db: DB) => {
 
   const list = async (params?: Query): Promise<Result<Course[]>> => {
     try {
-      const { name, pageSize = 10, page = 0 } = params ?? {};
-      const offset = (Number(page) - 1) * Number(pageSize);
-      const hasPagination = Number(page) > 0;
+      const { name, pageSize = 9, page = 0 } = params ?? {};
+      const numericPageSize = Number(pageSize);
+      const numericPage = Number(page);
+      const offset = (numericPage - 1) * numericPageSize;
+      const hasPagination = numericPage > 0;
 
       let query = "SELECT * FROM courses";
       const conditions: string[] = [];
@@ -255,7 +257,7 @@ export const createCourseRepository = (db: DB) => {
         query += ` WHERE ${conditions.join(' AND ')}`;
       }
 
-      query += ` LIMIT ${pageSize}`;
+      query += ` LIMIT ${numericPageSize}`;
       query += ` OFFSET ${offset}`;
 
       const statement = db.prepare(query);
@@ -282,14 +284,21 @@ export const createCourseRepository = (db: DB) => {
       );
 
       const { total } = db.prepare("SELECT COUNT(*) as total FROM courses").get() as { total: number };
-      const totalPages = Math.ceil(total / Number(pageSize));
-      const hasNextPage = Number(page) < totalPages;
-      const hasPreviousPage = Number(page ?? 1) > 1;
+      const totalPages = Math.ceil(total / numericPageSize);
+      const hasNextPage = numericPage < totalPages;
+      const hasPreviousPage = numericPage > 1;
 
       return {
         success: true as const,
         data: coursesWithLessons,
-        ...(hasPagination ? { total, pageSize, page, totalPages, hasNextPage, hasPreviousPage } : {}),
+        ...(hasPagination ? {
+          total,
+          pageSize: numericPageSize,
+          page: numericPage,
+          totalPages,
+          hasNextPage,
+          hasPreviousPage
+        } : {})
       };
     } catch (error) {
       console.error("Error fetching courses:", error);
@@ -306,8 +315,10 @@ export const createCourseRepository = (db: DB) => {
   const listLesson = async (params?: Query): Promise<Result<Lesson[]>> => {
     try {
       const { name, pageSize = 10, page = 0 } = params ?? {};
-      const offset = (Number(page) - 1) * Number(pageSize);
-      const hasPagination = Number(page) > 0;
+      const numericPageSize = Number(pageSize);
+      const numericPage = Number(page);
+      const offset = (numericPage - 1) * numericPageSize;
+      const hasPagination = numericPage > 0;
 
       let query = "SELECT * FROM lessons";
       const conditions: string[] = [];
@@ -320,7 +331,7 @@ export const createCourseRepository = (db: DB) => {
         query += ` WHERE ${conditions.join(' AND ')}`;
       }
 
-      query += ` LIMIT ${pageSize}`;
+      query += ` LIMIT ${numericPageSize}`;
       query += ` OFFSET ${offset}`;
 
       const statement = db.prepare(query);
@@ -337,14 +348,21 @@ export const createCourseRepository = (db: DB) => {
       );
 
       const { total } = db.prepare("SELECT COUNT(*) as total FROM lessons").get() as { total: number };
-      const totalPages = Math.ceil(total / Number(pageSize));
-      const hasNextPage = Number(page) < totalPages;
-      const hasPreviousPage = Number(page ?? 1) > 1;
+      const totalPages = Math.ceil(total / numericPageSize);
+      const hasNextPage = numericPage < totalPages;
+      const hasPreviousPage = numericPage > 1;
 
       return {
         success: true as const,
         data: lessonsWithTexts,
-        ...(hasPagination ? { total, pageSize, page, totalPages, hasNextPage, hasPreviousPage } : {}),
+        ...(hasPagination ? {
+          total,
+          pageSize: numericPageSize,
+          page: numericPage,
+          totalPages,
+          hasNextPage,
+          hasPreviousPage
+        } : {})
       };
     } catch (error) {
       console.error("Error fetching lessons:", error);
@@ -371,96 +389,87 @@ export const createCourseRepository = (db: DB) => {
   const create = async (data: CourseCreate): Promise<Result<string>> => {
     const db_transaction = db.transaction(() => {
       try {
-        const generatedSlug = generateSlug(data.title);
-        const slugExists = db.prepare("SELECT COUNT(*) as count FROM courses WHERE slug = ?").get(generatedSlug) as { count: number };
+        // Generate course ID and slug
+        const courseId = crypto.randomUUID();
+        const courseSlug = generateSlug(data.title);
+
+        // Check if slug exists
+        const slugExists = db.prepare("SELECT COUNT(*) as count FROM courses WHERE slug = ?").get(courseSlug) as { count: number };
         if (slugExists.count > 0) {
-          throw new Error(`Course with slug '${generatedSlug}' already exists`);
+          throw new Error(`Course with slug '${courseSlug}' already exists`);
         }
-  
-        const course = toDb({
-          ...data,
-          slug: generatedSlug
-        });
-  
-        console.log('Creating course with data:', JSON.stringify(course, null, 2));
-  
+
+        // First insert the course
         const courseQuery = db.prepare(`
           INSERT INTO courses (id, title, slug, description, category)
           VALUES (?, ?, ?, ?, ?)
         `);
-  
-        try {
-          courseQuery.run(
-            course.id,
-            course.title.trim(),
-            course.slug.toLowerCase(),
-            course.description.trim(),
-            course.category
-          );
-          console.log(`Inserted course with ID: ${course.id}`);
-        } catch (error) {
-          console.error('Error inserting course:', error);
-          throw new Error('Failed to insert course data');
-        }
-  
-        if (Array.isArray(course.lessons) && course.lessons.length > 0) {
+
+        courseQuery.run(
+          courseId,
+          data.title.trim(),
+          courseSlug.toLowerCase(),
+          data.description.trim(),
+          data.category
+        );
+
+        console.log(`Inserted course with ID: ${courseId}`);
+
+        // Then insert lessons if any
+        if (Array.isArray(data.lessons) && data.lessons.length > 0) {
           const lessonQuery = db.prepare(`
             INSERT INTO lessons (id, title, slug, preAmble, course_id)
             VALUES (?, ?, ?, ?, ?)
           `);
-  
+
           const textQuery = db.prepare(`
             INSERT INTO texts (id, text, lesson_id)
             VALUES (?, ?, ?)
           `);
-  
-          course.lessons.forEach((lesson) => {
-            const courseExists = db.prepare("SELECT id FROM courses WHERE id = ?").get(course.id);
-            if (!courseExists) {
-              throw new Error(`Course with ID ${course.id} does not exist`);
-            }
-  
-            try {
-              lessonQuery.run(
-                lesson.id,
-                lesson.title.trim(),
-                lesson.slug.toLowerCase(),
-                lesson.preAmble.trim(),
-                course.id
-              );
-  
-              console.log(`Inserted lesson with ID: ${lesson.id}`);
-  
-              if (Array.isArray(lesson.text) && lesson.text.length > 0) {
-                lesson.text.forEach((textItem) => {
-                  try {
-                    textQuery.run(textItem.id, textItem.text.trim(), lesson.id);
-                    console.log(`Inserted text for lesson ID: ${lesson.id}`);
-                  } catch (error) {
-                    console.error(`Error inserting text for lesson ${lesson.slug}:`, error);
-                    throw new Error(`Failed to insert text for lesson ${lesson.slug}`);
-                  }
-                });
+
+          for (const lesson of data.lessons) {
+            const lessonId = crypto.randomUUID();
+            const lessonSlug = generateSlug(lesson.title);
+
+            // Insert lesson
+            lessonQuery.run(
+              lessonId,
+              lesson.title.trim(),
+              lessonSlug.toLowerCase(),
+              lesson.preAmble.trim(),
+              courseId
+            );
+
+            console.log(`Inserted lesson with ID: ${lessonId}`);
+
+            // Insert texts for lesson
+            if (Array.isArray(lesson.text) && lesson.text.length > 0) {
+              for (const textItem of lesson.text) {
+                const textId = crypto.randomUUID();
+                textQuery.run(
+                  textId,
+                  textItem.text.trim(),
+                  lessonId
+                );
+                console.log(`Inserted text for lesson ID: ${lessonId}`);
               }
-            } catch (error) {
-              console.error(`Error inserting lesson ${lesson.slug}:`, error);
-              throw new Error(`Failed to insert lesson ${lesson.slug}`);
             }
-          });
+          }
         }
-  
-        return {
-          success: true as const,
-          data: course.id,
-        };
+
+        return courseSlug;
       } catch (error) {
         console.error("Error in create transaction:", error);
         throw error;
       }
     });
-  
+
     try {
-      return db_transaction();
+      const courseSlug = db_transaction();
+      return {
+        success: true as const,
+        data: courseSlug,
+      };
     } catch (error) {
       console.error("Course creation failed:", error);
       return {
@@ -488,7 +497,7 @@ export const createCourseRepository = (db: DB) => {
       const existingCourse = existingCourseResult.data;
   
       const course = toDb({
-        ...data,
+        ...data as Partial<Course>,
         id: existingCourse.id,
       });
   

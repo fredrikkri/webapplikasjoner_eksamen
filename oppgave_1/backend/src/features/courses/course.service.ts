@@ -18,6 +18,7 @@ import {
 
 import { createCourse, createCourseResponse, createLessonResponse } from "./course.mapper";
 import type { Query } from "../../lib/query";
+import { generateSlug } from "../../lib/utils";
 
 export const createCourseService = (courseRepository: CourseRepository) => {
   const getBySlug = async (slug: string): Promise<Result<Course | undefined>> => {
@@ -37,21 +38,41 @@ export const createCourseService = (courseRepository: CourseRepository) => {
     if (!result.success) return result;
 
     return {
-      ...result,
+      success: true,
       data: result.data.map(createCourseResponse),
+      ...(result.total !== undefined ? {
+        total: result.total,
+        pageSize: result.pageSize,
+        page: result.page,
+        totalPages: result.totalPages,
+        hasNextPage: result.hasNextPage,
+        hasPreviousPage: result.hasPreviousPage
+      } : {})
     };
   };
 
   const create = async (data: CourseCreate): Promise<Result<string>> => {
-    const course = createCourse(data);
-
-    if (!validateCreateCourse(course).success) {
+    const validation = validateCreateCourse(data);
+    if (!validation.success) {
       return {
         success: false,
         error: { code: "BAD_REQUEST", message: "Invalid Course data" },
       };
     }
-    return courseRepository.create(course);
+
+    // Transform the data to include required fields
+    const courseData = {
+      title: data.title,
+      description: data.description,
+      category: data.category,
+      lessons: data.lessons.map(lesson => ({
+        ...lesson,
+        id: crypto.randomUUID(),
+        slug: generateSlug(lesson.title)
+      }))
+    };
+
+    return courseRepository.create(courseData);
   };
 
   const update = async (data: UpdateCourse): Promise<Result<Course>> => {
@@ -91,8 +112,16 @@ export const createCourseService = (courseRepository: CourseRepository) => {
     }
 
     return {
-      ...result,
+      success: true,
       data: result.data.map(createLessonResponse),
+      ...(result.total !== undefined ? {
+        total: result.total,
+        pageSize: result.pageSize,
+        page: result.page,
+        totalPages: result.totalPages,
+        hasNextPage: result.hasNextPage,
+        hasPreviousPage: result.hasPreviousPage
+      } : {})
     };
   };
 
