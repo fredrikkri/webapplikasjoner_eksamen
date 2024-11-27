@@ -22,18 +22,18 @@ export default function EventCardExpanded({title, description, slug, date, locat
   const { addWaitlistRegistration } = useCreateWaitlistRegistration();
 
   const [registrations, setRegistrations] = useState<RegistrationType[]>([
-    { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "" },
+    { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "", order_id: "" },
   ]);
 
   const [waitlist, setwaitlist] = useState<RegistrationType[]>([
-    { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "" },
+    { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "", order_id: "" },
   ]);
 
   // SRC: kilde: chatgpt.com
   const handleAddEmailField = () => {
     setRegistrations([
       ...registrations,
-      { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "" },
+      { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "", order_id: "" },
     ]);
   };
 
@@ -72,13 +72,13 @@ export default function EventCardExpanded({title, description, slug, date, locat
     try {
       if (availableSlots >= registrationData.length) {
         for (const registration of registrationData) {
-          if (availableSlots > 0) {
-            await addRegistration(registration);
-            setAvailableSlots((prevAvailableSlots) => Math.max(prevAvailableSlots - 1, 0));
-          }
-          if (availableSlots <= 0) {
-            await addWaitlistRegistration(registration);
-          }
+          await addRegistration(registration);
+          setAvailableSlots((prevAvailableSlots) => Math.max(prevAvailableSlots - 1, 0));
+        }
+      }
+      else {
+        for (const registration of registrationData) {
+        await addWaitlistRegistration(registration);
         }
       }
     } catch (error) {

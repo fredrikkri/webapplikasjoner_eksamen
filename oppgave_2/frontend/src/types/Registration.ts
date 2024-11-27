@@ -4,4 +4,5 @@ export type Registration = {
     email: string;
     has_paid: string;
     registration_date: string;
+    order_id: string;
   };

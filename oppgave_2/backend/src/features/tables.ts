@@ -29,6 +29,7 @@ export const createTables = (db: DB) => {
         email TEXT NOT NULL,
         has_paid TEXT NOT NULL,
         registration_date TEXT NOT NULL,
+        order_id TEXT,
         FOREIGN KEY (event_id) REFERENCES events(id)
     );
 
