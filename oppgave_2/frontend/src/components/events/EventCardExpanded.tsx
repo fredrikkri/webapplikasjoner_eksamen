@@ -1,4 +1,5 @@
 import { useCreateRegistration } from "@/hooks/useRegistration";
+import { useCreateWaitlistRegistration } from "../../hooks/useWaitlistRegistration";
 import { useState } from "react";
 import { Registration as RegistrationType } from "@/types/Registration";
 
@@ -18,8 +19,13 @@ export default function EventCardExpanded({title, description, slug, date, locat
 
   const [availableSlots, setAvailableSlots] = useState<number>(available_slots);
   const { addRegistration, loading, error } = useCreateRegistration();
+  const { addWaitlistRegistration } = useCreateWaitlistRegistration();
 
   const [registrations, setRegistrations] = useState<RegistrationType[]>([
+    { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "" },
+  ]);
+
+  const [waitlist, setwaitlist] = useState<RegistrationType[]>([
     { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "" },
   ]);
 
@@ -63,9 +69,14 @@ export default function EventCardExpanded({title, description, slug, date, locat
     }));
     try {
       for (const registration of registrationData) {
-        await addRegistration(registration);
-        setAvailableSlots((prevAvailableSlots) => Math.max(prevAvailableSlots - 1, 0));
+        if (availableSlots > 0) {
+          await addRegistration(registration);
+          setAvailableSlots((prevAvailableSlots) => Math.max(prevAvailableSlots - 1, 0));
+        }
+        if (availableSlots <= 0) {
+          await addWaitlistRegistration(registration);
       }
+    }
 
     } catch (error) {
       console.error("error, could not create registration:", error);
@@ -100,7 +111,6 @@ export default function EventCardExpanded({title, description, slug, date, locat
       <p>
         <strong>Pris:</strong> {price}kr
       </p>
-      {availableSlots !== undefined && availableSlots > 0 ? (
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         {registrations.map((registration, index) => (
           <div key={registration.id} className="flex flex-col space-y-2">
@@ -153,11 +163,6 @@ export default function EventCardExpanded({title, description, slug, date, locat
           </button>
         </div>
       </form>
-) : (
-  <p>Gå til venteliste</p>
-)}
-
-      
     </div>
   );
 }

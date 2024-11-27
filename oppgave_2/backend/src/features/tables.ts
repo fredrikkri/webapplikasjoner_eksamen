@@ -23,6 +23,15 @@ export const createTables = (db: DB) => {
         FOREIGN KEY (event_id) REFERENCES events(id)
     );
 
+    CREATE TABLE IF NOT EXISTS wait_list (
+        id TEXT PRIMARY KEY,
+        event_id TEXT NOT NULL,
+        email TEXT NOT NULL,
+        has_paid TEXT NOT NULL,
+        registration_date TEXT NOT NULL,
+        FOREIGN KEY (event_id) REFERENCES events(id)
+    );
+
     CREATE TABLE IF NOT EXISTS events_template (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         event_id TEXT NOT NULL,

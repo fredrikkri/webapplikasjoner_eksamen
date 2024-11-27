@@ -4,6 +4,7 @@ import { EventController } from "./features/event/event.controller";
 import { registrationController } from "./features/registration/registration.controller";
 import { templateController } from "./features/event_template/template.controller";
 import { activeEventsController } from "./features/event_active/event_active.controller";
+import { waitlistController } from "./features/wait_list/waitlist.controller";
 
 const app = new Hono();
 app.use("/*", cors());
@@ -15,6 +16,7 @@ app.use("/*", cors({
 
 app.route("api/v1", EventController)
 app.route("api/v1", registrationController)
+app.route("api/v1", waitlistController)
 app.route("api/v1", templateController)
 app.route("api/v1", activeEventsController)
 
