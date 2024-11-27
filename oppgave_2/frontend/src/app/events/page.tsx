@@ -66,9 +66,9 @@ const event: Event = {
 
 export default function EventsPage() {
     return (
-    <Home>
-      <RegCard event={event} waitlist={waitlist}/>
-      <EventsFilter />
+      <Home>
+        <RegCard event={event} waitlist={waitlist}/>
+        <EventsFilter />
       </Home>
     )
   }
