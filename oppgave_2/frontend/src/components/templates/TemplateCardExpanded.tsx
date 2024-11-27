@@ -2,6 +2,10 @@ import { onAddActiveEvent } from "@/lib/services/activeEvents";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { Event as EventData } from "../../types/Event";
+import { createEvent } from "@/lib/services/events";
+import { onAddTemplate } from "@/lib/services/templates";
+import { useCreateEvent } from "@/hooks/useEvent";
+import { useRouter } from "next/navigation";
 
 type TemplateCardProps = {
     id: string;
@@ -29,22 +33,46 @@ type TemplateCardProps = {
   export default function TemplateCardExpanded({slug, title, description, date, location, event_type, total_slots, available_slots, price}: TemplateCardProps) {
 
     const [eventData, setEventData] = useState<EventData>({
-      id: '',
+      id: crypto.randomUUID(),
       title: title,
       description: description,
       date: date,
       location: location,
-      slug: slug,
+      slug: generateSlug(slug),
       event_type: event_type,
       total_slots: total_slots,
       available_slots: available_slots,
       price: price,
     });
-  
-    const handleActivateEvent = async (e: FormEvent<HTMLFormElement>, event_slug: string) => {
+
+    const { addEvent, loading, error } = useCreateEvent();
+    const router = useRouter();
+
+    // SRC: kilde: chatgpt.com  / med endringer
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>, action: string) => {
+      e.preventDefault();
+
       try {
-        await onAddActiveEvent({ event_id: event_slug })
+        if (action === "addTemplate") {
   
+          await addEvent(eventData);
+          const templateResponse = await onAddTemplate({ event_id: eventData.slug });
+    
+          if (templateResponse) {
+            setEventData(eventData);
+            router.push(`/templates`);
+          } else {
+            console.error("Failed to create template");
+          }
+        } else if (action === "addEvent") {
+          await addEvent(eventData);
+          const activeEventResponse = await onAddActiveEvent({ event_id: eventData.slug })
+          if(activeEventResponse){
+            setEventData(eventData)
+            router.push(`/events/${eventData.slug}`);
+          }
+        }
+
       } catch (error) {
         console.error("Error handling submit:", error);
       }
@@ -52,6 +80,7 @@ type TemplateCardProps = {
   
       // SRC: kilde: chatgpt.com  / med endringer
       const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        e.preventDefault()
         const { name, value } = e.target;
     
         setEventData((prevData) => ({
@@ -61,7 +90,7 @@ type TemplateCardProps = {
       };
 
     return (
-      <form onSubmit={(e) => handleActivateEvent(e, slug)} className="max-w-md mx-auto p-4 rounded-lg space-y-4">
+      <form onSubmit={(e) => handleSubmit(e, (e.nativeEvent as SubmitEvent).submitter?.getAttribute("value") as string)} className="max-w-md mx-auto p-4 rounded-lg space-y-4">
         <h2 className="text-2xl font-bold mb-4">Mal for {title}</h2>
   
         <label className="block">
