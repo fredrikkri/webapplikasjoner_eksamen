@@ -7,7 +7,7 @@
       "slug": "tech-conference-2024",
       "date": "2024-11-20",
       "location": "Oslo, Norway",
-      "event_type": "Conference",
+      "event_type": "Seminar",
       "total_slots": 300,
       "available_slots": 200,
       "price": 1500
@@ -19,7 +19,7 @@
       "slug": "web-dev-bootcamp",
       "date": "2024-12-01",
       "location": "Bergen, Norway",
-      "event_type": "Bootcamp",
+      "event_type": "Seminar",
       "total_slots": 100,
       "available_slots": 50,
       "price": 800
@@ -31,7 +31,7 @@
       "slug": "sommerkonsert",
       "date": "2025-09-04",
       "location": "Fredrikstad, Norway",
-      "event_type": "Konsert",
+      "event_type": "Seminar",
       "total_slots": 200,
       "available_slots": 30,
       "price": 1200
@@ -43,7 +43,7 @@
       "slug": "course-covid",
       "date": "2026-07-02",
       "location": "Fredrikstad, Norway",
-      "event_type": "Kurs",
+      "event_type": "Seminar",
       "total_slots": 1340,
       "available_slots": 90,
       "price": 6799
