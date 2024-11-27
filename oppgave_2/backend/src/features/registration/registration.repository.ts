@@ -47,8 +47,8 @@ export const createRegistrationRepository = (db: DB) => {
           console.log("Prepared registration data for DB insert:", registration);
       
           const query = db.prepare(`
-            INSERT INTO registrations (id, event_id, email, has_paid, registration_date)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO registrations (id, event_id, email, has_paid, registration_date, order_id)
+            VALUES (?, ?, ?, ?, ?, ?)
           `);
       
           query.run(
@@ -56,7 +56,8 @@ export const createRegistrationRepository = (db: DB) => {
             registration.event_id,
             registration.email,
             registration.has_paid,
-            registration.registration_date
+            registration.registration_date,
+            registration.order_id
           );
       
           return {

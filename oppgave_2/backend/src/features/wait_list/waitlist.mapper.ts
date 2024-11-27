@@ -2,7 +2,7 @@ import { Registration } from "../../types/registration";
 import { createId } from "../../util/utils";
 
 export const createWaitlistRegistrationResponse = (data: Registration): Registration => {
-    const { id, event_id, email, has_paid, registration_date } = data;
+    const { id, event_id, email, has_paid, registration_date, order_id } = data;
       
     return {
       ...data,
@@ -10,7 +10,8 @@ export const createWaitlistRegistrationResponse = (data: Registration): Registra
       event_id,
       email,
       has_paid,
-      registration_date
+      registration_date,
+      order_id
       };
   };
 
@@ -21,6 +22,7 @@ export const createWaitlistRegistrationResponse = (data: Registration): Registra
       email: data.email ?? "unknown",
       has_paid: data.has_paid ?? "false",
       registration_date: new Date().toISOString(),
+      order_id: data.order_id ?? "Unknown order"
     };
   };
   
@@ -31,6 +33,7 @@ export const createWaitlistRegistrationResponse = (data: Registration): Registra
       email: data.email ?? "unknown",
       has_paid: data.has_paid ?? "false",
       registration_date: new Date().toISOString(),
+      order_id: data.order_id ?? "Unknown order"
     };
     console.log("Created registration:", newRegistration);
   return newRegistration;
@@ -47,5 +50,6 @@ export const createWaitlistRegistrationResponse = (data: Registration): Registra
       email: regdata.email ?? "unknown",
       has_paid: regdata.has_paid.toString() ?? "false",
       registration_date: regdata.registration_date ?? new Date().toISOString(),
+      order_id: regdata.order_id ?? "Unknown order"
     };
   };

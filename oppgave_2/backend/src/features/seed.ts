@@ -6,7 +6,7 @@ import { join } from "path";
 export const seed = async (db: DB) => {
   const path = join(".", "src", "features", "data", "data.json");
   const file = await promises.readFile(path, "utf-8");
-  const { events, events_active, wait_list, events_template, registrations, days, event_rules } = JSON.parse(file);
+  const { events, events_active, events_template, registrations, days, event_rules } = JSON.parse(file);
 
   const insertEvent = db.prepare(`
     INSERT INTO events (id, title, description, slug, date, location, event_type, total_slots, available_slots, price)
@@ -15,11 +15,6 @@ export const seed = async (db: DB) => {
 
   const insertEventActive = db.prepare(`
     INSERT INTO events_active (event_id)
-    VALUES (?)
-  `);
-
-  const insertWaitList = db.prepare(`
-    INSERT INTO wait_list (event_id)
     VALUES (?)
   `);
 
