@@ -59,6 +59,7 @@ export default function EventCardExpanded({title, description, slug, date, locat
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const current_order_id = crypto.randomUUID();
 
     const registrationData = registrations.map(({ id, email, has_paid, event_id, registration_date }) => ({
       id,
@@ -66,18 +67,20 @@ export default function EventCardExpanded({title, description, slug, date, locat
       email,
       has_paid,
       registration_date,
+      order_id: current_order_id
     }));
     try {
-      for (const registration of registrationData) {
-        if (availableSlots > 0) {
-          await addRegistration(registration);
-          setAvailableSlots((prevAvailableSlots) => Math.max(prevAvailableSlots - 1, 0));
+      if (availableSlots >= registrationData.length) {
+        for (const registration of registrationData) {
+          if (availableSlots > 0) {
+            await addRegistration(registration);
+            setAvailableSlots((prevAvailableSlots) => Math.max(prevAvailableSlots - 1, 0));
+          }
+          if (availableSlots <= 0) {
+            await addWaitlistRegistration(registration);
+          }
         }
-        if (availableSlots <= 0) {
-          await addWaitlistRegistration(registration);
       }
-    }
-
     } catch (error) {
       console.error("error, could not create registration:", error);
       alert(`Det oppsto en feil, kunne ikke gjennomføre registrering.`);
