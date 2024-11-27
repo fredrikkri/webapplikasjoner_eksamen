@@ -1,8 +1,6 @@
 import { onAddActiveEvent } from "@/lib/services/activeEvents";
-import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { Event as EventData } from "../../types/Event";
-import { createEvent } from "@/lib/services/events";
 import { onAddTemplate } from "@/lib/services/templates";
 import { useCreateEvent } from "@/hooks/useEvent";
 import { useRouter } from "next/navigation";
