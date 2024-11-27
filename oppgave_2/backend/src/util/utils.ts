@@ -4,7 +4,7 @@ export const createId = () => {
 
 export const parseDate = (data: any) => {
     if (typeof data.date === 'string') {
-      return { ...data, date: new Date(data.date) };
+      return { ...data, date: new Date(data.date).toISOString()};
     }
     return data;
   };

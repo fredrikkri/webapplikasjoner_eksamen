@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import {Template as TemplateType} from "../types/Template"
-import { getAllTemplates, getTemplate } from "@/lib/services/templates";
+import { getAllTemplates, getTemplate, onAddTemplate } from "../lib/services/templates";
+import {Event as EventType} from "../types/Event"
 
 export const useAllTemplates = () => {
   const [templates, setTemplates] = useState<TemplateType[] | null>(null);
@@ -50,4 +51,30 @@ export const useTemplate = (templateSlug: string) => {
   }, [templateSlug]);
 
   return { template, loading, error };
+};
+
+export const useCreateEvent = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const addTemplate = async (eventId: string) => {
+    try {
+      setLoading(true);
+      const response = await onAddTemplate({ event_id: eventId });
+      
+      if (!response) {
+        throw new Error("Template creation failed.");
+      }
+
+      return response; // Returner responsen hvis nødvendig
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error("An unknown error occurred."));
+      console.error(err);
+      return null; // Returner null ved feil
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { addTemplate, loading, error };
 };

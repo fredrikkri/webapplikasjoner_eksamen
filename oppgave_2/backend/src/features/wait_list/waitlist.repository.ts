@@ -1,11 +1,9 @@
 import { Result } from "@/types";
 import db, { DB } from "../db";
 import { CreateRegistration, Registration } from "../../types/registration";
-import { toDb } from "./registration.mapper";
-import {type EventCreate, type Event} from "../../types/event";
+import { toDb } from "./waitlist.mapper";
 
-
-export const createRegistrationRepository = (db: DB) => {
+export const createWaitlistRepository = (db: DB) => {
 
   const eventExist = async (id: string): Promise<boolean> => {
     const query = db.prepare(
@@ -17,7 +15,7 @@ export const createRegistrationRepository = (db: DB) => {
 
       const list = async (query?: Record<string, string>): Promise<Result<Registration[]>> => {
         try {
-          const statement = db.prepare(`SELECT * from registrations`);
+          const statement = db.prepare(`SELECT * from wait_list`);
           const data = statement.all() as Registration[];
     
           return {
@@ -44,10 +42,10 @@ export const createRegistrationRepository = (db: DB) => {
 
 
           const registration = toDb(e);
-          console.log("Prepared registration data for DB insert:", registration);
+          console.log("Prepared waitlist-registration data for DB insert:", registration);
       
           const query = db.prepare(`
-            INSERT INTO registrations (id, event_id, email, has_paid, registration_date, order_id)
+            INSERT INTO wait_list (id, event_id, email, has_paid, registration_date, order_id)
             VALUES (?, ?, ?, ?, ?, ?)
           `);
       
@@ -65,59 +63,18 @@ export const createRegistrationRepository = (db: DB) => {
             data: registration.id,
           };
         } catch (error) {
-          console.error("Error during creation of registration:", error);
+          console.error("Error during creation of waitlist-registration:", error);
           return {
             success: false,
             error: {
               code: "INTERNAL_SERVER_ERROR",
-              message: "Feil med oppretting av registration",
+              message: "Feil med oppretting av registrering for ventelist",
             },
           };
         }
       };
-
-      // SRC: kilde: chatgpt.com  || med endringer /
-      const bookSlot = async (event_id: string): Promise<Result<string>> => {
-        try {
-          const event = db.prepare("SELECT * FROM events WHERE slug = ? LIMIT 1").get(event_id) as Event | undefined;;
-      
-          if (!event) {
-            return { success: false, error: {
-              code: "INTERNAL_SERVER_ERROR",
-              message: "Error decreasing available slots",
-            },
-          };
-          }
-          console.log("Final event yoyoyoy; ", event)
-      
-          if (event.available_slots <= 0) {
-            return { success: false, error: {
-              code: "INTERNAL_SERVER_ERROR",
-              message: "Error, there are none avalible slots"} };
-          }
-
-          const updateResult = db
-            .prepare("UPDATE events SET available_slots = available_slots - 1 WHERE slug = ?")
-            .run(event_id);
-      
-          if (updateResult.changes === 0) {
-            return { success: false, error: {
-              code: "INTERNAL_SERVER_ERROR",
-              message: "Error, failed to update avalible slots"}  };
-          }
-      
-          return { success: true, data: "Slot successfully booked" };
-        } catch (error) {
-          console.error("Error booking slot:", error);
-          return { success: false, error: {
-            code: "INTERNAL_SERVER_ERROR",
-            message: "An unexpected error happend"}  };
-        }
-      };
-      
-
-      
-      const getRegistrationById = async (eventId: string): Promise<Result<Registration[]>> => {
+  
+      const getWaitlistRegistrationById = async (eventId: string): Promise<Result<Registration[]>> => {
         try {
         const exists = await eventExist(eventId);
         if (!exists) {
@@ -154,9 +111,9 @@ export const createRegistrationRepository = (db: DB) => {
     }
 }
 
-      return { list, create, getRegistrationById, bookSlot }
+      return { list, create, getWaitlistRegistrationById }
 }
 
-export const registrationRepository = createRegistrationRepository(db);
+export const waitlistRepository = createWaitlistRepository(db);
 
-export type RegistrationRepository = ReturnType<typeof createRegistrationRepository>;
+export type WaitlistRepository = ReturnType<typeof createWaitlistRepository>;

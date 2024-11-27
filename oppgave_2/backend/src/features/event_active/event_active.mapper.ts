@@ -8,7 +8,7 @@ export const createActiveEventResponse = (template: any): Event => {
         title: template.title,
         description: template.description,
         slug: template.slug,
-        date: new Date(template.date),
+        date: template.date,
         location: template.location,
         event_type: template.event_type,
         total_slots: template.total_slots,
@@ -28,7 +28,7 @@ export const fromDb = (event: ActiveEvents) => {
 
 export const createActiveEvent = (event: Partial<ActiveEvents>): ActiveEvents => {
     return {
-        id: event.id ?? createId(),  
+        id: event.id ?? "",  
         event_id: event?.event_id ?? ""
     };
 };
@@ -36,7 +36,6 @@ export const createActiveEvent = (event: Partial<ActiveEvents>): ActiveEvents =>
 export const toDb = (data: Partial<ActiveEvents>) => {
   const event = createActiveEvent(data); 
   return {
-    id: event.id ?? createId(),  
-    event_id: event?.event_id ?? ""
+    event_id: event.event_id
     };
 };

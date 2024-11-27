@@ -1,17 +1,5 @@
-import { BASE_URL, ENDPOINTS } from "@/config/config";
-
-export interface Template {
-  id: string;
-  title: string;
-  description: string;
-  slug: string;
-  date: Date;
-  location: string;
-  event_type: string;
-  total_slots: string;
-  available_slots: number;
-  price: number;
-}
+import { BASE_URL, ENDPOINTS } from "../../config/config";
+import { Template } from "../../types/Template"
 
 export const getTemplate = async (slug: string): Promise<Template | undefined> => {
   const response = await fetch(ENDPOINTS.templates + `/${slug}`);
@@ -38,4 +26,27 @@ export const getAllTemplates = async (): Promise<Template[]> => {
   }
 
   return result.data as Template[];
+};
+
+export const onAddTemplate = async ({ event_id }: { event_id: string }) => {
+  try {
+    const response = await fetch(ENDPOINTS.createTemplate, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ event_id }),
+    });
+
+    const data = await response.json();
+    if (!data.success) {
+      console.log("FAIL: ", data.data);
+      return;
+    }
+    return data;
+  } catch (error) {
+    console.log("fail catch");
+  } finally {
+    console.log("finally");
+  }
 };

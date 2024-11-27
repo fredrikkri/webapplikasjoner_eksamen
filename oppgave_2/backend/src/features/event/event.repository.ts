@@ -111,7 +111,6 @@ const list = async (params?: Query): Promise<Result<Event[]>> => {
   const create = async (data: EventCreate): Promise<Result<string>> => {
     try {
       const event = toDb(data);
-      console.log("evemt",event )
 
       const query = db.prepare(`
         INSERT INTO events (id, title, description, slug, date, location, event_type, total_slots, available_slots, price)
@@ -129,6 +128,18 @@ const list = async (params?: Query): Promise<Result<Event[]>> => {
         event.avalible_slots,
         event.price
       );
+      console.log("Executing SQL query with values:", {
+        id: event.id,
+        title: event.title,
+        description: event.description,
+        slug: event.slug,
+        date: event.date,
+        location: event.location,
+        event_type: event.event_type,
+        total_slots: event.total_slots,
+        available_slots: event.avalible_slots,
+        price: event.price,
+    });
       return {
         success: true,
         data: event.id,

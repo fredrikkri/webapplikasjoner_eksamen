@@ -6,7 +6,7 @@ import { join } from "path";
 export const seed = async (db: DB) => {
   const path = join(".", "src", "features", "data", "data.json");
   const file = await promises.readFile(path, "utf-8");
-  const { events, events_active, events_template, registrations, days } = JSON.parse(file);
+  const { events, events_active, events_template, registrations, days, event_rules } = JSON.parse(file);
 
   const insertEvent = db.prepare(`
     INSERT INTO events (id, title, description, slug, date, location, event_type, total_slots, available_slots, price)
@@ -31,6 +31,11 @@ export const seed = async (db: DB) => {
   const insertDay = db.prepare(`
     INSERT INTO days (day)
     VALUES (?)
+  `);
+
+  const insertEventRule = db.prepare(`
+    INSERT INTO event_rules (event_id, is_private, restricted_days, allow_multiple_events_same_day, waitlist)
+    VALUES (?, ?, ?, ?, ?)
   `);
 
   db.transaction(() => {
@@ -63,6 +68,16 @@ export const seed = async (db: DB) => {
         registration.email,
         registration.has_paid,
         registration.registration_date
+      );
+    }
+
+    for (const rule of event_rules) {
+      insertEventRule.run(
+        rule.event_id,
+        rule.is_private,
+        rule.restricted_days,
+        rule.allow_multiple_events_same_day,
+        rule.waitlist
       );
     }
 

@@ -1,17 +1,5 @@
-import { BASE_URL, ENDPOINTS } from "@/config/config";
-
-export interface Event {
-  id: string;
-  title: string;
-  description: string;
-  slug: string;
-  date: Date;
-  location: string;
-  event_type: string;
-  total_slots: number;
-  available_slots: number;
-  price: number;
-}
+import { ENDPOINTS } from "@/config/config";
+import { Event } from "../../types/Event"
 
 export const getEvent = async (slug: string): Promise<Event | undefined> => {
   const response = await fetch(ENDPOINTS.events + `/${slug}`);
@@ -41,7 +29,7 @@ export const getAllEvents = async (): Promise<Event[]> => {
 };
 
 export const createEvent = async (data: Event): Promise<void> => {
-  console.log("cirrent event", data)
+  console.log("current event", data)
   try {
     const response = await fetch(ENDPOINTS.create, {
       method: 'POST',

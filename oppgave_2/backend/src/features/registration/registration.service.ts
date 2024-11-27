@@ -1,6 +1,6 @@
 import { Query } from "@/lib/query";
 import { Result } from "@/types";
-import { CreateRegistration, Registration, validateCreateRegistration } from "../../types/registration";
+import { CreateRegistration, Registration } from "../../types/registration";
 import { registrationRepository, RegistrationRepository } from "./registration.repository";
 import { createRegistration, createRegistrationResponse } from "./registration.mapper";
 
@@ -20,13 +20,29 @@ export const createRegistrationService = (registrationRepository: RegistrationRe
       const create = async (data: CreateRegistration): Promise<Result<string>> => {
         const registration = createRegistration(data);
     
-        if (!validateCreateRegistration(registration).success) {
-          return {
-            success: false,
-            error: { code: "BAD_REQUEST", message: "Invalid Registration data" },
-          };
-        }
-        return registrationRepository.create(registration);
+        // if (!validateCreateRegistration(registration).success) {
+        //   return {
+        //     success: false,
+        //     error: { code: "BAD_REQUEST", message: "Invalid Registration data" },
+        //   };
+        // }
+        const result = await registrationRepository.create(registration)
+        return result;
+      };
+
+      const bookSlot = async (data: CreateRegistration): Promise<Result<string>> => {
+        const registration = createRegistration(data);
+    
+        // if (!validateCreateRegistration(registration).success) {
+        //   return {
+        //     success: false,
+        //     error: { code: "BAD_REQUEST", message: "Invalid Registration data" },
+        //   };
+        // }
+        const result = await registrationRepository.bookSlot(registration.event_id)
+        return result;
+        
+        
       };
 
       const getRegistrationsByEventId = async (eventId: string): Promise<Result<Registration[] | undefined>> => {
@@ -37,11 +53,8 @@ export const createRegistrationService = (registrationRepository: RegistrationRe
           ...result,
           data: result.data.map(createRegistrationResponse),
         };
-        
     };
-
-
-      return { list, create, getRegistrationsByEventId }
+  return { list, create, getRegistrationsByEventId, bookSlot }
 }
 
 export const registrationService = createRegistrationService(registrationRepository);

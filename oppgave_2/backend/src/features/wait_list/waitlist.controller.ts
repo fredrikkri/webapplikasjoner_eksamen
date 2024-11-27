@@ -1,12 +1,12 @@
 import { Hono } from "hono";
 import { errorResponse, type ErrorCode } from "../../lib/error";
-import { registrationService, RegistrationService } from "./registration.service";
+import { waitlistService, WaitlistService } from "./waitlist.service";
 
-export const createRegistrationController = (registrationService: RegistrationService) => {
+export const createWaitlistRegistrationController = (waitlistRegistrationService: WaitlistService) => {
     const app = new Hono();
 
-    app.get("/registrations", async (c) => {
-        const result = await registrationService.list()
+    app.get("/waitlist-registrations", async (c) => {
+        const result = await waitlistRegistrationService.list()
     
         if (!result.success)
           return errorResponse(
@@ -17,17 +17,10 @@ export const createRegistrationController = (registrationService: RegistrationSe
         return c.json(result);
       });
 
-      app.post("/registrer", async (c) => {
+      app.post("/waitlist-registrer", async (c) => {
         const data = await c.req.json();
-        const result2 = await registrationService.bookSlot(data)
-        if (!result2.success)
-          return errorResponse(
-            c,
-            result2.error.code as ErrorCode,
-            result2.error.message
-          );
         console.log("Raw data: ", data)
-        const result = await registrationService.create(data);
+        const result = await waitlistRegistrationService.create(data);
         console.log("Geir: ", result)
         if (!result.success)
           return errorResponse(
@@ -39,9 +32,9 @@ export const createRegistrationController = (registrationService: RegistrationSe
         return c.json(result, { status: 201 });
       });
 
-      app.get("/registrations/:event_id", async (c) => {
+      app.get("/waitlist-registrations/:event_id", async (c) => {
         const eventId = c.req.param("event_id");
-        const result = await registrationService.getRegistrationsByEventId(eventId);
+        const result = await waitlistRegistrationService.getWaitlistRegistrationsByEventId(eventId);
     
         if (!result.success)
           return errorResponse(
@@ -55,4 +48,4 @@ export const createRegistrationController = (registrationService: RegistrationSe
     return app;
 }
 
-export const registrationController = createRegistrationController(registrationService);
+export const waitlistController = createWaitlistRegistrationController(waitlistService);
