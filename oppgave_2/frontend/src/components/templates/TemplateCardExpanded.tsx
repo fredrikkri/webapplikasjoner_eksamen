@@ -3,6 +3,9 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { Event as EventData } from "../../types/Event";
 import { createEvent } from "@/lib/services/events";
+import { onAddTemplate } from "@/lib/services/templates";
+import { useCreateEvent } from "@/hooks/useEvent";
+import { useRouter } from "next/navigation";
 
 type TemplateCardProps = {
     id: string;
@@ -35,20 +38,41 @@ type TemplateCardProps = {
       description: description,
       date: date,
       location: location,
-      slug: generateSlug(title),
+      slug: generateSlug(slug),
       event_type: event_type,
       total_slots: total_slots,
       available_slots: available_slots,
       price: price,
     });
-  
-    const handleActivateEvent = async (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
+
+    const { addEvent, loading, error } = useCreateEvent();
+    const router = useRouter();
+
+    // SRC: kilde: chatgpt.com  / med endringer
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>, action: string) => {
+      e.preventDefault();
+
       try {
-        console.log(eventData)
-        await createEvent(eventData)
-        await onAddActiveEvent({ event_id: eventData.slug })
+        if (action === "addTemplate") {
   
+          await addEvent(eventData);
+          const templateResponse = await onAddTemplate({ event_id: eventData.slug });
+    
+          if (templateResponse) {
+            setEventData(eventData);
+            router.push(`/templates`);
+          } else {
+            console.error("Failed to create template");
+          }
+        } else if (action === "addEvent") {
+          await addEvent(eventData);
+          const activeEventResponse = await onAddActiveEvent({ event_id: eventData.slug })
+          if(activeEventResponse){
+            setEventData(eventData)
+            router.push(`/events/${eventData.slug}`);
+          }
+        }
+
       } catch (error) {
         console.error("Error handling submit:", error);
       }
@@ -66,7 +90,7 @@ type TemplateCardProps = {
       };
 
     return (
-      <form onSubmit={(e) => handleActivateEvent(e)} className="max-w-md mx-auto p-4 rounded-lg space-y-4">
+      <form onSubmit={(e) => handleSubmit(e, (e.nativeEvent as SubmitEvent).submitter?.getAttribute("value") as string)} className="max-w-md mx-auto p-4 rounded-lg space-y-4">
         <h2 className="text-2xl font-bold mb-4">Mal for {title}</h2>
   
         <label className="block">
