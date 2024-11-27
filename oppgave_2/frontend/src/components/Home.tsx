@@ -1,12 +1,15 @@
 "use client";
 
 import { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 
 interface HomeProps {
   children: ReactNode;
 }
 
 export default function Home({ children }: HomeProps) {
+  const pathname = usePathname();
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
       <div className="mx-auto grid min-h-screen w-full grid-rows-[auto_minmax(900px,_1fr)_auto] px-4 sm:px-6 lg:px-8">
@@ -22,7 +25,7 @@ export default function Home({ children }: HomeProps) {
             <li data-testid="nav_events">
                 <a 
                   href="/events" 
-                  className="text-black rounded-full bg-gray-200 py-2 px-6 font-bold text-sky-900 transition-all hover:bg-gray-300 hover:shadow-lg"
+                  className={`text-black rounded-full ${pathname === '/events' ? 'bg-teal-400 text-white' : 'bg-gray-200 text-sky-600 hover:text-white'} py-2 px-6 font-bold transition-all hover:bg-teal-500 hover:shadow-lg`}
                 >
                   Arrangementer
                 </a>
@@ -30,7 +33,7 @@ export default function Home({ children }: HomeProps) {
               <li data-testid="nav_templates">
                 <a 
                   href="/templates" 
-                  className="text-black rounded-full bg-gray-200 py-2 px-6 font-bold text-sky-900 transition-all hover:bg-gray-300 hover:shadow-lg"
+                  className={`text-black rounded-full ${pathname === '/templates' ? 'bg-teal-400 text-white' : 'bg-gray-200 text-sky-600 hover:text-white'} py-2 px-6 font-bold transition-all hover:bg-teal-500 hover:shadow-lg`}
                 >
                   Mal
                 </a>
@@ -38,7 +41,7 @@ export default function Home({ children }: HomeProps) {
               <li data-testid="nav_new">
                 <a 
                   href="/opprett" 
-                  className="rounded-full bg-teal-400 px-6 py-2 text-black font-medium transition-all hover:bg-teal-500 hover:shadow-lg"
+                  className={`rounded-full ${pathname === '/opprett' ? 'bg-teal-400 text-white' : 'bg-gray-200 text-sky-600 hover:text-white'} px-6 py-2 font-bold transition-all hover:bg-teal-500 hover:shadow-lg`}
                 >
                   Opprett arangement
                 </a>
@@ -63,5 +66,3 @@ export default function Home({ children }: HomeProps) {
     </div>
   );
 }
-
-
