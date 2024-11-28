@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Event } from "@/types/Event";
 import { Registration } from "@/types/Registration";
 
@@ -6,8 +7,9 @@ interface RegCardProps {
   waitlist: Registration[] | null;
 }
 
-const handleClickAccept = () => {
-  // Handle accepting registrations
+const handleClickAccept = (selected: string[]) => {
+  console.log("Accepted registrations:", selected);
+  // Further logic to process accepted registrations
 };
 
 const handleClickDecline = () => {
@@ -16,8 +18,18 @@ const handleClickDecline = () => {
 
 export default function RegCard(props: RegCardProps) {
   const { event, waitlist } = props;
-  console.log("event!!!!", event)
-  console.log("waitlist!!!", waitlist)
+
+  // State for tracking selected registrations
+  const [selected, setSelected] = useState<string[]>([]);
+
+  // Handle the click event on a registration item
+  const handleSelectRegistration = (orderId: string) => {
+    setSelected((prevSelected) =>
+      prevSelected.includes(orderId)
+        ? prevSelected.filter((id) => id !== orderId)  // Deselect if already selected
+        : [...prevSelected, orderId]  // Select if not already selected
+    );
+  };
 
   if (!event) {
     return (
@@ -32,7 +44,7 @@ export default function RegCard(props: RegCardProps) {
     );
   }
 
-  if (waitlist?.length === undefined) {
+  if (!waitlist || waitlist.length === 0) {
     return (
       <div className="rounded-xl border-2 border-slate-200 bg-slate-50 p-8 text-center max-w-2xl mx-auto">
         <div className="w-16 h-16 mx-auto mb-4 text-slate-400">
@@ -45,7 +57,7 @@ export default function RegCard(props: RegCardProps) {
     );
   }
 
-  if(event && waitlist?.length !== undefined) return (
+  return (
     <article className="bg-white rounded-xl shadow-lg overflow-hidden border-l-4 border-blue-500">
       <div className="p-6">
         {/* Header */}
@@ -66,31 +78,30 @@ export default function RegCard(props: RegCardProps) {
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-center text-slate-600">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
-                </svg>
-                <span>Order ID: {waitlist.length}</span>
-              </div>
-              <div className="flex items-center text-slate-600">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                <span>Antall påmeldte: {waitlist.length}</span>
+                <span>Antall plasser: {event.available_slots}/{event.total_slots}</span>
               </div>
             </div>
           </div>
 
-          {/* Email List */}
+          {/* Email List with Checkmarks */}
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold text-slate-900 mb-3">Påmeldte e-postadresser</h3>
+            <h3 className="text-lg font-semibold text-slate-900 mb-3">Ordere</h3>
             <div className="bg-slate-50 rounded-lg p-4">
               {Array.isArray(waitlist) && waitlist.length > 0 ? (
                 <ul className="space-y-2">
                   {waitlist.map((item, index) => (
                     <li key={index} className="flex items-center text-slate-700 bg-white p-3 rounded-lg shadow-sm">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                      {item.email}
+                      <input
+                        placeholder="egg"
+                        type="checkbox"
+                        className="mr-3"
+                        checked={selected.includes(item.order_id)}
+                        onChange={() => handleSelectRegistration(item.order_id)}
+                      />
+
+                      ({index+1}) {item.order_id}
                     </li>
                   ))}
                 </ul>
@@ -105,7 +116,7 @@ export default function RegCard(props: RegCardProps) {
             <button
               type="button"
               className="flex-1 inline-flex justify-center items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm"
-              onClick={handleClickAccept}
+              onClick={() => handleClickAccept(selected)}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
