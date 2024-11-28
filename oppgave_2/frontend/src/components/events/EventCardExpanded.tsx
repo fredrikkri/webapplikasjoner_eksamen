@@ -2,6 +2,7 @@ import { useCreateRegistration } from "@/hooks/useRegistration";
 import { useCreateWaitlistRegistration } from "../../hooks/useWaitlistRegistration";
 import { useState } from "react";
 import { Registration as RegistrationType } from "@/types/Registration";
+import Link from "next/link";
 
 type EventCardProps = {
   title: string;
@@ -87,9 +88,19 @@ export default function EventCardExpanded({title, description, slug, date, locat
     } 
   }
 
+
   return (
     <div className="p-2.5 my-6 rounded-xl">
-      <h2 className="text-2xl font-bold text-gray-800 my-3">{title}</h2>
+          
+      <h2 className="text-2xl font-bold text-gray-800 my-3">{title}
+      <Link href={`/events/${slug}/admin`}>
+      <button
+            type="button"
+            className="bg-emerald-600 font-light text-white py-2 px-4 rounded-md p-5">
+            Administrer
+      </button>
+      </Link>
+      </h2>
       <p>{description}</p>
       <p>
         <strong>Dato:</strong>{" "}
