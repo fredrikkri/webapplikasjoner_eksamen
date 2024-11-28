@@ -130,6 +130,7 @@ export default function EventCardExpanded({title, description, slug, date, locat
                 checked={registration.has_paid === "true"}
                 onChange={(e) => handleChange(e, index)}
                 className="h-4 w-4"
+                placeholder="box"
               />
               <label htmlFor={`has_paid-${index}`} className="text-sm">
                 Betalt?
