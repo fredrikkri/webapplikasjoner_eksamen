@@ -17,7 +17,7 @@ export const createWaitlistService = (waitlistRepository: WaitlistRepository)=> 
         };
       };
 
-      const listOrders = async (event_slug?: string): Promise<Result<{ order_id: string; number_of_people: number }[]>> => {
+      const listOrders = async (event_slug?: string): Promise<Result<{ order_id: string; number_of_people: number; responsible_person: string }[]>> => {
         const result = await waitlistRepository.listOrders(event_slug);
         if (!result.success) return result;
     

@@ -34,10 +34,11 @@ export const createWaitlistRepository = (db: DB) => {
         }
       };
 
-      const listOrders = async (event_slug?: string): Promise<Result<{ order_id: string; number_of_people: number }[]>> => {
+      // SRC: kilde: chatgpt.com  || med justeringer /
+      const listOrders = async (event_slug?: string): Promise<Result<{ order_id: string; number_of_people: number; responsible_person: string }[]>> => {
         const eventStatement = db.prepare(`SELECT id FROM events WHERE slug = ?`);
         const event = eventStatement.get(event_slug) as { id: string } | undefined;
-
+      
         if (!event) {
           return {
             success: false,
@@ -47,21 +48,39 @@ export const createWaitlistRepository = (db: DB) => {
             },
           };
         }
-
+      
         const event_id: string = event.id;
-
+      
         try {
           const statement = db.prepare(`
-            SELECT DISTINCT order_id, COUNT(*) as number_of_people 
-            from wait_list 
+            SELECT order_id, COUNT(*) as number_of_people 
+            FROM wait_list
             WHERE event_id = ?
-            GROUP BY order_id`);
-          const data = statement.all(event_id) as { order_id: string; number_of_people: number }[];
-
-    
+            GROUP BY order_id
+          `);
+          const orders = statement.all(event_id) as { order_id: string; number_of_people: number }[];
+      
+          const result = await Promise.all(
+            orders.map(async (order) => {
+              const responsiblePersonStatement = db.prepare(`
+                SELECT email 
+                FROM wait_list
+                WHERE order_id = ?
+                LIMIT 1
+              `);
+              const responsiblePerson = responsiblePersonStatement.get(order.order_id) as { email: string } | undefined;
+              
+              return {
+                order_id: order.order_id,
+                number_of_people: order.number_of_people,
+                responsible_person: responsiblePerson?.email || 'N/A',
+              };
+            })
+          );
+      
           return {
             success: true,
-            data,
+            data: result,
           };
         } catch (error) {
           console.error("Error fetching registrations:", error);
@@ -74,7 +93,6 @@ export const createWaitlistRepository = (db: DB) => {
           };
         }
       };
-
 
       // SRC: kilde: chatgpt.com  || med justeringer /
       const listOrder = async (event_slug?: string, order_id?: string): Promise<Result<Registration[]>> => {
