@@ -75,8 +75,7 @@ export const createWaitlistRepository = (db: DB) => {
         }
       };
 
-
-      // SRC: kilde: chatgpt.com  || med justeringer /
+            // SRC: kilde: chatgpt.com  || med justeringer /
       const listOrder = async (event_slug?: string, order_id?: string): Promise<Result<Registration[]>> => {
         try {
           if (!event_slug || !order_id) {
@@ -126,8 +125,6 @@ export const createWaitlistRepository = (db: DB) => {
         }
       };
       
-      
-
       const create = async (data: CreateRegistration): Promise<Result<string>> => {
         try {
       const event = db.prepare("SELECT id FROM events WHERE slug = ? LIMIT 1").get(data.event_id);
@@ -205,7 +202,41 @@ export const createWaitlistRepository = (db: DB) => {
     }
 }
 
-      return { list, listOrders, listOrder, create, getWaitlistRegistrationById }
+      const deleteRegistration = async (registrationId: string): Promise<Result<void>> => {
+        try {
+          const checkQuery = db.prepare("SELECT id FROM wait_list WHERE id = ?");
+          const exists = checkQuery.get(registrationId);
+
+          if (!exists) {
+            return {
+              success: false,
+              error: {
+                code: "NOT_FOUND",
+                message: "Registration not found",
+              },
+            };
+          }
+
+          const deleteQuery = db.prepare("DELETE FROM wait_list WHERE id = ?");
+          deleteQuery.run(registrationId);
+
+          return {
+            success: true,
+            data: undefined,
+          };
+        } catch (error) {
+          console.error("Error deleting registration:", error);
+          return {
+            success: false,
+            error: {
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to delete registration",
+            },
+          };
+        }
+      };
+
+      return { list, listOrders, listOrder, create, getWaitlistRegistrationById, deleteRegistration }
 }
 
 export const waitlistRepository = createWaitlistRepository(db);
