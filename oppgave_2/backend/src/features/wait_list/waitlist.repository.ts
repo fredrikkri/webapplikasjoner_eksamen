@@ -35,9 +35,9 @@ export const createWaitlistRepository = (db: DB) => {
       };
 
       // SRC: kilde: chatgpt.com  || med justeringer /
-      const listOrders = async (event_slug?: string): Promise<Result<{ order_id: string; number_of_people: number; responsible_person: string }[]>> => {
-        const eventStatement = db.prepare(`SELECT id FROM events WHERE slug = ?`);
-        const event = eventStatement.get(event_slug) as { id: string } | undefined;
+      const listOrders = async (event_slug?: string): Promise<Result<{ order_id: string; number_of_people: number; responsible_person: string; total_price: number }[]>> => {
+        const eventStatement = db.prepare(`SELECT id, price FROM events WHERE slug = ?`);
+        const event = eventStatement.get(event_slug) as { id: string; price: number } | undefined;
       
         if (!event) {
           return {
@@ -50,6 +50,7 @@ export const createWaitlistRepository = (db: DB) => {
         }
       
         const event_id: string = event.id;
+        const event_price: number = event.price;
       
         try {
           const statement = db.prepare(`
@@ -69,11 +70,14 @@ export const createWaitlistRepository = (db: DB) => {
                 LIMIT 1
               `);
               const responsiblePerson = responsiblePersonStatement.get(order.order_id) as { email: string } | undefined;
-              
+      
+              const total_price = order.number_of_people * event_price;
+      
               return {
                 order_id: order.order_id,
                 number_of_people: order.number_of_people,
                 responsible_person: responsiblePerson?.email || 'N/A',
+                total_price: total_price,
               };
             })
           );
@@ -93,6 +97,7 @@ export const createWaitlistRepository = (db: DB) => {
           };
         }
       };
+      
 
       // SRC: kilde: chatgpt.com  || med justeringer /
       const listOrder = async (event_slug?: string, order_id?: string): Promise<Result<Registration[]>> => {
