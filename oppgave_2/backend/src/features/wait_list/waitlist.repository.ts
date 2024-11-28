@@ -34,7 +34,22 @@ export const createWaitlistRepository = (db: DB) => {
         }
       };
 
-      const listOrders = async (event_id?: string): Promise<Result<Registration[]>> => {
+      const listOrders = async (event_slug?: string): Promise<Result<Registration[]>> => {
+        const eventStatement = db.prepare(`SELECT id FROM events WHERE slug = ?`);
+        const event = eventStatement.get(event_slug) as { id: string } | undefined;
+
+        if (!event) {
+          return {
+            success: false,
+            error: {
+              code: "EVENT_NOT_FOUND",
+              message: "Event not found for the provided slug",
+            },
+          };
+        }
+
+        const event_id: string = event.id;
+
         try {
           const statement = db.prepare(`SELECT DISTINCT order_id from wait_list WHERE event_id = ? `);
           const data = statement.all(event_id) as Registration[];
@@ -54,6 +69,7 @@ export const createWaitlistRepository = (db: DB) => {
           };
         }
       };
+
 
       // SRC: kilde: chatgpt.com  || med justeringer /
       const listOrder = async (event_slug?: string, order_id?: string): Promise<Result<Registration[]>> => {
