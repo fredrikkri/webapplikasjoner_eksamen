@@ -36,6 +36,7 @@ export const createTables = (db: DB) => {
     CREATE TABLE IF NOT EXISTS events_template (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         event_id TEXT NOT NULL,
+        private TEXT,
         FOREIGN KEY (event_id) REFERENCES events(id)
     );
 
