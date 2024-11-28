@@ -1,17 +1,9 @@
 import { Event } from "@/types/Event";
-
-interface WaitlistItem {
-  id: string;
-  event_id: string;
-  email: string;
-  has_paid: string;
-  registration_date: string;
-  order_id: string;
-}
+import { Registration } from "@/types/Registration";
 
 interface RegCardProps {
   event: Event | null;
-  waitlist: WaitlistItem[] | null;
+  waitlist: Registration[] | null;
 }
 
 const handleClickAccept = () => {

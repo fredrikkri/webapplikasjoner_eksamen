@@ -11,7 +11,6 @@ export const useWaitlist = (eventId: string) => {
     const fetchWaitlist = async () => {
       try {
         setLoading(true);
-        // Assuming `getWaitlistByEvent` is a function that fetches waitlist data by event ID
         const waitlistData = await getWaitlist(eventId);
         setWaitlist(waitlistData as Registration[]);
       } catch (err) {
