@@ -9,28 +9,28 @@ interface RegCardProps {
 
 const handleClickAccept = (selected: string[]) => {
   console.log("Accepted registrations:", selected);
-  // Further logic to process accepted registrations
+  
 };
 
-const handleClickDecline = () => {
-  // Handle declining registrations
+const handleClickDecline = (selected: string[]) => {
+  console.log("Declined registrations:", selected);
 };
 
 export default function RegCard(props: RegCardProps) {
   const { event, waitlist } = props;
 
-  // State for tracking selected registrations
   const [selected, setSelected] = useState<string[]>([]);
 
-  // Handle the click event on a registration item
+  // SRC: kilde: chatgpt.com /
   const handleSelectRegistration = (orderId: string) => {
     setSelected((prevSelected) =>
       prevSelected.includes(orderId)
-        ? prevSelected.filter((id) => id !== orderId)  // Deselect if already selected
-        : [...prevSelected, orderId]  // Select if not already selected
+        ? prevSelected.filter((id) => id !== orderId) 
+        : [...prevSelected, orderId] 
     );
   };
 
+  // SRC: kilde: chatgpt.com  /
   if (!event) {
     return (
       <div className="rounded-xl border-2 border-slate-200 bg-slate-50 p-8 text-center max-w-2xl mx-auto">
@@ -43,7 +43,7 @@ export default function RegCard(props: RegCardProps) {
       </div>
     );
   }
-
+// SRC: kilde: chatgpt.com  /
   if (!waitlist || waitlist.length === 0) {
     return (
       <div className="rounded-xl border-2 border-slate-200 bg-slate-50 p-8 text-center max-w-2xl mx-auto">
@@ -57,6 +57,7 @@ export default function RegCard(props: RegCardProps) {
     );
   }
 
+  // SRC: kilde: chatgpt.com  || med endringer /
   return (
     <article className="bg-white rounded-xl shadow-lg overflow-hidden border-l-4 border-blue-500">
       <div className="p-6">
@@ -127,7 +128,7 @@ export default function RegCard(props: RegCardProps) {
             <button
               type="button"
               className="flex-1 inline-flex justify-center items-center px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 shadow-sm"
-              onClick={handleClickDecline}
+              onClick={() => handleClickDecline(selected)}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
