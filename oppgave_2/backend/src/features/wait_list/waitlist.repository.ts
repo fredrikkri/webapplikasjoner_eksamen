@@ -34,7 +34,7 @@ export const createWaitlistRepository = (db: DB) => {
         }
       };
 
-      const listOrders = async (event_slug?: string): Promise<Result<Registration[]>> => {
+      const listOrders = async (event_slug?: string): Promise<Result<{ order_id: string; number_of_people: number }[]>> => {
         const eventStatement = db.prepare(`SELECT id FROM events WHERE slug = ?`);
         const event = eventStatement.get(event_slug) as { id: string } | undefined;
 
@@ -51,15 +51,20 @@ export const createWaitlistRepository = (db: DB) => {
         const event_id: string = event.id;
 
         try {
-          const statement = db.prepare(`SELECT DISTINCT order_id from wait_list WHERE event_id = ? `);
-          const data = statement.all(event_id) as Registration[];
+          const statement = db.prepare(`
+            SELECT DISTINCT order_id, COUNT(*) as number_of_people 
+            from wait_list 
+            WHERE event_id = ?
+            GROUP BY order_id`);
+          const data = statement.all(event_id) as { order_id: string; number_of_people: number }[];
+
     
           return {
             success: true,
             data,
           };
         } catch (error) {
-
+          console.error("Error fetching registrations:", error);
           return {
             success: false,
             error: {
