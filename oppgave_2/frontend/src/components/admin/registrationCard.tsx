@@ -86,31 +86,51 @@ export default function RegCard(props: RegCardProps) {
             </div>
           </div>
 
-          {/* Email List with Checkmarks */}
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold text-slate-900 mb-3">Ordere</h3>
-            <div className="bg-slate-50 rounded-lg p-4">
-              {Array.isArray(waitlist) && waitlist.length > 0 ? (
-                <ul className="space-y-2">
-                  {waitlist.map((item, index) => (
-                    <li key={index} className="flex items-center text-slate-700 bg-white p-3 rounded-lg shadow-sm">
-                      <input
-                        placeholder="egg"
-                        type="checkbox"
-                        className="mr-3"
-                        checked={selected.includes(item.order_id)}
-                        onChange={() => handleSelectRegistration(item.order_id)}
-                      />
 
-                      ({index+1}) {item.order_id}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-slate-600 text-center py-4">Ingen påmeldte</p>
-              )}
+          <div className="space-y-2">
+            <div className="bg-slate-50 rounded-lg p-4">
+            {Array.isArray(waitlist) && waitlist.length > 0 ? (
+              <ul className="space-y-2">
+              {/* Header Row */}
+                <li className="flex items-center font-semibold text-slate-700 bg-slate-100 p-3 rounded-lg shadow-sm">
+                  <span className="flex-1">Email ansvar</span>
+                  <span className="flex-1 text-center">Antall påmeldte</span>
+                  <span className="flex-1 text-center">Order ID</span>
+                  <span className="flex-1 text-center">Velg</span>
+                </li>
+
+        {/* Waitlist Items */}
+        {waitlist.map((item, index) => (
+          <li key={index} className="flex items-center justify-between text-slate-700 bg-white p-3 rounded-lg shadow-sm hover:bg-slate-100 transition-colors duration-200">
+            {/* Email and Responsible Person */}
+            <div className="flex-1">{item.responsible_person}</div>
+            {/* Number of People */}
+            <span className="flex-1 text-center">{item.number_of_people}</span>
+            {/* Order ID */}
+            <span className="flex-1 text-center">{item.order_id}</span>
+            {/* Checkbox to select */}
+            <div className="flex-1 text-center">
+              <input
+                placeholder="switchboxting"
+                type="checkbox"
+                className="mr-3"
+                checked={selected.includes(item.order_id)}
+                onChange={() => handleSelectRegistration(item.order_id)}
+              />
             </div>
-          </div>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p className="text-slate-600 text-center py-4">Ingen påmeldte</p>
+    )}
+  </div>
+</div>
+
+
+
+
+
 
           {/* Action Buttons */}
           <div className="flex gap-4 pt-4 border-t border-slate-200">
