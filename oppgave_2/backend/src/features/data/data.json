@@ -91,10 +91,12 @@
   
   "events_template": [
     {
-      "event_id": "event-1"
+      "event_id": "event-1",
+      "private": "False"
     },
     {
-      "event_id": "event-3"
+      "event_id": "event-3",
+      "private": "True"
     }
   ],
   "registrations": [

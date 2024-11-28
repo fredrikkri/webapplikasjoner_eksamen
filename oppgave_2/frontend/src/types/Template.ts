@@ -14,4 +14,5 @@ export type Template = {
 export type TemplateBase = {
     id: string;
     event_id: string;
+    private: string;
   }

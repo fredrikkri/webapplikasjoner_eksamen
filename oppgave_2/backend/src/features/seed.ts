@@ -19,8 +19,8 @@ export const seed = async (db: DB) => {
   `);
 
   const insertEventTemplate = db.prepare(`
-    INSERT INTO events_template (event_id)
-    VALUES (?)
+    INSERT INTO events_template (event_id, private)
+    VALUES (?, ?)
   `);
 
   const insertRegistration = db.prepare(`
@@ -59,7 +59,10 @@ export const seed = async (db: DB) => {
     }
 
     for (const template of events_template) {
-      insertEventTemplate.run(template.event_id);
+      insertEventTemplate.run(
+        template.event_id,
+        template.private
+      );
     }
 
     for (const registration of registrations) {
