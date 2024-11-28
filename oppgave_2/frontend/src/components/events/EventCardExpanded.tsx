@@ -2,6 +2,7 @@ import { useCreateRegistration } from "@/hooks/useRegistration";
 import { useCreateWaitlistRegistration } from "../../hooks/useWaitlistRegistration";
 import { useState } from "react";
 import { Registration as RegistrationType } from "@/types/Registration";
+import Link from "next/link";
 
 type EventCardProps = {
   title: string;
@@ -69,27 +70,42 @@ export default function EventCardExpanded({title, description, slug, date, locat
       registration_date,
       order_id: current_order_id
     }));
-    try {
-      if (availableSlots >= registrationData.length) {
-        for (const registration of registrationData) {
-          await addRegistration(registration);
-          setAvailableSlots((prevAvailableSlots) => Math.max(prevAvailableSlots - 1, 0));
-        }
-      }
-      else {
-        for (const registration of registrationData) {
-        await addWaitlistRegistration(registration);
-        }
-      }
-    } catch (error) {
-      console.error("error, could not create registration:", error);
-      alert(`Det oppsto en feil, kunne ikke gjennomføre registrering.`);
-    } 
-  }
 
+
+    for (const registration of registrationData) {
+      await addWaitlistRegistration(registration);
+    }
+
+  //   try {
+  //     if (availableSlots >= registrationData.length) {
+  //       for (const registration of registrationData) {
+  //         await addRegistration(registration);
+  //         setAvailableSlots((prevAvailableSlots) => Math.max(prevAvailableSlots - 1, 0));
+  //       }
+  //     }
+  //     else {
+  //       for (const registration of registrationData) {
+  //       await addWaitlistRegistration(registration);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("error, could not create registration:", error);
+  //     alert(`Det oppsto en feil, kunne ikke gjennomføre registrering.`);
+  //   } 
+  }
+  
   return (
     <div className="p-2.5 my-6 rounded-xl">
-      <h2 className="text-2xl font-bold text-gray-800 my-3">{title}</h2>
+          
+      <h2 className="text-2xl font-bold text-gray-800 my-3">{title}
+      <Link href={`/events/${slug}/admin`}>
+      <button
+            type="button"
+            className="bg-emerald-600 font-light text-white py-2 px-4 rounded-md p-5">
+            Administrer
+      </button>
+      </Link>
+      </h2>
       <p>{description}</p>
       <p>
         <strong>Dato:</strong>{" "}
@@ -133,6 +149,7 @@ export default function EventCardExpanded({title, description, slug, date, locat
                 checked={registration.has_paid === "true"}
                 onChange={(e) => handleChange(e, index)}
                 className="h-4 w-4"
+                placeholder="box"
               />
               <label htmlFor={`has_paid-${index}`} className="text-sm">
                 Betalt?
