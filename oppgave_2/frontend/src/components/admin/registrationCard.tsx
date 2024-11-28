@@ -1,19 +1,38 @@
 import { useState } from "react";
 import { Event } from "@/types/Event";
 import { Registration } from "@/types/Registration";
+import { deleteWaitlistRegistration } from "@/lib/services/waitlistRegistrations";
 
 interface RegCardProps {
   event: Event | null;
   waitlist: Registration[] | null;
 }
 
-const handleClickAccept = (selected: string[]) => {
-  console.log("Accepted registrations:", selected);
-  
+const handleClickAccept = async (selected: string[]) => {
+  console.log("Selected registrations:", selected);
+
 };
 
-const handleClickDecline = (selected: string[]) => {
+const handleClickDecline = async (selected: string[]) => {
   console.log("Declined registrations:", selected);
+  for (let i = 0; i < selected.length; i++) {
+    const registrationId = selected[i];
+
+    try {
+      const success = await deleteWaitlistRegistration(registrationId);
+
+      if (success) {
+        console.log(`Registration ${registrationId} deleted successfully.`);
+      } else {
+        console.log(`Failed to delete registration ${registrationId}.`);
+      }
+    } catch (error) {
+      console.error(`Error deleting registration ${registrationId}:`, error);
+    }
+  }
+
+  // After all deletions, log the accepted registrations (those that were successfully deleted)
+  console.log("Accepted registrations:", selected);
 };
 
 export default function RegCard(props: RegCardProps) {

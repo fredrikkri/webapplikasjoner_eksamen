@@ -227,7 +227,7 @@ export const createWaitlistRepository = (db: DB) => {
 
       const deleteRegistration = async (registrationId: string): Promise<Result<void>> => {
         try {
-          const checkQuery = db.prepare("SELECT id FROM wait_list WHERE id = ?");
+          const checkQuery = db.prepare("SELECT id FROM wait_list WHERE order_id = ?");
           const exists = checkQuery.get(registrationId);
 
           if (!exists) {
@@ -240,7 +240,7 @@ export const createWaitlistRepository = (db: DB) => {
             };
           }
 
-          const deleteQuery = db.prepare("DELETE FROM wait_list WHERE id = ?");
+          const deleteQuery = db.prepare("DELETE FROM wait_list WHERE order_id = ?");
           deleteQuery.run(registrationId);
 
           return {
