@@ -55,13 +55,38 @@ export const createWaitlistRepository = (db: DB) => {
         }
       };
 
-      const listOrder = async (event_id?: string, order_id?: string): Promise<Result<Registration[]>> => {
+      // SRC: kilde: chatgpt.com  || med justeringer /
+      const listOrder = async (event_slug?: string, order_id?: string): Promise<Result<Registration[]>> => {
         try {
+          if (!event_slug || !order_id) {
+            return {
+              success: false,
+              error: {
+                code: "INVALID_INPUT",
+                message: "Event slug and order ID are required.",
+              },
+            };
+          }
+    
+          const eventStatement = db.prepare(`SELECT id FROM events WHERE slug = ?`);
+          const event = eventStatement.get(event_slug) as { id: string } | undefined;
+      
+          if (!event) {
+            return {
+              success: false,
+              error: {
+                code: "EVENT_NOT_FOUND",
+                message: "Event not found for the provided slug.",
+              },
+            };
+          }
+      
+          const eventId: string = event.id;
+
           const statement = db.prepare(`
             SELECT * FROM wait_list WHERE event_id = ? AND order_id = ?
           `);
-    
-          const data = statement.all(event_id, order_id) as Registration[];
+          const data = statement.all(eventId, order_id) as Registration[];
       
           return {
             success: true,
@@ -73,12 +98,13 @@ export const createWaitlistRepository = (db: DB) => {
           return {
             success: false,
             error: {
-              code: "SOME_CODE_HERE",
-              message: "Failed getting registrations",
+              code: "DB_ERROR",
+              message: "Failed getting registrations.",
             },
           };
         }
       };
+      
       
 
       const create = async (data: CreateRegistration): Promise<Result<string>> => {
