@@ -17,6 +17,19 @@ export const createWaitlistRegistrationController = (waitlistRegistrationService
         return c.json(result);
       });
 
+      app.get(":event_id/waitlist-orders", async (c) => {
+        const eventId = c.req.param("event_id");
+        const result = await waitlistRegistrationService.listOrders(eventId)
+    
+        if (!result.success)
+          return errorResponse(
+            c,
+            result.error.code as ErrorCode,
+            result.error.message
+          );
+        return c.json(result);
+      });
+
       app.post("/waitlist-registrer", async (c) => {
         const data = await c.req.json();
         console.log("Raw data: ", data)
