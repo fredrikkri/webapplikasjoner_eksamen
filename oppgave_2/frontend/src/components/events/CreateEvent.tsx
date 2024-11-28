@@ -49,7 +49,7 @@ const CreateEvent: React.FC = () => {
     // SRC: kilde: chatgpt.com  / med endringer
   const handleSubmit = async (e: FormEvent<HTMLFormElement>, action: string) => {
     e.preventDefault();
-        //const action = e.currentTarget.getElementsByTagName("button").namedItem("action")?.getAttribute("value"); 
+            //const action = e.currentTarget.getElementsByTagName("button").namedItem("action")?.getAttribute("value"); 
 
     eventData.id = crypto.randomUUID();
 
@@ -101,21 +101,6 @@ const CreateEvent: React.FC = () => {
                 className={inputClasses}
                 required
                 placeholder="Skriv inn arrangementets tittel"
-              />
-            </label>
-          </div>
-
-          <div>
-            <label className={labelClasses}>
-              URL-Slug
-              <input
-                type="text"
-                name="slug"
-                value={eventData.slug || ""}
-                onChange={handleChange}
-                className={`${inputClasses} bg-slate-50`}
-                required
-                readOnly
               />
             </label>
           </div>
