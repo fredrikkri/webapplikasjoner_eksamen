@@ -1,6 +1,6 @@
 import { Query } from "@/lib/query";
 import { Result } from "@/types";
-import { CreateRegistration, Registration } from "../../types/registration";
+import { CreateRegistration, Registration, validateCreateRegistration } from "../../types/registration";
 import { waitlistRepository, WaitlistRepository } from "./waitlist.repository";
 import { createWaitlistRegistration, createWaitlistRegistrationResponse } from "./waitlist.mapper";
 
@@ -17,13 +17,12 @@ export const createWaitlistService = (waitlistRepository: WaitlistRepository)=> 
         };
       };
 
-      const listOrders = async (event_slug?: string): Promise<Result<Registration[]>> => {
+      const listOrders = async (event_slug?: string): Promise<Result<{ order_id: string; number_of_people: number; responsible_person: string }[]>> => {
         const result = await waitlistRepository.listOrders(event_slug);
         if (!result.success) return result;
     
         return {
-          ...result,
-          data: result.data.map(createWaitlistRegistrationResponse),
+          ...result
         };
       };
 
@@ -40,12 +39,12 @@ export const createWaitlistService = (waitlistRepository: WaitlistRepository)=> 
       const create = async (data: CreateRegistration): Promise<Result<string>> => {
         const registration = createWaitlistRegistration(data);
     
-        // if (!validateCreateRegistration(registration).success) {
-        //   return {
-        //     success: false,
-        //     error: { code: "BAD_REQUEST", message: "Invalid Registration data" },
-        //   };
-        // }
+        if (!validateCreateRegistration(registration).success) {
+          return {
+            success: false,
+            error: { code: "BAD_REQUEST", message: "Invalid Registration data" },
+          };
+        }
         const result = await waitlistRepository.create(registration)
         return result;
       };
