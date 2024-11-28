@@ -72,6 +72,20 @@ export const createWaitlistRegistrationController = (waitlistRegistrationService
         return c.json(result);
       });
 
+      // SRC: kilde: chatgpt.com  || med justeringer /
+      app.delete("/waitlist-registrations/:registration_id", async (c) => {
+        const registrationId = c.req.param("registration_id");
+        const result = await waitlistRegistrationService.deleteRegistration(registrationId);
+    
+        if (!result.success)
+          return errorResponse(
+            c,
+            result.error.code as ErrorCode,
+            result.error.message
+          );
+        return c.json({ success: true, message: "Registration deleted successfully" });
+      });
+
     return app;
 }
 
