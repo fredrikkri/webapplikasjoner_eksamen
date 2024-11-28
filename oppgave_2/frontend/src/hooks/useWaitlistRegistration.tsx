@@ -1,5 +1,5 @@
 import { Registration, Registration as RegistrationType } from "../types/Registration";
-import { createWaitlistRegistration, getWaitlist } from "../lib/services/waitlistRegistrations";
+import { createWaitlistRegistration, deleteWaitlistRegistration, getWaitlist } from "../lib/services/waitlistRegistrations";
 import { useState, useEffect } from 'react';
 
 export const useWaitlist = (eventId: string) => {
@@ -46,3 +46,21 @@ export const useCreateWaitlistRegistration = () => {
     return { addWaitlistRegistration, loading, error };
   };
 
+  export const deleteRegistration = async (registrationId: string) => {
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<Error | null>(null);
+    const [success, setSuccess] = useState<boolean>(false);
+
+    try {
+      const isDeleted = await deleteWaitlistRegistration(registrationId);
+
+      if (isDeleted) {
+        setSuccess(true);
+      } 
+
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('An error occurred'));
+    } finally {
+      setLoading(false);
+    }
+  };

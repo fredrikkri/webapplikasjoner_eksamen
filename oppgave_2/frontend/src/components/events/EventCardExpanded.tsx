@@ -32,18 +32,18 @@ export default function EventCardExpanded({
   const { addWaitlistRegistration } = useCreateWaitlistRegistration();
 
   const [registrations, setRegistrations] = useState<RegistrationType[]>([
-    { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "", order_id: "" },
+    { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "", order_id: "" , responsible_person: "", number_of_people: 0},
   ]);
 
   const [waitlist, setwaitlist] = useState<RegistrationType[]>([
-    { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "", order_id: "" },
+    { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "", order_id: "", responsible_person: "", number_of_people: 0},
   ]);
 
   // SRC: kilde: chatgpt.com
   const handleAddEmailField = () => {
     setRegistrations([
       ...registrations,
-      { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "", order_id: "" },
+      { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "", order_id: "" , responsible_person: "", number_of_people: 0},
     ]);
   };
 
@@ -71,13 +71,15 @@ export default function EventCardExpanded({
     e.preventDefault();
     const current_order_id = crypto.randomUUID();
 
-    const registrationData = registrations.map(({ id, email, has_paid, event_id, registration_date }) => ({
+    const registrationData = registrations.map(({ id, email, has_paid, event_id, registration_date, responsible_person, number_of_people }) => ({
       id,
       event_id,
       email,
       has_paid,
       registration_date,
-      order_id: current_order_id
+      order_id: current_order_id,
+      responsible_person,
+      number_of_people
     }));
 
     for (const registration of registrationData) {

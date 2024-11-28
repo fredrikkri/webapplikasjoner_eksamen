@@ -1,36 +1,55 @@
 import { useState } from "react";
 import { Event } from "@/types/Event";
 import { Registration } from "@/types/Registration";
+import { deleteWaitlistRegistration } from "@/lib/services/waitlistRegistrations";
 
 interface RegCardProps {
   event: Event | null;
   waitlist: Registration[] | null;
 }
 
-const handleClickAccept = (selected: string[]) => {
-  console.log("Accepted registrations:", selected);
-  // Further logic to process accepted registrations
+const handleClickAccept = async (selected: string[]) => {
+  console.log("Selected registrations:", selected);
+
 };
 
-const handleClickDecline = () => {
-  // Handle declining registrations
+const handleClickDecline = async (selected: string[]) => {
+  console.log("Declined registrations:", selected);
+  for (let i = 0; i < selected.length; i++) {
+    const registrationId = selected[i];
+
+    try {
+      const success = await deleteWaitlistRegistration(registrationId);
+
+      if (success) {
+        console.log(`Registration ${registrationId} deleted successfully.`);
+      } else {
+        console.log(`Failed to delete registration ${registrationId}.`);
+      }
+    } catch (error) {
+      console.error(`Error deleting registration ${registrationId}:`, error);
+    }
+  }
+
+  // After all deletions, log the accepted registrations (those that were successfully deleted)
+  console.log("Accepted registrations:", selected);
 };
 
 export default function RegCard(props: RegCardProps) {
   const { event, waitlist } = props;
 
-  // State for tracking selected registrations
   const [selected, setSelected] = useState<string[]>([]);
 
-  // Handle the click event on a registration item
+  // SRC: kilde: chatgpt.com /
   const handleSelectRegistration = (orderId: string) => {
     setSelected((prevSelected) =>
       prevSelected.includes(orderId)
-        ? prevSelected.filter((id) => id !== orderId)  // Deselect if already selected
-        : [...prevSelected, orderId]  // Select if not already selected
+        ? prevSelected.filter((id) => id !== orderId) 
+        : [...prevSelected, orderId] 
     );
   };
 
+  // SRC: kilde: chatgpt.com  /
   if (!event) {
     return (
       <div className="rounded-xl border-2 border-slate-200 bg-slate-50 p-8 text-center max-w-2xl mx-auto">
@@ -43,7 +62,7 @@ export default function RegCard(props: RegCardProps) {
       </div>
     );
   }
-
+// SRC: kilde: chatgpt.com  /
   if (!waitlist || waitlist.length === 0) {
     return (
       <div className="rounded-xl border-2 border-slate-200 bg-slate-50 p-8 text-center max-w-2xl mx-auto">
@@ -57,6 +76,7 @@ export default function RegCard(props: RegCardProps) {
     );
   }
 
+  // SRC: kilde: chatgpt.com  || med endringer /
   return (
     <article className="bg-white rounded-xl shadow-lg overflow-hidden border-l-4 border-blue-500">
       <div className="p-6">
@@ -85,31 +105,51 @@ export default function RegCard(props: RegCardProps) {
             </div>
           </div>
 
-          {/* Email List with Checkmarks */}
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold text-slate-900 mb-3">Ordere</h3>
-            <div className="bg-slate-50 rounded-lg p-4">
-              {Array.isArray(waitlist) && waitlist.length > 0 ? (
-                <ul className="space-y-2">
-                  {waitlist.map((item, index) => (
-                    <li key={index} className="flex items-center text-slate-700 bg-white p-3 rounded-lg shadow-sm">
-                      <input
-                        placeholder="egg"
-                        type="checkbox"
-                        className="mr-3"
-                        checked={selected.includes(item.order_id)}
-                        onChange={() => handleSelectRegistration(item.order_id)}
-                      />
 
-                      ({index+1}) {item.order_id}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-slate-600 text-center py-4">Ingen påmeldte</p>
-              )}
+          <div className="space-y-2">
+            <div className="bg-slate-50 rounded-lg p-4">
+            {Array.isArray(waitlist) && waitlist.length > 0 ? (
+              <ul className="space-y-2">
+              {/* Header Row */}
+                <li className="flex items-center font-semibold text-slate-700 bg-slate-100 p-3 rounded-lg shadow-sm">
+                  <span className="flex-1">Email ansvar</span>
+                  <span className="flex-1 text-center">Antall påmeldte</span>
+                  <span className="flex-1 text-center">Order ID</span>
+                  <span className="flex-1 text-center">Velg</span>
+                </li>
+
+        {/* Waitlist Items */}
+        {waitlist.map((item, index) => (
+          <li key={index} className="flex items-center justify-between text-slate-700 bg-white p-3 rounded-lg shadow-sm hover:bg-slate-100 transition-colors duration-200">
+            {/* Email and Responsible Person */}
+            <div className="flex-1">{item.responsible_person}</div>
+            {/* Number of People */}
+            <span className="flex-1 text-center">{item.number_of_people}</span>
+            {/* Order ID */}
+            <span className="flex-1 text-center">{item.order_id}</span>
+            {/* Checkbox to select */}
+            <div className="flex-1 text-center">
+              <input
+                placeholder="switchboxting"
+                type="checkbox"
+                className="mr-3"
+                checked={selected.includes(item.order_id)}
+                onChange={() => handleSelectRegistration(item.order_id)}
+              />
             </div>
-          </div>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p className="text-slate-600 text-center py-4">Ingen påmeldte</p>
+    )}
+  </div>
+</div>
+
+
+
+
+
 
           {/* Action Buttons */}
           <div className="flex gap-4 pt-4 border-t border-slate-200">
@@ -127,7 +167,7 @@ export default function RegCard(props: RegCardProps) {
             <button
               type="button"
               className="flex-1 inline-flex justify-center items-center px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 shadow-sm"
-              onClick={handleClickDecline}
+              onClick={() => handleClickDecline(selected)}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

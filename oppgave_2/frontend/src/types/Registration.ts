@@ -5,4 +5,6 @@ export type Registration = {
     has_paid: string;
     registration_date: string;
     order_id: string;
+    number_of_people: number;
+    responsible_person: string;
   };

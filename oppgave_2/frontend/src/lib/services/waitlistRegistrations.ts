@@ -37,6 +37,29 @@ export const createWaitlistRegistration = async (data: RegistrationType): Promis
       return null;
     }
   };
+
+  export const deleteWaitlistRegistration = async (registrationId: string): Promise<boolean> => {
+    try {
+      const url = ENDPOINTS.deleteWaitlistItem(registrationId);
+  
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to delete registration with ID ${registrationId}: ${response.statusText}`);
+      }
+  
+      console.log(`Successfully deleted registration with ID: ${registrationId}`);
+      return true;
+    } catch (error) {
+      console.error("Error deleting registration:", error);
+      return false;
+    }
+  };
   
   
   
