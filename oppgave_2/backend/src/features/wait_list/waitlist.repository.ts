@@ -55,6 +55,32 @@ export const createWaitlistRepository = (db: DB) => {
         }
       };
 
+      const listOrder = async (event_id?: string, order_id?: string): Promise<Result<Registration[]>> => {
+        try {
+          const statement = db.prepare(`
+            SELECT * FROM wait_list WHERE event_id = ? AND order_id = ?
+          `);
+    
+          const data = statement.all(event_id, order_id) as Registration[];
+      
+          return {
+            success: true,
+            data,
+          };
+        } catch (error) {
+          console.error("Error fetching registrations:", error);
+      
+          return {
+            success: false,
+            error: {
+              code: "SOME_CODE_HERE",
+              message: "Failed getting registrations",
+            },
+          };
+        }
+      };
+      
+
       const create = async (data: CreateRegistration): Promise<Result<string>> => {
         try {
       const event = db.prepare("SELECT id FROM events WHERE slug = ? LIMIT 1").get(data.event_id);
@@ -132,7 +158,7 @@ export const createWaitlistRepository = (db: DB) => {
     }
 }
 
-      return { list, listOrders, create, getWaitlistRegistrationById }
+      return { list, listOrders, listOrder, create, getWaitlistRegistrationById }
 }
 
 export const waitlistRepository = createWaitlistRepository(db);

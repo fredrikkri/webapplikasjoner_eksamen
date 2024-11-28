@@ -27,6 +27,16 @@ export const createWaitlistService = (waitlistRepository: WaitlistRepository)=> 
         };
       };
 
+      const listOrder = async (event_id?: string, order_id?: string): Promise<Result<Registration[]>> => {
+        const result = await waitlistRepository.listOrder(event_id, order_id);
+        if (!result.success) return result;
+    
+        return {
+          ...result,
+          data: result.data.map(createWaitlistRegistrationResponse),
+        };
+      };
+
       const create = async (data: CreateRegistration): Promise<Result<string>> => {
         const registration = createWaitlistRegistration(data);
     
@@ -49,7 +59,7 @@ export const createWaitlistService = (waitlistRepository: WaitlistRepository)=> 
           data: result.data.map(createWaitlistRegistrationResponse),
         };
     };
-  return { list, listOrders, create, getWaitlistRegistrationsByEventId }
+  return { list, listOrders, listOrder, create, getWaitlistRegistrationsByEventId }
 }
 
 export const waitlistService = createWaitlistService(waitlistRepository);
