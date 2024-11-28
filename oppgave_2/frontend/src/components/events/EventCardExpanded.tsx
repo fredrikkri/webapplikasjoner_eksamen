@@ -69,24 +69,30 @@ export default function EventCardExpanded({title, description, slug, date, locat
       registration_date,
       order_id: current_order_id
     }));
-    try {
-      if (availableSlots >= registrationData.length) {
-        for (const registration of registrationData) {
-          await addRegistration(registration);
-          setAvailableSlots((prevAvailableSlots) => Math.max(prevAvailableSlots - 1, 0));
-        }
-      }
-      else {
-        for (const registration of registrationData) {
-        await addWaitlistRegistration(registration);
-        }
-      }
-    } catch (error) {
-      console.error("error, could not create registration:", error);
-      alert(`Det oppsto en feil, kunne ikke gjennomføre registrering.`);
-    } 
-  }
 
+
+    for (const registration of registrationData) {
+      await addWaitlistRegistration(registration);
+    }
+
+  //   try {
+  //     if (availableSlots >= registrationData.length) {
+  //       for (const registration of registrationData) {
+  //         await addRegistration(registration);
+  //         setAvailableSlots((prevAvailableSlots) => Math.max(prevAvailableSlots - 1, 0));
+  //       }
+  //     }
+  //     else {
+  //       for (const registration of registrationData) {
+  //       await addWaitlistRegistration(registration);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("error, could not create registration:", error);
+  //     alert(`Det oppsto en feil, kunne ikke gjennomføre registrering.`);
+  //   } 
+  }
+  
   return (
     <div className="p-2.5 my-6 rounded-xl">
       <h2 className="text-2xl font-bold text-gray-800 my-3">{title}</h2>
