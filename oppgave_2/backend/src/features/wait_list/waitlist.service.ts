@@ -58,7 +58,19 @@ export const createWaitlistService = (waitlistRepository: WaitlistRepository)=> 
           data: result.data.map(createWaitlistRegistrationResponse),
         };
     };
-  return { list, listOrders, listOrder, create, getWaitlistRegistrationsByEventId }
+
+    // SRC: kilde: chatgpt.com  || med justeringer /
+    const deleteRegistration = async (registrationId: string): Promise<Result<void>> => {
+      if (!registrationId) {
+        return {
+          success: false,
+          error: { code: "BAD_REQUEST", message: "Registration ID is required" },
+        };
+      }
+      return await waitlistRepository.deleteRegistration(registrationId);
+    };
+
+  return { list, listOrders, listOrder, create, getWaitlistRegistrationsByEventId, deleteRegistration }
 }
 
 export const waitlistService = createWaitlistService(waitlistRepository);
