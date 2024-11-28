@@ -9,5 +9,6 @@ export const ENDPOINTS = {
   createRegistration: `${BASE_URL}/registrer`,
   createWaitlistRegistration: `${BASE_URL}/waitlist-registrer`,
   createActiveEvent: `${BASE_URL}/activeevents/add`,
-  createTemplate: `${BASE_URL}/templates/add`
+  createTemplate: `${BASE_URL}/templates/add`,
+  getWishlist: `${BASE_URL}/:event_id/waitlist-orders`
 };

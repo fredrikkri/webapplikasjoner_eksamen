@@ -5,6 +5,7 @@ import { Event } from "../../../../types/Event";
 import { useParams } from "next/navigation";
 import RegCard from "@/components/admin/registrationCard";
 import { useEvent } from "@/hooks/useEvent";
+import { useWaitlist } from "@/hooks/useWaitlistRegistration";
 
 const waitlist = [
     {
@@ -41,23 +42,12 @@ const waitlist = [
     },
   ];
   
-  const event: Event = {
-    id: '1',
-    title: 'Tech Conference 2024',
-    description: 'A conference to discuss the latest trends in technology and innovation.',
-    date: '2024-12-10T09:00:00Z',
-    location: 'Silicon Valley Conference Center, California, USA',
-    slug: 'tech-conference-2024',
-    event_type: 'Conference',
-    total_slots: 500,
-    available_slots: 200,
-    price: 150,
-  };
 
 export default function Admin() {
     const params = useParams();
     const slug = params?.slug as string;
     const { event, loading, error } = useEvent(slug);
+    const { waitlist } = useWaitlist(slug)
     return ( 
     <Home>
         <RegCard event={event} waitlist={waitlist}/>

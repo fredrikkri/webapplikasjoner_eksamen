@@ -1,5 +1,5 @@
 import { ENDPOINTS } from "@/config/config";
-import { Registration as RegistrationType } from "../../types/Registration";
+import { Registration, Registration as RegistrationType } from "../../types/Registration";
 
 export const createWaitlistRegistration = async (data: RegistrationType): Promise<void> => {
     console.log("current waitlist-registration", data)
@@ -19,3 +19,23 @@ export const createWaitlistRegistration = async (data: RegistrationType): Promis
       console.error("Error creating waitlist-registration:", error);
     }
   };
+
+  export const getWaitlist = async (eventId: string): Promise<Registration[] | null> => {
+    try {
+      const response = await fetch(`${ENDPOINTS.getWishlist}/${eventId}`);
+  
+      if (!response.ok) {
+        throw new Error(`Failed to fetch waitlist for event ${eventId}: ${response.statusText}`);
+      }
+  
+      const waitlistData: Registration[] = await response.json();
+      console.log('Fetched waitlist:', waitlistData);
+  
+      return waitlistData;
+    } catch (error) {
+      console.error("Error fetching waitlist data:", error);
+      return null;
+    }
+  };
+  
+  
