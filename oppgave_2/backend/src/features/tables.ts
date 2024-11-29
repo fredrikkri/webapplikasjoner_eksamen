@@ -56,8 +56,7 @@ export const createTables = (db: DB) => {
     );
 
     CREATE TABLE IF NOT EXISTS event_rules (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        event_id INTEGER NOT NULL,
+        event_id INTEGER NOT NULL PRIMARY KEY,
         is_private TEXT,
         restricted_days TEXT,
         allow_multiple_events_same_day TEXT,
