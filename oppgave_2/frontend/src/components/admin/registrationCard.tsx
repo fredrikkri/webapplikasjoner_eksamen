@@ -14,10 +14,18 @@ export default function RegCard(props: RegCardProps) {
   const { event, waitlist } = props;
   const { addRegistration, loading, error } = useCreateRegistration();
   const { waitlist: fetchedWaitlist } = getWaitListByEventId(event?.id || "");
-
-
   const [selected, setSelected] = useState<Registration[]>([]);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  const handleSelectAll = () => {
+    if (waitlist) {
+      if (selected.length === waitlist.length) {
+        setSelected([]); // Deselect all
+      } else {
+        setSelected(waitlist.map(item => item)); // Select all
+      }
+    }
+  };
 
   // SRC: kilde: chatgpt.com  || med endringer /
   const handleSelectRegistration = (registration: Registration) => {
