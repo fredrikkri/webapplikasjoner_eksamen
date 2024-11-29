@@ -45,7 +45,7 @@ export default function TemplateCardExpanded({
     description: description,
     date: date,
     location: location,
-    slug: generateSlug(slug),
+    slug: generateSlug(title),
     event_type: event_type,
     total_slots: total_slots,
     available_slots: available_slots,
@@ -90,7 +90,8 @@ export default function TemplateCardExpanded({
 
     setEventData((prevData) => ({
       ...prevData,
-      [name]: value
+      [name]: value,
+      slug: name === "title" ? generateSlug(value) : prevData.slug
     }));
   };
 
@@ -117,21 +118,6 @@ export default function TemplateCardExpanded({
                 className={inputClasses}
                 required
                 placeholder="Skriv inn arrangementets tittel"
-              />
-            </label>
-          </div>
-
-          <div>
-            <label className={labelClasses}>
-              URL-Slug
-              <input
-                type="text"
-                name="slug"
-                value={generateSlug(eventData.title)}
-                onChange={handleChange}
-                className={`${inputClasses} bg-slate-50`}
-                required
-                readOnly
               />
             </label>
           </div>

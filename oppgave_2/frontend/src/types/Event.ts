@@ -1,3 +1,5 @@
+import { Rules } from './Rules';
+
 export type Event = {
     id: string;
     title: string;
@@ -9,4 +11,5 @@ export type Event = {
     total_slots: number;
     available_slots: number;
     price: number;
+    rules?: Rules;
 }

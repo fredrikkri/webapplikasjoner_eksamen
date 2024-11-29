@@ -39,6 +39,7 @@ export const createTemplateRepository = (db: DB) => {
     }
   };
   
+  
   const create = async (data: TemplateCreate): Promise<Result<string>> => {
     console.log("egg \n", data.event_id)
     try {

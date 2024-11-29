@@ -1,26 +1,48 @@
 "use client";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Event as EventData } from "../../types/Event";
 import { useCreateEvent } from "../../hooks/useEvent";
-import { onAddTemplate } from "@/lib/services/templates";
-import { onAddActiveEvent } from "@/lib/services/activeEvents";
+import { onAddTemplate } from "../../lib/services/templates";
+import { onAddActiveEvent } from "../../lib/services/activeEvents";
+import { Rules } from "../../types/Rules";
 
 // SRC: kilde: chatgpt.com  / med endringer
 const CreateEvent: React.FC = () => {
   const router = useRouter();
-  const [eventData, setEventData] = useState<EventData>({
-    id: '',
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [eventData, setEventData] = useState<Omit<EventData, 'id'>>({
     title: '',
     description: '',
-    date: new Date().toISOString(),
+    date: new Date().toISOString().split('T')[0],
     location: '',
     slug: '',
     event_type: '',
     total_slots: 0,
     available_slots: 0,
     price: 0,
+    rules: {
+      is_private: "false",
+      restricted_days: null,
+      allow_multiple_events_same_day: "true",
+      waitlist: "true"
+    }
   });
+
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const daysOfWeek = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag'];
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const { addEvent, loading, error } = useCreateEvent();
 
@@ -34,24 +56,54 @@ const CreateEvent: React.FC = () => {
     return `${titleSlug}-${uniquePart}`;
   };
 
-    // SRC: kilde: chatgpt.com  / med endringer
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  // SRC: kilde: chatgpt.com  / med endringer
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-
-    setEventData((prevData) => ({
-      ...prevData,
-      [name]: name === "total_slots" || name === "available_slots" || name === "price" ? Number(value) : value,
-      slug: name === "title" ? generateSlug(value) : prevData.slug,
-      available_slots: name === "available_slots" ? 0 : prevData.total_slots,
-    }));
+    
+    if (name.startsWith('rules.')) {
+      const ruleKey = name.split('.')[1];
+      setEventData((prevData) => ({
+        ...prevData,
+        rules: {
+          ...prevData.rules!,
+          [ruleKey]: value
+        }
+      }));
+    } else {
+      setEventData((prevData) => ({
+        ...prevData,
+        [name]: name === "total_slots" || name === "available_slots" || name === "price" 
+          ? Number(value) 
+          : value,
+        slug: name === "title" ? generateSlug(value) : prevData.slug,
+        available_slots: name === "available_slots" ? 0 : prevData.total_slots,
+      }));
+    }
   };
 
-    // SRC: kilde: chatgpt.com  / med endringer
+  const handleDayToggle = (day: string) => {
+    setSelectedDays(prev => {
+      const newDays = prev.includes(day)
+        ? prev.filter(d => d !== day)
+        : [...prev, day];
+      
+      setEventData(prevData => ({
+        ...prevData,
+        rules: {
+          ...prevData.rules!,
+          restricted_days: newDays.length > 0 ? newDays.join(',') : null
+        }
+      }));
+
+      return newDays;
+    });
+  };
+
+  // SRC: kilde: chatgpt.com  / med endringer
   const handleSubmit = async (e: FormEvent<HTMLFormElement>, action: string) => {
     e.preventDefault();
-        //const action = e.currentTarget.getElementsByTagName("button").namedItem("action")?.getAttribute("value"); 
-
-    eventData.id = crypto.randomUUID();
 
     try {
       if (action === "addTemplate") {
@@ -79,6 +131,7 @@ const CreateEvent: React.FC = () => {
 
   const inputClasses = "mt-2 block w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition duration-200";
   const labelClasses = "block text-sm font-medium text-slate-700 mb-1";
+  const selectClasses = "ml-3 block w-24 rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-teal-500 focus:outline-none focus:ring-teal-500 sm:text-sm";
 
   // SRC: kilde: chatgpt.com  / med endringer
   return (
@@ -101,21 +154,6 @@ const CreateEvent: React.FC = () => {
                 className={inputClasses}
                 required
                 placeholder="Skriv inn arrangementets tittel"
-              />
-            </label>
-          </div>
-
-          <div>
-            <label className={labelClasses}>
-              URL-Slug
-              <input
-                type="text"
-                name="slug"
-                value={eventData.slug || ""}
-                onChange={handleChange}
-                className={`${inputClasses} bg-slate-50`}
-                required
-                readOnly
               />
             </label>
           </div>
@@ -217,6 +255,108 @@ const CreateEvent: React.FC = () => {
                   min="0"
                 />
               </label>
+            </div>
+          </div>
+
+          {/* Rules Section */}
+          <div className="mt-8 p-6 bg-slate-50 rounded-lg border border-slate-200">
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">Regler for arrangementet</h3>
+            
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium text-slate-700">Privat arrangement</label>
+                  <p className="text-sm text-slate-500">Kun for inviterte deltakere</p>
+                </div>
+                <select
+                  name="rules.is_private"
+                  value={eventData.rules?.is_private || "false"}
+                  onChange={handleChange}
+                  className={selectClasses}
+                >
+                  <option value="false">Nei</option>
+                  <option value="true">Ja</option>
+                </select>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium text-slate-700">Tillat flere arrangementer samme dag</label>
+                  <p className="text-sm text-slate-500">Deltakere kan melde seg på flere arrangementer på samme dato</p>
+                </div>
+                <select
+                  name="rules.allow_multiple_events_same_day"
+                  value={eventData.rules?.allow_multiple_events_same_day || "true"}
+                  onChange={handleChange}
+                  className={selectClasses}
+                >
+                  <option value="true">Ja</option>
+                  <option value="false">Nei</option>
+                </select>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium text-slate-700">Aktiver venteliste</label>
+                  <p className="text-sm text-slate-500">Tillat påmelding til venteliste når arrangementet er fullt</p>
+                </div>
+                <select
+                  name="rules.waitlist"
+                  value={eventData.rules?.waitlist || "true"}
+                  onChange={handleChange}
+                  className={selectClasses}
+                >
+                  <option value="false">Nei</option>
+                  <option value="true">Ja</option>
+                </select>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium text-slate-700">Begrensede dager</label>
+                  <p className="text-sm text-slate-500">Velg dager hvor påmelding ikke er tillatt</p>
+                </div>
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className={`${selectClasses} bg-white border w-36 border-gray-300 ${isDropdownOpen ? 'border-teal-500 w-36 ring-1 ring-teal-500' : ''}`}
+                  >
+                    <span className="block truncate">
+                      {selectedDays.length === 0 ? 'Velg Dager' : `${selectedDays.length} valgt`}
+                    </span>
+                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                      <svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                      </svg>
+                    </span>
+                  </button>
+                  {isDropdownOpen && (
+                    <div className="absolute right-0 mt-1 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-10">
+                      <div className="py-1">
+                        {daysOfWeek.map((day) => (
+                          <div
+                            key={day}
+                            className="flex items-center px-4 py-2 hover:bg-slate-50 cursor-pointer"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleDayToggle(day);
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selectedDays.includes(day)}
+                              onChange={() => {}}
+                              className="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
+                            />
+                            <span className="ml-3 text-sm text-gray-700">{day}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>

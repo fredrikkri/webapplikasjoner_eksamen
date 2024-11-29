@@ -90,7 +90,6 @@ export default function RegCard(props: RegCardProps) {
     );
   }
 
-  // SRC: kilde: chatgpt.com  || med endringer /
   return (
     <article className="bg-white rounded-xl shadow-lg overflow-hidden border-l-4 border-blue-500">
       <div className="p-6">
