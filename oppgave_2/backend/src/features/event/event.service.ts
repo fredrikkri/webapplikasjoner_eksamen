@@ -13,6 +13,7 @@ import {
 
 import { createEvent, createEventResponse } from "./event.mapper";
 import type { Query } from "../../lib/query";
+import { rulesService } from "../rules/rules.service";
 
 export const createEventService = (eventRepository: EventRepository) => {
 
@@ -30,9 +31,9 @@ export const createEventService = (eventRepository: EventRepository) => {
         return eventRepository.getById(slug);
       };
 
-      const create = async (data: Event): Promise<Result<string>> => {
-        console.log("this is the data: ",)
-        const event = createEvent(data);
+      const create = async (data: EventCreate): Promise<Result<string>> => {
+        const { rules, ...eventData } = data;
+        const event = createEvent({ ...eventData, rules });
     
         if (!validateEventCreate(event).success) {
           return {
@@ -40,7 +41,14 @@ export const createEventService = (eventRepository: EventRepository) => {
             error: { code: "BAD_REQUEST", message: "Invalid Event data" },
           };
         }
-        return eventRepository.create(event);
+        const result = await eventRepository.create(event);
+        
+        if (result.success) {
+            // Create rules with the provided configuration
+            await rulesService.create(event.id, rules);
+        }
+        
+        return result;
       };
 
 return {

@@ -14,7 +14,7 @@ export const createEventRepository = (db: DB) => {
         return data.count > 0;
       };
 
-      // SRC: kilde: chatgpt.com  || med justeringer /
+            // SRC: kilde: chatgpt.com  || med justeringer /
 const getById = async (slug: string): Promise<Result<Event>> => {
     try {
       const eventExists = await exist(slug);
@@ -27,7 +27,6 @@ const getById = async (slug: string): Promise<Result<Event>> => {
   
       const query = db.prepare("SELECT * FROM events WHERE slug = ?");
       const eventData = query.get(slug) as Event;  
-  
   
       return {
         success: true,
@@ -48,7 +47,7 @@ const getById = async (slug: string): Promise<Result<Event>> => {
     }
   };
 
-  // SRC: kilde: chatgpt.com  || med endringer /
+    // SRC: kilde: chatgpt.com  || med endringer /
 const fetchEvents = async (params?: Query): Promise<Event[]> => {
     const { name, pageSize = 10, page = 0 } = params ?? {};
     const offset = (Number(page) - 1) * Number(pageSize);
@@ -62,7 +61,7 @@ const fetchEvents = async (params?: Query): Promise<Event[]> => {
     return statement.all() as Event[];
   };
 
-  // SRC: kilde: chatgpt.com || med endringer/
+    // SRC: kilde: chatgpt.com || med endringer/
 const list = async (params?: Query): Promise<Result<Event[]>> => {
     try {
       const events = await fetchEvents(params);
@@ -84,7 +83,6 @@ const list = async (params?: Query): Promise<Result<Event[]>> => {
   
       query += ` LIMIT ${pageSize}`;
       query += ` OFFSET ${offset}`;
-  
   
       const { total } = db.prepare("SELECT COUNT(*) as total FROM events").get() as { total: number };
       const totalPages = Math.ceil(total / Number(pageSize));
@@ -108,9 +106,10 @@ const list = async (params?: Query): Promise<Result<Event[]>> => {
     }
   };
 
-  const create = async (data: EventCreate): Promise<Result<string>> => {
+  const create = async (data: Event & { rules: any }): Promise<Result<string>> => {
     try {
-      const event = toDb(data);
+      const { rules, ...eventData } = data;
+      const event = toDb({ ...eventData, rules });
 
       const query = db.prepare(`
         INSERT INTO events (id, title, description, slug, date, location, event_type, total_slots, available_slots, price)
@@ -162,7 +161,3 @@ const list = async (params?: Query): Promise<Result<Event[]>> => {
 export const eventRepository = createEventRepository(db);
 
 export type EventRepository = ReturnType<typeof createEventRepository>;
-
-function uuidv4(): string {
-  throw new Error("Function not implemented.");
-}

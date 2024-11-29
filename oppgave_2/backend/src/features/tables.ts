@@ -61,7 +61,7 @@ export const createTables = (db: DB) => {
         restricted_days TEXT,
         allow_multiple_events_same_day TEXT,
         waitlist TEXT,
-        FOREIGN KEY (event_id) REFERENCES events(id)
+        FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
     );
 
 
