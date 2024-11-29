@@ -17,6 +17,12 @@ export const createRegistrationService = (registrationRepository: RegistrationRe
         };
       };
 
+      const createByOrderID = async (order_id: string): Promise<Result<string>> => {
+    
+        const result = await registrationRepository.createByOrderId(order_id)
+        return result;
+      };
+
       const create = async (data: CreateRegistration): Promise<Result<string>> => {
         const registration = createRegistration(data);
     
@@ -54,7 +60,7 @@ export const createRegistrationService = (registrationRepository: RegistrationRe
           data: result.data.map(createRegistrationResponse),
         };
     };
-  return { list, create, getRegistrationsByEventId, bookSlot }
+  return { list, create, getRegistrationsByEventId, bookSlot, createByOrderID }
 }
 
 export const registrationService = createRegistrationService(registrationRepository);

@@ -40,7 +40,7 @@ export const createRegistrationRepository = (db: DB) => {
         try {
       const event = db.prepare("SELECT id FROM events WHERE slug = ? LIMIT 1").get(data.event_id);
       const eventId: string = (event as { id: string }).id;
-      const e: Registration = { ...data, event_id: eventId }
+      const e: CreateRegistration = { ...data, event_id: eventId }
 
 
           const registration = toDb(e);
@@ -115,7 +115,70 @@ export const createRegistrationRepository = (db: DB) => {
         }
       };
       
-
+      const createByOrderId = async (order_id: string): Promise<Result<string>> => {
+        try {
+          // Step 1: Get all registrations with the same order_id
+          const query = db.prepare("SELECT * FROM wait_list WHERE order_id = ?");
+          const registrationsData = query.all(order_id);
+      
+          if (registrationsData.length === 0) {
+            return {
+              success: false,
+              error: {
+                code: "NOT_FOUND",
+                message: "No registrations found with the provided order_id",
+              },
+            };
+          }
+      
+          // Step 2: Convert the fetched data into Registration objects
+          const registrations: CreateRegistration[] = registrationsData.map((data: any) => {
+            return {
+              id: data.id,
+              event_id: data.event_id,
+              email: data.email,
+              has_paid: data.has_paid,
+              registration_date: data.registration_date,
+              order_id: data.order_id
+            };
+          });
+      
+          // Step 3: Insert each registration into the database
+          registrations.forEach((registration) => {
+            const registrationDb = toDb(registration); // Convert it to the format needed for DB insert
+            console.log("Prepared registration data for DB insert:", registrationDb);
+      
+            const query = db.prepare(`
+              INSERT INTO registrations (id, event_id, email, has_paid, registration_date, order_id)
+              VALUES (?, ?, ?, ?, ?, ?)
+            `);
+      
+            query.run(
+              registrationDb.id,
+              registrationDb.event_id,
+              registrationDb.email,
+              registrationDb.has_paid,
+              registrationDb.registration_date,
+              registrationDb.order_id
+            );
+          });
+      
+          return {
+            success: true,
+            data: `Successfully created ${registrations.length} registration(s)`,
+          };
+        } catch (error) {
+          console.error("Error during creation of registration:", error);
+          return {
+            success: false,
+            error: {
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Error during creation of registration",
+            },
+          };
+        }
+      };
+      
       
       const getRegistrationById = async (eventId: string): Promise<Result<Registration[]>> => {
         try {
@@ -152,9 +215,11 @@ export const createRegistrationRepository = (db: DB) => {
         },
       };
     }
+
+    
 }
 
-      return { list, create, getRegistrationById, bookSlot }
+      return { list, create, getRegistrationById, bookSlot, createByOrderId }
 }
 
 export const registrationRepository = createRegistrationRepository(db);

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Event } from "@/types/Event";
 import { Registration } from "@/types/Registration";
-import { useCreateRegistration } from "@/hooks/useRegistration";
+import { useCreateRegistrationById } from "@/hooks/useRegistration";
 import { deleteWaitlistRegistration } from "@/lib/services/waitlistRegistrations";
 import { getWaitListByEventId } from "@/hooks/useWaitlistRegistration";
 
@@ -12,7 +12,7 @@ interface RegCardProps {
 
 export default function RegCard(props: RegCardProps) {
   const { event, waitlist } = props;
-  const { addRegistration, loading, error } = useCreateRegistration();
+  const { addRegistration, loading, error } = useCreateRegistrationById();
   const { waitlist: fetchedWaitlist } = getWaitListByEventId(event?.id || "");
   const [selected, setSelected] = useState<Registration[]>([]);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -38,16 +38,21 @@ export default function RegCard(props: RegCardProps) {
 
   // SRC: kilde: chatgpt.com  || med endringer /
   const handleClickAccept = async (selected: Registration[]) => {
-    console.log("Accepted registrations:", selected);
-    for (let i = 0; i < selected.length; i++) {
-      const registration = selected[i];
+    const uniqueSelected = Array.from(
+      new Map(selected.map((item) => [item.order_id, item])).values()
+    );
+  
+    for (let i = 0; i < uniqueSelected.length; i++) {
+      const registration = uniqueSelected[i];
       try {
-        await addRegistration(registration);
+        await addRegistration(registration.order_id);
+        await deleteWaitlistRegistration(registration.order_id);
       } catch (error) {
         console.error(`Error accepting registration:`, error);
       }
     }
   };
+  
 
   // SRC: kilde: chatgpt.com  || med endringer /
   const handleClickDecline = async (selected: Registration[]) => {
@@ -93,21 +98,57 @@ export default function RegCard(props: RegCardProps) {
   return (
     <article className="bg-white rounded-xl shadow-lg overflow-hidden border-l-4 border-blue-500">
       <div className="p-6">
-        <div className="border-b border-slate-200 pb-4 mb-6">
-          <h2 className="text-2xl font-bold text-slate-900">Registrations for {event.title}</h2>
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+
+
+        <div className="border-b border-slate-200 pb-6 mb-8">
+  <div className="flex items-center justify-between">
+    <h2 className="text-2xl font-bold text-slate-900">
+      Registrations for {event.title}
+    </h2>
+    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
             {waitlist.length} {waitlist.length === 1 ? "registration" : "registrations"}
-          </span>
-        </div>
+    </span>
+  </div>
+
+
+</div>
+
 
         <div className="space-y-6">
-          <div className="bg-slate-50 rounded-lg p-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center text-slate-600">
-                <span>Available slots: {event.available_slots}/{event.total_slots}</span>
-              </div>
-            </div>
-          </div>
+        <div className="space-y-6">
+  <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="flex items-center justify-between sm:justify-start space-x-4">
+        <div className="flex items-center text-slate-700">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 text-blue-500 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+            />
+          </svg>
+          <span className="text-lg font-semibold">Available Slots</span>
+        </div>
+        <div className="text-xl font-bold text-blue-700">
+          {event.available_slots}/{event.total_slots}
+        </div>
+      </div>
+    </div>
+
+    {/* Additional Information */}
+    <div className="mt-4 text-sm text-slate-500">
+      <p>Plassene oppdateres i sanntid, og nye påmeldinger blir tilgjengelige etter hvert som de blir bekreftet.</p>
+    </div>
+  </div>
+</div>
+
 
 
           <div className="space-y-2">

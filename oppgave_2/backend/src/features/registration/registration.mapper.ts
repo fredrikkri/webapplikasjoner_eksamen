@@ -1,4 +1,4 @@
-import { Registration } from "../../types/registration";
+import { CreateRegistration, Registration } from "../../types/registration";
 import { createId } from "../../util/utils";
 
 export const createRegistrationResponse = (data: Registration): Registration => {
@@ -15,7 +15,8 @@ export const createRegistrationResponse = (data: Registration): Registration => 
       };
   };
 
-  export const createRegistration = (data: Partial<Registration>): Registration => {
+
+  export const createRegistration = (data: Partial<CreateRegistration>): Registration => {
     return {
       id: createId(),
       event_id: data.event_id ?? "N/A",
@@ -26,7 +27,7 @@ export const createRegistrationResponse = (data: Registration): Registration => 
     };
   };
   
-  export const fromDb = (data: Registration) => {
+  export const fromDb = (data: CreateRegistration) => {
     const newRegistration: Registration = {
       id: createId(),
       event_id: data.event_id ?? "N/A",

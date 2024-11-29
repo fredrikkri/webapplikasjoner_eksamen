@@ -39,6 +39,20 @@ export const createRegistrationController = (registrationService: RegistrationSe
         return c.json(result, { status: 201 });
       });
 
+      app.post("/registrerWishlist", async (c) => {
+        const data = await c.req.json();
+
+        const result = await registrationService.createByOrderID(data);
+        if (!result.success)
+          return errorResponse(
+            c,
+            result.error.code as ErrorCode,
+            result.error.message
+          );
+         
+        return c.json(result, { status: 201 });
+      });
+
       app.get("/registrations/:event_id", async (c) => {
         const eventId = c.req.param("event_id");
         const result = await registrationService.getRegistrationsByEventId(eventId);
