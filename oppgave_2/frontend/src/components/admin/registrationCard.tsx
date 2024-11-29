@@ -119,7 +119,17 @@ export default function RegCard(props: RegCardProps) {
                     <span className="flex-1">Order ansvar</span>
                     <span className="flex-1 text-center">Antall</span>
                     <span className="flex-1 text-center">Order ID</span>
-                    <span className="flex-1 text-center">Velg</span>
+                    <span className="flex-1 text-center">                    
+                      <label className="inline-flex items-center space-x-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="form-checkbox h-5 w-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                          checked={waitlist.length > 0 && selected.length === waitlist.length}
+                          onChange={handleSelectAll}
+                        />
+                        <span>Velg alle</span>
+                      </label>
+                    </span>
                   </li>
 
                   {waitlist.map((item, index) => (
