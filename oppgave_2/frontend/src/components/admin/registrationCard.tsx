@@ -59,6 +59,7 @@ export default function RegCard(props: RegCardProps) {
         console.error(`Error accepting registration:`, error);
       }
     }
+    window.history.go()
   };
   
 

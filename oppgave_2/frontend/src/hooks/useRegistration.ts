@@ -25,7 +25,7 @@ export const useCreateRegistration = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<Error | null>(null);
   
-    const addRegistration = async (order_id: string) => {
+    const addRegistration = async (order_id: string[]) => {
       try {
         setLoading(true);
         await createRegistrationById(order_id);
