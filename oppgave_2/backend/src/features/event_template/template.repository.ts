@@ -20,7 +20,6 @@ export const createTemplateRepository = (db: DB) => {
         SELECT e.*
         FROM events e
         JOIN events_template et ON e.id = et.event_id
-        WHERE et.private != 'True'  -- Ekskluderer events der 'private' er 'True'
       `);
       
       const data = statement.all() as Event[];
