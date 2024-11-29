@@ -51,7 +51,7 @@ export const toDb = (data: Partial<Event> & { rules: Omit<Rules, 'event_id'> }) 
         location: event.location,
         event_type: event.event_type,
         total_slots: event.total_slots,
-        avalible_slots: event.available_slots,
+        available_slots: event.available_slots,
         price: event.price,
         rules: event.rules
     }

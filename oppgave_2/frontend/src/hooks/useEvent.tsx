@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getEvent, getAllEvents, createEvent } from "../lib/services/events";
-import {Event as EventType} from "../types/Event"
+import { Event as EventType } from "../types/Event";
 
 export const useAllEvents = () => {
   const [events, setEvents] = useState<EventType[] | null>(null);
@@ -56,16 +56,27 @@ export const useCreateEvent = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const addEvent = async (eventData: EventType) => {
+  const addEvent = async (eventData: Omit<EventType, 'id'>) => {
     try {
       setLoading(true);
-      await createEvent(eventData);
+      const formattedEventData = {
+        ...eventData,
+        rules: {
+          ...eventData.rules,
+          is_private: eventData.rules?.is_private || "false",
+          allow_multiple_events_same_day: eventData.rules?.allow_multiple_events_same_day || "true",
+          waitlist: eventData.rules?.waitlist || "true",
+          restricted_days: eventData.rules?.restricted_days || null
+        }
+      };
+      await createEvent(formattedEventData);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('An error occurred'));
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  return { addEvent, useAllEvents, loading, error };
+  return { addEvent, loading, error };
 };

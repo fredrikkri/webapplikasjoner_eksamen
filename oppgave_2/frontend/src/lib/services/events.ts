@@ -1,5 +1,5 @@
 import { ENDPOINTS } from "@/config/config";
-import { Event } from "../../types/Event"
+import { Event } from "../../types/Event";
 
 export const getEvent = async (slug: string): Promise<Event | undefined> => {
   const response = await fetch(ENDPOINTS.events + `/${slug}`);
@@ -28,7 +28,7 @@ export const getAllEvents = async (): Promise<Event[]> => {
   return result.data as Event[];
 };
 
-export const createEvent = async (data: Event): Promise<void> => {
+export const createEvent = async (data: Omit<Event, 'id'> & { rules: any }): Promise<void> => {
   console.log("current event", data)
   try {
     const response = await fetch(ENDPOINTS.create, {
@@ -42,7 +42,13 @@ export const createEvent = async (data: Event): Promise<void> => {
     if (!response.ok) {
       throw new Error(`Failed to create event: ${response.statusText}`);
     }
+
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.error.message || "Failed to create event");
+    }
   } catch (error) {
     console.error("Error creating event:", error);
+    throw error;
   }
 };
