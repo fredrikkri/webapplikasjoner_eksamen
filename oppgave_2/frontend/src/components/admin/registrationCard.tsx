@@ -41,11 +41,19 @@ export default function RegCard(props: RegCardProps) {
     const uniqueSelected = Array.from(
       new Map(selected.map((item) => [item.order_id, item])).values()
     );
-  
+    const orderIds: string[] = uniqueSelected.map((registration) => registration.order_id);
+
+      try {
+        await addRegistration(orderIds);
+      } catch (error) {
+        console.error(`Error accepting registration:`, error);
+      }
+    
+
     for (let i = 0; i < uniqueSelected.length; i++) {
       const registration = uniqueSelected[i];
       try {
-        await addRegistration(registration.order_id);
+      
         await deleteWaitlistRegistration(registration.order_id);
       } catch (error) {
         console.error(`Error accepting registration:`, error);

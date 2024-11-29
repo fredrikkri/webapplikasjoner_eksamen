@@ -17,8 +17,8 @@ export const createRegistrationService = (registrationRepository: RegistrationRe
         };
       };
 
-      const createByOrderID = async (order_id: string): Promise<Result<string>> => {
-    
+      const createByOrderID = async (order_id: string[]): Promise<Result<string>> => {
+      
         const result = await registrationRepository.createByOrderId(order_id)
         return result;
       };

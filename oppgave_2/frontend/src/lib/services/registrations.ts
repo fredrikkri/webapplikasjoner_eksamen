@@ -20,7 +20,7 @@ export const createRegistration = async (data: Registration): Promise<void> => {
     }
   };
 
-  export const createRegistrationById = async (order_id: string): Promise<void> => {
+  export const createRegistrationById = async (order_id: string[]): Promise<void> => {
     console.log("current registration", order_id)
     try {
       const response = await fetch(ENDPOINTS.createRegistrationById, {
