@@ -15,10 +15,11 @@ export default function RegCard(props: RegCardProps) {
   const { addRegistration, loading, error } = useCreateRegistration();
   const { waitlist: fetchedWaitlist } = getWaitListByEventId(event?.id || "");
 
+
   const [selected, setSelected] = useState<Registration[]>([]);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
-  // Handle selecting/deselecting a registration
+  // SRC: kilde: chatgpt.com  || med endringer /
   const handleSelectRegistration = (registration: Registration) => {
     setSelected((prevSelected) =>
       prevSelected.includes(registration)
@@ -27,7 +28,7 @@ export default function RegCard(props: RegCardProps) {
     );
   };
 
-  // Handle accepting selected registrations
+  // SRC: kilde: chatgpt.com  || med endringer /
   const handleClickAccept = async (selected: Registration[]) => {
     console.log("Accepted registrations:", selected);
     for (let i = 0; i < selected.length; i++) {
@@ -40,7 +41,7 @@ export default function RegCard(props: RegCardProps) {
     }
   };
 
-  // Handle declining selected registrations
+  // SRC: kilde: chatgpt.com  || med endringer /
   const handleClickDecline = async (selected: Registration[]) => {
     console.log("Declined registrations:", selected);
     for (let i = 0; i < selected.length; i++) {
@@ -53,25 +54,17 @@ export default function RegCard(props: RegCardProps) {
     }
   };
 
-  // Toggle dropdown visibility based on order_id
+  // SRC: kilde: chatgpt.com /
   const toggleDropdown = (orderId: string) => {
-    setOpenDropdown((prev) => (prev === orderId ? null : orderId)); // Toggle the dropdown for the clicked order_id
+    setOpenDropdown((prev) => (prev === orderId ? null : orderId));
   };
 
-  // Filter registrations by order_id
+  // SRC: kilde: chatgpt.com  || med endringer /
   const filterRegistrationsByOrderId = (orderId: string) => {
     return fetchedWaitlist?.filter((item) => item.order_id === orderId) || [];
   };
 
-  // Handle Select All functionality
-  const handleSelectAll = () => {
-    if (selected.length === fetchedWaitlist?.length) {
-      setSelected([]); // If all are selected, deselect them
-    } else {
-      setSelected(fetchedWaitlist || []); // Select all items
-    }
-  };
-
+  // SRC: kilde: chatgpt.com  || med endringer /
   if (!event) {
     return (
       <div className="rounded-xl border-2 border-slate-200 bg-slate-50 p-8 text-center max-w-2xl mx-auto">
@@ -80,6 +73,7 @@ export default function RegCard(props: RegCardProps) {
     );
   }
 
+  // SRC: kilde: chatgpt.com  || med endringer /
   if (!waitlist || waitlist.length === 0) {
     return (
       <div className="rounded-xl border-2 border-slate-200 bg-slate-50 p-8 text-center max-w-2xl mx-auto">
@@ -88,13 +82,14 @@ export default function RegCard(props: RegCardProps) {
     );
   }
 
+  // SRC: kilde: chatgpt.com  || med endringer /
   return (
     <article className="bg-white rounded-xl shadow-lg overflow-hidden border-l-4 border-blue-500">
       <div className="p-6">
         <div className="border-b border-slate-200 pb-4 mb-6">
           <h2 className="text-2xl font-bold text-slate-900">Registrations for {event.title}</h2>
           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-            {fetchedWaitlist?.length} {fetchedWaitlist?.length === 1 ? "registration" : "registrations"}
+            {waitlist.length} {waitlist.length === 1 ? "registration" : "registrations"}
           </span>
         </div>
 
@@ -107,9 +102,10 @@ export default function RegCard(props: RegCardProps) {
             </div>
           </div>
 
+
           <div className="space-y-2">
             <div className="bg-slate-50 rounded-lg p-4">
-              {Array.isArray(fetchedWaitlist) && fetchedWaitlist.length > 0 ? (
+              {Array.isArray(waitlist) && waitlist.length > 0 ? (
                 <ul className="space-y-2">
                   <li className="flex items-center font-semibold text-slate-700 bg-slate-100 p-3 rounded-lg shadow-sm">
                     <span className="flex-1">Order ansvar</span>
@@ -118,7 +114,7 @@ export default function RegCard(props: RegCardProps) {
                     <span className="flex-1 text-center">Velg</span>
                   </li>
 
-                  {fetchedWaitlist.map((item, index) => (
+                  {waitlist.map((item, index) => (
                     <li key={index} className="flex items-center justify-between text-slate-700 bg-white p-3 rounded-lg shadow-sm hover:bg-slate-100 transition-colors duration-200">
                       <div className="flex-1">
                         <span
@@ -129,7 +125,7 @@ export default function RegCard(props: RegCardProps) {
                         </span>
                         {openDropdown === item.order_id && (
                           <div className="mt-2 p-4 bg-slate-50 shadow-lg rounded-lg">
-                            <p className="font-semibold">Order medlemmer:</p>
+                            <p className="font-semibold">Ordre medlemmer:</p>
                             <ul>
                               {filterRegistrationsByOrderId(item.order_id).map((filteredItem, idx) => (
                                 <li key={idx}>
@@ -160,22 +156,13 @@ export default function RegCard(props: RegCardProps) {
             </div>
           </div>
 
-          {/* Select All Button */}
-          <div className="flex justify-between gap-4 pt-4 border-t border-slate-200">
-            <button
-              type="button"
-              className="flex-1 inline-flex justify-center items-center px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 shadow-sm"
-              onClick={handleSelectAll}
-            >
-              {selected.length === fetchedWaitlist?.length ? "Deselect All" : "Select All"}
-            </button>
-
+          <div className="flex gap-4 pt-4 border-t border-slate-200">
             <button
               type="button"
               className="flex-1 inline-flex justify-center items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm"
               onClick={() => handleClickAccept(selected)}
             >
-              Accept registrations
+              Accept {waitlist.length > 1 ? "registrations" : "registration"}
             </button>
 
             <button
@@ -183,7 +170,7 @@ export default function RegCard(props: RegCardProps) {
               className="flex-1 inline-flex justify-center items-center px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 shadow-sm"
               onClick={() => handleClickDecline(selected)}
             >
-              Decline registration
+              Decline {waitlist.length > 1 ? "registrations" : "registration"}
             </button>
           </div>
         </div>
