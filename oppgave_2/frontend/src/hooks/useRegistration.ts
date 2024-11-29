@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Registration as RegistrationType } from "../types/Registration";
+import { Registration  } from "../types/Registration";
 import { createRegistration } from "../lib/services/registrations";
 
 export const useCreateRegistration = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<Error | null>(null);
   
-    const addRegistration = async (eventData: RegistrationType) => {
+    const addRegistration = async (eventData: Registration) => {
       try {
         setLoading(true);
         await createRegistration(eventData);

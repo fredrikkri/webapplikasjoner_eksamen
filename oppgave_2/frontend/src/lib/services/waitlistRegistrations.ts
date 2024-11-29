@@ -62,4 +62,21 @@ export const createWaitlistRegistration = async (data: RegistrationType): Promis
   };
   
   
-  
+export const getAttendersWaitList = async (eventId: string): Promise<Registration[] | null> => {
+  try {
+    const response = await fetch(ENDPOINTS.getAttendersWaitList(eventId));
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch waitlist for event ${eventId}: ${response.statusText}`);
+    }
+
+    const waitlistData = await response.json();
+
+    return waitlistData.data || null; // If no data, return null
+
+  } catch (error) {
+    console.error('Error fetching waitlist:', error);
+
+    return null;
+  }
+};

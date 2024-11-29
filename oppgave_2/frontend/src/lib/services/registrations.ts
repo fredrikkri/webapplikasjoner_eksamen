@@ -1,7 +1,7 @@
 import { ENDPOINTS } from "@/config/config";
-import { Registration as RegistrationType } from "../../types/Registration";
+import { Registration } from "../../types/Registration";
 
-export const createRegistration = async (data: RegistrationType): Promise<void> => {
+export const createRegistration = async (data: Registration): Promise<void> => {
     console.log("current registration", data)
     try {
       const response = await fetch(ENDPOINTS.createRegistration, {
