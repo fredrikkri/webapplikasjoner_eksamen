@@ -68,7 +68,8 @@ function SingleTemplate({ slug = "" }: TemplateProps) {
         event_type={template.event_type}
         total_slots={template.total_slots}
         available_slots={template.available_slots}
-        price={template.price} 
+        price={template.price}
+        rules={template.rules}
       />
     </div>
   );

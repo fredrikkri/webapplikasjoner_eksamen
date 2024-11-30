@@ -15,5 +15,6 @@ export const ENDPOINTS = {
   deleteRegistration: (id: string) => `${BASE_URL}/deleteregistration/${id}`,
   getWishlist: (eventId: string) => `${BASE_URL}/${eventId}/waitlist-orders`,
   deleteWaitlistItem: (registrationId: string) => `${BASE_URL}/waitlist-registrations/${registrationId}`,
-  getAttendersWaitList: (eventId: string) => `${BASE_URL}/waitlist-registrations/${eventId}`
+  getAttendersWaitList: (eventId: string) => `${BASE_URL}/waitlist-registrations/${eventId}`,
+  rules: (eventId: string) => `${BASE_URL}/rules/${eventId}`
 };

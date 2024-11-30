@@ -1,3 +1,5 @@
+import { Rules } from "./Rules";
+
 export type Template = {
     id: string;
     title: string;
@@ -9,6 +11,7 @@ export type Template = {
     total_slots: number;
     available_slots: number;
     price: number;
+    rules?: Rules;
 }
 
 export type TemplateBase = {
