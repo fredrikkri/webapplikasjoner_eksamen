@@ -1,6 +1,6 @@
 import { Result } from "@/types";
 import db, { DB } from "../db";
-import { CreateRegistration, Registration } from "../../types/registration";
+import { CreateRegistration, Registration, RegistrationEvent } from "../../types/registration";
 import { toDb } from "./registration.mapper";
 import {type EventCreate, type Event} from "../../types/event";
 
@@ -15,10 +15,10 @@ export const createRegistrationRepository = (db: DB) => {
     return data.count > 0;
   };
 
-      const list = async (query?: Record<string, string>): Promise<Result<Registration[]>> => {
+      const list = async (query?: Record<string, string>): Promise<Result<RegistrationEvent[]>> => {
         try {
           const statement = db.prepare(`SELECT * from registrations`);
-          const data = statement.all() as Registration[];
+          const data = statement.all() as RegistrationEvent[];
     
           return {
             success: true,
@@ -36,45 +36,50 @@ export const createRegistrationRepository = (db: DB) => {
         }
       };
 
-      const create = async (data: CreateRegistration): Promise<Result<string>> => {
+      // SRC: kilde: chatgpt.com  || med endringer /
+      const create = async (data: CreateRegistration[]): Promise<Result<string>> => {
         try {
-      const event = db.prepare("SELECT id FROM events WHERE slug = ? LIMIT 1").get(data.event_id);
-      const eventId: string = (event as { id: string }).id;
-      const e: Registration = { ...data, event_id: eventId }
 
-
-          const registration = toDb(e);
-          console.log("Prepared registration data for DB insert:", registration);
+          const registrationsToInsert = data.map((registration) => {
+            const registrationWithEvent = { ...registration };
+            
+            return toDb(registrationWithEvent) as RegistrationEvent;
+          });
       
-          const query = db.prepare(`
-            INSERT INTO registrations (id, event_id, email, has_paid, registration_date, order_id)
-            VALUES (?, ?, ?, ?, ?, ?)
-          `);
+          db.transaction(() => {
+            registrationsToInsert.forEach((registration) => {
+              const query = db.prepare(`
+                INSERT INTO registrations (id, event_id, email, has_paid, registration_date, order_id)
+                VALUES (?, ?, ?, ?, ?, ?)
+              `);
       
-          query.run(
-            registration.id,
-            registration.event_id,
-            registration.email,
-            registration.has_paid,
-            registration.registration_date,
-            registration.order_id
-          );
+              query.run(
+                registration.id,
+                registration.event_id,
+                registration.email,
+                registration.has_paid,
+                registration.registration_date,
+                registration.order_id
+              );
+            });
+          })(); // Execute transaction
       
           return {
             success: true,
-            data: registration.id,
+            data: `${registrationsToInsert.length} registrations created successfully.`,
           };
         } catch (error) {
-          console.error("Error during creation of registration:", error);
+          console.error("Error during creation of registrations:", error);
           return {
             success: false,
             error: {
               code: "INTERNAL_SERVER_ERROR",
-              message: "Feil med oppretting av registration",
+              message: "Error processing registrations",
             },
           };
         }
       };
+      
 
       // SRC: kilde: chatgpt.com  || med endringer /
       const bookSlot = async (event_id: string): Promise<Result<string>> => {
@@ -115,8 +120,112 @@ export const createRegistrationRepository = (db: DB) => {
         }
       };
       
-
+      // SRC: kilde: chatgpt.com  || med endringer /
+      const createByOrderId = async (order_id: string[]): Promise<Result<string>> => {
+        try {
+          let totalCreated = 0;
       
+          for (let i = 0; i < order_id.length; i++) {
+            const orderId = order_id[i];
+      
+            const query = db.prepare("SELECT * FROM wait_list WHERE order_id = ?");
+            const registrationsData = query.all(orderId);
+      
+            if (registrationsData.length === 0) {
+              return {
+                success: false,
+                error: {
+                  code: "NOT_FOUND",
+                  message: "No registrations found with the provided order_id",
+                },
+              };
+            }
+      
+            const registrations: CreateRegistration[] = registrationsData.map((data: any) => {
+              return {
+                id: data.id,
+                event_id: data.event_id,
+                email: data.email,
+                has_paid: data.has_paid,
+                registration_date: data.registration_date,
+                order_id: data.order_id,
+              };
+            });
+      
+            for (const registration of registrations) {
+              const registrationDb = toDb(registration);
+              console.log("Prepared registration data for DB insert:", registrationDb);
+      
+              const query = db.prepare(`
+                INSERT INTO registrations (id, event_id, email, has_paid, registration_date, order_id)
+                VALUES (?, ?, ?, ?, ?, ?)
+              `);
+      
+              query.run(
+                registrationDb.id,
+                registrationDb.event_id,
+                registrationDb.email,
+                registrationDb.has_paid,
+                registrationDb.registration_date,
+                registrationDb.order_id
+              );
+      
+              totalCreated++;
+            }
+          }
+      
+          return {
+            success: true,
+            data: `Successfully created ${totalCreated} registration(s)`,
+          };
+      
+        } catch (error) {
+          console.error("Error during creation of registration:", error);
+          return {
+            success: false,
+            error: {
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Error during creation of registration",
+            },
+          };
+        }
+      };
+      
+      const deleteRegistration = async (id: string): Promise<Result<void>> => {
+        try {
+          const checkQuery = db.prepare("SELECT id FROM registrations WHERE id = ?");
+          const exists = checkQuery.get(id);
+
+          if (!exists) {
+            return {
+              success: false,
+              error: {
+                code: "NOT_FOUND",
+                message: "Registration not found",
+              },
+            };
+          }
+
+          const deleteQuery = db.prepare("DELETE FROM registrations WHERE id = ?");
+          deleteQuery.run(id);
+
+          return {
+            success: true,
+            data: undefined,
+          };
+        } catch (error) {
+          console.error("Error deleting registration:", error);
+          return {
+            success: false,
+            error: {
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to delete registration",
+            },
+          };
+        }
+      };
+      
+      // SRC: kilde: chatgpt.com  || med endringer /
       const getRegistrationById = async (eventId: string): Promise<Result<Registration[]>> => {
         try {
         const exists = await eventExist(eventId);
@@ -152,9 +261,10 @@ export const createRegistrationRepository = (db: DB) => {
         },
       };
     }
+
 }
 
-      return { list, create, getRegistrationById, bookSlot }
+      return { list, create, getRegistrationById, bookSlot, createByOrderId, deleteRegistration }
 }
 
 export const registrationRepository = createRegistrationRepository(db);

@@ -19,16 +19,24 @@ export const createRegistrationController = (registrationService: RegistrationSe
 
       app.post("/registrer", async (c) => {
         const data = await c.req.json();
-        const result2 = await registrationService.bookSlot(data)
-        if (!result2.success)
-          return errorResponse(
-            c,
-            result2.error.code as ErrorCode,
-            result2.error.message
-          );
+
         console.log("Raw data: ", data)
         const result = await registrationService.create(data);
         console.log("Geir: ", result)
+        if (!result.success)
+          return errorResponse(
+            c,
+            result.error.code as ErrorCode,
+            result.error.message
+          );
+         
+        return c.json(result, { status: 201 });
+      });
+
+      app.post("/registrerWishlist", async (c) => {
+        const data = await c.req.json();
+
+        const result = await registrationService.createByOrderID(data);
         if (!result.success)
           return errorResponse(
             c,
@@ -50,6 +58,19 @@ export const createRegistrationController = (registrationService: RegistrationSe
             result.error.message
           );
         return c.json(result);
+      });
+
+      app.delete("/deleteregistration/:id", async (c) => {
+        const registrationId = c.req.param("id");
+        const result = await registrationService.deleteRegistration(registrationId);
+    
+        if (!result.success)
+          return errorResponse(
+            c,
+            result.error.code as ErrorCode,
+            result.error.message
+          );
+        return c.json({ success: true, message: "Registration deleted successfully" });
       });
 
     return app;

@@ -28,7 +28,6 @@ export default function EventCardExpanded({
   price,
 }: EventCardProps) {
   const [availableSlots, setAvailableSlots] = useState<number>(available_slots);
-  const { addRegistration, loading, error } = useCreateRegistration();
   const { addWaitlistRegistration } = useCreateWaitlistRegistration();
 
   const [registrations, setRegistrations] = useState<RegistrationType[]>([
