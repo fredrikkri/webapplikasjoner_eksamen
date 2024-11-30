@@ -3,6 +3,7 @@ import {type EventCreate, type Event} from "../../types/event";
 import type { Result } from "../../types/index";
 import { fromDb, toDb } from "./event.mapper";
 import type { Query } from "../../lib/query";
+import type { Rules } from "../../types/rules";
 
 export const createEventRepository = (db: DB) => {
 
@@ -106,10 +107,12 @@ export const createEventRepository = (db: DB) => {
         }
     };
 
-    const create = async (data: Event & { rules: any }): Promise<Result<string>> => {
+    const create = async (data: Event & { rules: Omit<Rules, 'event_id'> }): Promise<Result<string>> => {
         try {
           const { rules, ...eventData } = data;
           const event = toDb({ ...eventData, rules });
+
+          console.log("Creating event with data:", event);
 
           const insertEvent = db.prepare(`
             INSERT INTO events (id, title, description, slug, date, location, event_type, total_slots, available_slots, price)

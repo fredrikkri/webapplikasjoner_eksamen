@@ -26,7 +26,10 @@ const CreateEvent: React.FC = () => {
       is_private: "false",
       restricted_days: null,
       allow_multiple_events_same_day: "true",
-      waitlist: "true"
+      waitlist: "true",
+      fixed_price: "false",
+      fixed_size: "false",
+      is_free: "false"
     }
   });
 
@@ -271,6 +274,54 @@ const CreateEvent: React.FC = () => {
                 <select
                   name="rules.is_private"
                   value={eventData.rules?.is_private || "false"}
+                  onChange={handleChange}
+                  className={selectClasses}
+                >
+                  <option value="false">Nei</option>
+                  <option value="true">Ja</option>
+                </select>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium text-slate-700">Fast pris</label>
+                  <p className="text-sm text-slate-500">Prisen kan ikke endres etter opprettelse</p>
+                </div>
+                <select
+                  name="rules.fixed_price"
+                  value={eventData.rules?.fixed_price || "false"}
+                  onChange={handleChange}
+                  className={selectClasses}
+                >
+                  <option value="false">Nei</option>
+                  <option value="true">Ja</option>
+                </select>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium text-slate-700">Fast størrelse</label>
+                  <p className="text-sm text-slate-500">Antall plasser kan ikke endres etter opprettelse</p>
+                </div>
+                <select
+                  name="rules.fixed_size"
+                  value={eventData.rules?.fixed_size || "false"}
+                  onChange={handleChange}
+                  className={selectClasses}
+                >
+                  <option value="false">Nei</option>
+                  <option value="true">Ja</option>
+                </select>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium text-slate-700">Gratis arrangement</label>
+                  <p className="text-sm text-slate-500">Arrangementet er gratis for alle deltakere</p>
+                </div>
+                <select
+                  name="rules.is_free"
+                  value={eventData.rules?.is_free || "false"}
                   onChange={handleChange}
                   className={selectClasses}
                 >

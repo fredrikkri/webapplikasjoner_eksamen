@@ -34,7 +34,15 @@ export const createEvent = (event: Partial<Event> & { rules: Omit<Rules, 'event_
         total_slots: event.total_slots ?? 0,
         available_slots: event.total_slots ?? 0,
         price: event.price ?? 0,
-        rules: event.rules
+        rules: {
+            is_private: event.rules?.is_private ?? "false",
+            restricted_days: event.rules?.restricted_days ?? null,
+            allow_multiple_events_same_day: event.rules?.allow_multiple_events_same_day ?? "true",
+            waitlist: event.rules?.waitlist ?? "true",
+            fixed_price: event.rules?.fixed_price ?? "false",
+            fixed_size: event.rules?.fixed_size ?? "false",
+            is_free: event.rules?.is_free ?? "false"
+        }
     }
     console.log("Mapped event, createEvent:", newEvent);
     return newEvent;
@@ -53,7 +61,15 @@ export const toDb = (data: Partial<Event> & { rules: Omit<Rules, 'event_id'> }) 
         total_slots: event.total_slots,
         available_slots: event.available_slots,
         price: event.price,
-        rules: event.rules
+        rules: {
+            is_private: event.rules?.is_private ?? "false",
+            restricted_days: event.rules?.restricted_days ?? null,
+            allow_multiple_events_same_day: event.rules?.allow_multiple_events_same_day ?? "true",
+            waitlist: event.rules?.waitlist ?? "true",
+            fixed_price: event.rules?.fixed_price ?? "false",
+            fixed_size: event.rules?.fixed_size ?? "false",
+            is_free: event.rules?.is_free ?? "false"
+        }
     }
     console.log("Mapped event, toDb:", newEvent);
     return newEvent;

@@ -6,7 +6,10 @@ export const fromDb = (rules: Rules): Rules => {
         is_private: rules.is_private ?? "false",
         restricted_days: rules.restricted_days ?? null,
         allow_multiple_events_same_day: rules.allow_multiple_events_same_day ?? "true",
-        waitlist: rules.waitlist ?? "false"
+        waitlist: rules.waitlist ?? "false",
+        fixed_price: rules.fixed_price ?? "false",
+        fixed_size: rules.fixed_size ?? "false",
+        is_free: rules.is_free ?? "false"
     };
 };
 
@@ -16,7 +19,10 @@ export const createRulesResponse = (rules: Rules): Rules => {
         is_private: rules.is_private,
         restricted_days: rules.restricted_days,
         allow_multiple_events_same_day: rules.allow_multiple_events_same_day,
-        waitlist: rules.waitlist
+        waitlist: rules.waitlist,
+        fixed_price: rules.fixed_price,
+        fixed_size: rules.fixed_size,
+        is_free: rules.is_free
     };
 };
 
@@ -26,6 +32,9 @@ export const toDb = (eventId: string, rules: Omit<Rules, 'event_id'>): Rules => 
         is_private: rules.is_private,
         restricted_days: rules.restricted_days,
         allow_multiple_events_same_day: rules.allow_multiple_events_same_day,
-        waitlist: rules.waitlist
+        waitlist: rules.waitlist,
+        fixed_price: rules.fixed_price,
+        fixed_size: rules.fixed_size,
+        is_free: rules.is_free
     };
 };
