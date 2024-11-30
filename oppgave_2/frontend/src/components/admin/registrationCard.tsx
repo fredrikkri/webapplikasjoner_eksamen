@@ -112,7 +112,7 @@ export default function RegCard(props: RegCardProps) {
         <div className="border-b border-slate-200 pb-6 mb-8">
   <div className="flex items-center justify-between">
     <h2 className="text-2xl font-bold text-slate-900">
-      Registrations for {event.title}
+      Påmeldinger
     </h2>
     <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
             {waitlist.length} {waitlist.length === 1 ? "registration" : "registrations"}

@@ -1,4 +1,4 @@
-import { CreateRegistration, Registration } from "../../types/registration";
+import { CreateRegistration, Registration, RegistrationEvent } from "../../types/registration";
 import { createId } from "../../util/utils";
 
 export const createRegistrationResponse = (data: Registration): Registration => {
@@ -15,6 +15,19 @@ export const createRegistrationResponse = (data: Registration): Registration => 
       };
   };
 
+  export const createRegistrationResponseGet = (data: RegistrationEvent): RegistrationEvent => {
+    const { id, event_id, email, has_paid, registration_date, order_id } = data;
+      
+    return {
+      ...data,
+      id,
+      event_id,
+      email,
+      has_paid,
+      registration_date,
+      order_id
+      };
+  };
 
   export const createRegistration = (data: Partial<CreateRegistration>): Registration => {
     return {
@@ -40,7 +53,7 @@ export const createRegistrationResponse = (data: Registration): Registration => 
   return newRegistration;
   };
 
-  export const toDb = (data: Partial<Registration>) => {
+  export const toDb = (data: Partial<RegistrationEvent>) => {
     const regdata = createRegistration(data);
   
     console.log("Data to insert into DB:", regdata); 

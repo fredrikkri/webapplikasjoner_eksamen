@@ -17,3 +17,12 @@ export type Registration = {
     registration_date: string;
     order_id: string;
   }; 
+
+  export type RegistrationEventData = {
+    id: string;
+    event_id: string;
+    email: string;
+    has_paid: string;
+    registration_date: string;
+    order_id: string;
+  }; 

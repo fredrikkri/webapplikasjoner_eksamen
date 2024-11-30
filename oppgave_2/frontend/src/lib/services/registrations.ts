@@ -1,7 +1,7 @@
 import { ENDPOINTS } from "@/config/config";
-import { Registration } from "../../types/Registration";
+import { Registration, RegistrationEventData } from "../../types/Registration";
 
-export const createRegistration = async (data: Registration): Promise<void> => {
+export const createRegistration = async (data: RegistrationEventData[]): Promise<void> => {
     console.log("current registration", data)
     try {
       const response = await fetch(ENDPOINTS.createRegistration, {
@@ -37,4 +37,18 @@ export const createRegistration = async (data: Registration): Promise<void> => {
     } catch (error) {
       console.error("Error creating registration:", error);
     }
+  };
+
+  export const getAllEventsRegistrations = async (): Promise<RegistrationEventData[]> => {
+    const response = await fetch(ENDPOINTS.getRegistrationEventData);
+    if (!response.ok) {
+      throw new Error("Failed to fetch events");
+    }
+  
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.error.message || "Failed to fetch events");
+    }
+  
+    return result.data as RegistrationEventData[];
   };
