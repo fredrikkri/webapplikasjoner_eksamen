@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAllRegistrations, useCreateRegistration } from "@/hooks/useRegistration";
+import { deleteRegistrationById, useAllRegistrations, useCreateRegistration } from "@/hooks/useRegistration";
 import { Event } from "@/types/Event";
 import { Registration, RegistrationEventData } from "@/types/Registration";
 import crypto from "crypto"; // If you're using Node.js for crypto (otherwise skip this line)
@@ -75,9 +75,16 @@ export default function AdminEvent(props: RegCardProps) {
     setNewRegistrations(updatedRegistrations);
   };
 
-  const handleRemovePerson = (index: number) => {
-    
+  const handleRemovePerson = async (registrationId: string) => {
+    try {
+        await deleteRegistrationById(registrationId);
+
+    } catch (error) {
+      console.error("Failed to remove registration:", error);
+    } finally {
+    }
   };
+  
 
 
   return (
@@ -120,7 +127,7 @@ export default function AdminEvent(props: RegCardProps) {
                                                 {/* Aligning the "Remove" button to the right */}
                                                 <button
                           className="text-red-500 hover:text-red-700 focus:outline-none ml-auto"
-                          onClick={() => handleRemovePerson(0)}
+                          onClick={() => handleRemovePerson(registration.id)}
                         >
                           Fjern
                         </button>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Registration, RegistrationEventData  } from "../types/Registration";
-import {  createRegistration, createRegistrationById, getAllEventsRegistrations } from "../lib/services/registrations";
+import {  createRegistration, createRegistrationById, deleteRegistration, getAllEventsRegistrations } from "../lib/services/registrations";
 
 export const useCreateRegistration = () => {
     const [loading, setLoading] = useState<boolean>(false);
@@ -60,4 +60,13 @@ export const useCreateRegistration = () => {
     }, []);
   
     return { events, loading, error };
+  };
+  export const deleteRegistrationById = async (registrationId: string) => {
+    try {
+      const isDeleted = await deleteRegistration(registrationId);
+      return isDeleted;
+    } catch (err) {
+      console.error("Error during deletion:", err);
+      throw err;
+    }
   };

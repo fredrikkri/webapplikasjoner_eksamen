@@ -191,6 +191,39 @@ export const createRegistrationRepository = (db: DB) => {
         }
       };
       
+      const deleteRegistration = async (id: string): Promise<Result<void>> => {
+        try {
+          const checkQuery = db.prepare("SELECT id FROM registrations WHERE id = ?");
+          const exists = checkQuery.get(id);
+
+          if (!exists) {
+            return {
+              success: false,
+              error: {
+                code: "NOT_FOUND",
+                message: "Registration not found",
+              },
+            };
+          }
+
+          const deleteQuery = db.prepare("DELETE FROM registrations WHERE id = ?");
+          deleteQuery.run(id);
+
+          return {
+            success: true,
+            data: undefined,
+          };
+        } catch (error) {
+          console.error("Error deleting registration:", error);
+          return {
+            success: false,
+            error: {
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to delete registration",
+            },
+          };
+        }
+      };
       
       // SRC: kilde: chatgpt.com  || med endringer /
       const getRegistrationById = async (eventId: string): Promise<Result<Registration[]>> => {
@@ -229,10 +262,9 @@ export const createRegistrationRepository = (db: DB) => {
       };
     }
 
-    
 }
 
-      return { list, create, getRegistrationById, bookSlot, createByOrderId }
+      return { list, create, getRegistrationById, bookSlot, createByOrderId, deleteRegistration }
 }
 
 export const registrationRepository = createRegistrationRepository(db);

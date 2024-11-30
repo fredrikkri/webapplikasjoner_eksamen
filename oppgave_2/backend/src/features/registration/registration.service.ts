@@ -79,7 +79,18 @@ export const createRegistrationService = (registrationRepository: RegistrationRe
           data: result.data.map(createRegistrationResponse),
         };
     };
-  return { list, create, getRegistrationsByEventId, bookSlot, createByOrderID }
+
+    const deleteRegistration = async (id: string | undefined): Promise<Result<void>> => {
+      if (!id) {
+        return {
+          success: false,
+          error: { code: "BAD_REQUEST", message: "Registration ID is required" },
+        };
+      }
+      return await registrationRepository.deleteRegistration(id);
+    };
+
+  return { list, create, getRegistrationsByEventId, bookSlot, createByOrderID, deleteRegistration }
 }
 
 export const registrationService = createRegistrationService(registrationRepository);

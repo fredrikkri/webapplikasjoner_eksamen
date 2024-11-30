@@ -52,3 +52,27 @@ export const createRegistration = async (data: RegistrationEventData[]): Promise
   
     return result.data as RegistrationEventData[];
   };
+
+  export const deleteRegistration = async (id: string): Promise<boolean> => {
+    try {
+      const url = ENDPOINTS.deleteRegistration(id);
+  
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to delete registration with ID ${id}: ${response.statusText}`);
+      }
+  
+      console.log(`Successfully deleted registration with ID: ${id}`);
+      return true;
+    } catch (error) {
+      console.error("Error deleting registration:", error);
+      return false;
+    }
+  };
+  

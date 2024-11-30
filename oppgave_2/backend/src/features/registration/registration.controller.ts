@@ -60,6 +60,19 @@ export const createRegistrationController = (registrationService: RegistrationSe
         return c.json(result);
       });
 
+      app.delete("/deleteregistration/:id", async (c) => {
+        const registrationId = c.req.param("id");
+        const result = await registrationService.deleteRegistration(registrationId);
+    
+        if (!result.success)
+          return errorResponse(
+            c,
+            result.error.code as ErrorCode,
+            result.error.message
+          );
+        return c.json({ success: true, message: "Registration deleted successfully" });
+      });
+
     return app;
 }
 
