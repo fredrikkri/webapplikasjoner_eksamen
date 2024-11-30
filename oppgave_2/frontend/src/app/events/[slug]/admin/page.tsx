@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import RegCard from "@/components/admin/registrationCard";
 import { useEvent } from "@/hooks/useEvent";
 import { useWaitlist } from "@/hooks/useWaitlistRegistration";
+import DownloadExcel from "@/components/DownloadeExcel";
 
 export default function Admin() {
     const params = useParams();
