@@ -1,6 +1,7 @@
 import { ENDPOINTS } from "@/config/config";
 import { Registration, Registration as RegistrationType } from "../../types/Registration";
 
+// SRC: kilde: chatgpt.com  || med endringer /
 export const createWaitlistRegistration = async (data: RegistrationType): Promise<void> => {
     console.log("current waitlist-registration", data)
     try {
@@ -20,7 +21,7 @@ export const createWaitlistRegistration = async (data: RegistrationType): Promis
     }
   };
 
-
+// SRC: kilde: chatgpt.com  || med endringer /
   export const getWaitlist = async (eventId: string): Promise<Registration[] | null> => {
     try {
       const response = await fetch(ENDPOINTS.getWishlist(eventId));
@@ -28,16 +29,16 @@ export const createWaitlistRegistration = async (data: RegistrationType): Promis
       if (!response.ok) {
         throw new Error(`Failed to fetch waitlist for event ${eventId}: ${response.statusText}`);
       }
-  
-      const waitlistData: Registration[] = await response.json();
-    
+        const waitlistData = (await response.json()) as { data: Registration[] };
+
       return waitlistData.data;
     } catch (error) {
-      
+      console.error("Error fetching:", error);
       return null;
     }
   };
-
+  
+  // SRC: kilde: chatgpt.com  || med endringer /
   export const deleteWaitlistRegistration = async (registrationId: string): Promise<boolean> => {
     try {
       const url = ENDPOINTS.deleteWaitlistItem(registrationId);
@@ -61,7 +62,7 @@ export const createWaitlistRegistration = async (data: RegistrationType): Promis
     }
   };
   
-  
+  // SRC: kilde: chatgpt.com  || med endringer /
 export const getAttendersWaitList = async (eventId: string): Promise<Registration[] | null> => {
   try {
     const response = await fetch(ENDPOINTS.getAttendersWaitList(eventId));
@@ -72,7 +73,7 @@ export const getAttendersWaitList = async (eventId: string): Promise<Registratio
 
     const waitlistData = await response.json();
 
-    return waitlistData.data || null; // If no data, return null
+    return waitlistData.data || null;
 
   } catch (error) {
     console.error('Error fetching waitlist:', error);

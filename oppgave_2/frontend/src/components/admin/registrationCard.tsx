@@ -17,6 +17,7 @@ export default function RegCard(props: RegCardProps) {
   const [selected, setSelected] = useState<Registration[]>([]);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
+
   const handleSelectAll = () => {
     if (waitlist) {
       if (selected.length === waitlist.length) {
@@ -104,60 +105,50 @@ export default function RegCard(props: RegCardProps) {
     );
   }
 
+// SRC: kilde: chatgpt.com  || med endringer /
   return (
     <article className="bg-white rounded-xl shadow-lg overflow-hidden border-l-4 border-blue-500">
       <div className="p-6">
-
-
         <div className="border-b border-slate-200 pb-6 mb-8">
-  <div className="flex items-center justify-between">
-    <h2 className="text-2xl font-bold text-slate-900">
-      Påmeldinger
-    </h2>
-    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-            {waitlist.length} {waitlist.length === 1 ? "registration" : "registrations"}
-    </span>
-  </div>
-
-
-</div>
-        <div className="space-y-6">
-        <div className="space-y-6">
-  <div className="bg-white rounded-lg shadow-md p-6">
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-      <div className="flex items-center justify-between sm:justify-start space-x-4">
-        <div className="flex items-center text-slate-700">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 text-blue-500 mr-2"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-            />
-          </svg>
-          <span className="text-lg font-semibold">Available Slots</span>
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-slate-900">Påmeldinger</h2>
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+              {waitlist.length} {waitlist.length === 1 ? "registration" : "registrations"}
+            </span>
+          </div>
         </div>
-        <div className="text-xl font-bold text-blue-700">
-          {event.available_slots}/{event.total_slots}
-        </div>
-      </div>
-    </div>
-
-    {/* Additional Information */}
-    <div className="mt-4 text-sm text-slate-500">
-      <p>Plassene oppdateres i sanntid, og nye påmeldinger blir tilgjengelige etter hvert som de blir bekreftet.</p>
-    </div>
-  </div>
-</div>
-
-
-
+  
+        <div className="space-y-6">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="flex items-center justify-between sm:justify-start space-x-4">
+                <div className="flex items-center text-slate-700">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 text-blue-500 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                    />
+                  </svg>
+                  <span className="text-lg font-semibold">Available Slots</span>
+                </div>
+                <div className="text-xl font-bold text-blue-700">
+                  {event.available_slots}/{event.total_slots}
+                </div>
+              </div>
+            </div>
+            <div className="mt-4 text-sm text-slate-500">
+              <p>Plassene oppdateres i sanntid, og nye påmeldinger blir tilgjengelige etter hvert som de blir bekreftet.</p>
+            </div>
+          </div>
+  
           <div className="space-y-2">
             <div className="bg-slate-50 rounded-lg p-4">
               {Array.isArray(waitlist) && waitlist.length > 0 ? (
@@ -166,7 +157,7 @@ export default function RegCard(props: RegCardProps) {
                     <span className="flex-1">Order ansvar</span>
                     <span className="flex-1 text-center">Antall</span>
                     <span className="flex-1 text-center">Order ID</span>
-                    <span className="flex-1 text-center">                    
+                    <span className="flex-1 text-center">
                       <label className="inline-flex items-center space-x-2 cursor-pointer">
                         <input
                           type="checkbox"
@@ -178,49 +169,56 @@ export default function RegCard(props: RegCardProps) {
                       </label>
                     </span>
                   </li>
-
-                  {waitlist.map((item, index) => (
-                    <li key={index} className="flex items-center justify-between text-slate-700 bg-white p-3 rounded-lg shadow-sm hover:bg-slate-100 transition-colors duration-200">
-                      <div className="flex-1">
-                        <span
-                          className="cursor-pointer text-blue-500"
-                          onClick={() => toggleDropdown(item.order_id)}
-                        >
-                          {item.responsible_person}
-                        </span>
-                        {openDropdown === item.order_id && (
-                          <div className="mt-2 p-4 bg-slate-50 shadow-lg rounded-lg">
-                            <p className="font-semibold">Ordre medlemmer:</p>
-                            <ul>
-                              {filterRegistrationsByOrderId(item.order_id).map((filteredItem, idx) => (
-                                <li key={idx}>
-                                  {filteredItem.email}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                      <span className="flex-1 text-center">{item.number_of_people}</span>
-                      <span className="flex-1 text-center">{item.order_id}</span>
-                      <div className="flex-1 text-center">
-                        <input
-                        placeholder="e"
-                          type="checkbox"
-                          className="mr-3"
-                          checked={selected.includes(item)}
-                          onChange={() => handleSelectRegistration(item)}
-                        />
-                      </div>
-                    </li>
-                  ))}
+  
+                  {waitlist
+                    .sort((a, b) => {
+                      const dateA = new Date(a.registration_date).getTime();
+                      const dateB = new Date(b.registration_date).getTime();
+                      return dateA - dateB;
+                    })
+                    .map((item, index) => (
+                      <li
+                        key={index}
+                        className="flex items-center justify-between text-slate-700 bg-white p-3 rounded-lg shadow-sm hover:bg-slate-100 transition-colors duration-200"
+                      >
+                        <div className="flex-1">
+                          <span
+                            className="cursor-pointer text-blue-500"
+                            onClick={() => toggleDropdown(item.order_id)}
+                          >
+                            {item.responsible_person}
+                          </span>
+                          {openDropdown === item.order_id && (
+                            <div className="mt-2 p-4 bg-slate-50 shadow-lg rounded-lg">
+                              <p className="font-semibold">Ordre medlemmer:</p>
+                              <ul>
+                                {filterRegistrationsByOrderId(item.order_id).map((filteredItem, idx) => (
+                                  <li key={idx}>{filteredItem.email}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                        <span className="flex-1 text-center">{item.number_of_people}</span>
+                        <span className="flex-1 text-center">{item.order_id}</span>
+                        <div className="flex-1 text-center">
+                          <input
+                            placeholder="e"
+                            type="checkbox"
+                            className="mr-3"
+                            checked={selected.includes(item)}
+                            onChange={() => handleSelectRegistration(item)}
+                          />
+                        </div>
+                      </li>
+                    ))}
                 </ul>
               ) : (
                 <p className="text-slate-600 text-center py-4">No registrations found</p>
               )}
             </div>
           </div>
-
+  
           <div className="flex gap-4 pt-4 border-t border-slate-200">
             <button
               type="button"
@@ -229,7 +227,7 @@ export default function RegCard(props: RegCardProps) {
             >
               Accept {waitlist.length > 1 ? "registrations" : "registration"}
             </button>
-
+  
             <button
               type="button"
               className="flex-1 inline-flex justify-center items-center px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 shadow-sm"

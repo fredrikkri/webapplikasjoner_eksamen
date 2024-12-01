@@ -41,7 +41,6 @@ export const getAllEvents = async (): Promise<Event[]> => {
       return e;
     })
   );
-  console.log(eventWithRules)
   return eventWithRules;
 };
 

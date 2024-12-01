@@ -12,6 +12,7 @@ export const useWaitlist = (eventId: string) => {
       try {
         setLoading(true);
         const waitlistData = await getWaitlist(eventId);
+        
         setWaitlist(waitlistData as Registration[]);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('An error occurred while fetching the waitlist data'));
@@ -65,38 +66,37 @@ export const useCreateWaitlistRegistration = () => {
     }
   };
 
+  // SRC: kilde: chatgpt.com  || med endringer /
   export const getWaitListByEventId = (eventId: string) => {
-    const [waitlist, setWaitlist] = useState<Registration[] | null>(null); // Store the waitlist data
-    const [loading, setLoading] = useState<boolean>(true); // Track loading state
-    const [error, setError] = useState<string | null>(null); // Track error state
+    const [waitlist, setWaitlist] = useState<Registration[] | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
   
     useEffect(() => {
-      // Async function to fetch the waitlist
       const fetchWaitlist = async () => {
-        setLoading(true); // Set loading to true while fetching
-        setError(null); // Reset error before fetching
-        setWaitlist(null); // Reset waitlist data
+        setLoading(true);
+        setError(null);
+        setWaitlist(null);
   
         try {
-          // Fetch the waitlist data using the updated function
           const waitlistData = await getAttendersWaitList(eventId);
   
           if (waitlistData) {
-            setWaitlist(waitlistData); // Store the fetched waitlist data
+            setWaitlist(waitlistData);
           } else {
             setError('No waitlist data available.');
           }
         } catch (err: any) {
           setError(err.message || 'An error occurred while fetching the waitlist data');
         } finally {
-          setLoading(false); // Set loading to false once the fetch is done
+          setLoading(false);
         }
       };
   
       if (eventId) {
-        fetchWaitlist(); // Fetch waitlist data if eventId exists
+        fetchWaitlist();
       }
-    }, [eventId]); // Re-run when eventId changes
+    }, [eventId]);
   
-    return { waitlist, loading, error }; // Return the state
+    return { waitlist, loading, error };
   };

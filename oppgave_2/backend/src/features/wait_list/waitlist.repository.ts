@@ -35,7 +35,14 @@ export const createWaitlistRepository = (db: DB) => {
       };
 
       // SRC: kilde: chatgpt.com  || med justeringer /
-      const listOrders = async (event_slug?: string): Promise<Result<{ order_id: string; number_of_people: number; responsible_person: string; total_price: number }[]>> => {
+      const listOrders = async (event_slug?: string): 
+      Promise<Result<{ 
+        order_id: string;
+         number_of_people: number; 
+         responsible_person: string; 
+         total_price: number;
+         registration_date: string;
+        }[]>> => {
         const eventStatement = db.prepare(`SELECT id, price FROM events WHERE slug = ?`);
         const event = eventStatement.get(event_slug) as { id: string; price: number } | undefined;
       
@@ -54,12 +61,13 @@ export const createWaitlistRepository = (db: DB) => {
       
         try {
           const statement = db.prepare(`
-            SELECT order_id, COUNT(*) as number_of_people 
+            SELECT order_id, COUNT(*) as number_of_people, registration_date 
             FROM wait_list
             WHERE event_id = ?
             GROUP BY order_id
           `);
-          const orders = statement.all(event_id) as { order_id: string; number_of_people: number }[];
+          const orders = statement.all(event_id) as { order_id: string; number_of_people: number; registration_date: string; }[];
+          console.log(orders)
       
           const result = await Promise.all(
             orders.map(async (order) => {
@@ -69,7 +77,7 @@ export const createWaitlistRepository = (db: DB) => {
                 WHERE order_id = ?
                 LIMIT 1
               `);
-              const responsiblePerson = responsiblePersonStatement.get(order.order_id) as { email: string } | undefined;
+              const responsiblePerson = responsiblePersonStatement.get(order.order_id) as { email: string, registration_date: string } | undefined;
       
               const total_price = order.number_of_people * event_price;
       
@@ -78,6 +86,7 @@ export const createWaitlistRepository = (db: DB) => {
                 number_of_people: order.number_of_people,
                 responsible_person: responsiblePerson?.email || 'N/A',
                 total_price: total_price,
+                registration_date: order.registration_date
               };
             })
           );
@@ -98,7 +107,7 @@ export const createWaitlistRepository = (db: DB) => {
         }
       };
 
-            // SRC: kilde: chatgpt.com  || med justeringer /
+      // SRC: kilde: chatgpt.com  || med justeringer /
       const listOrder = async (event_slug?: string, order_id?: string): Promise<Result<Registration[]>> => {
         try {
           if (!event_slug || !order_id) {
@@ -188,6 +197,7 @@ export const createWaitlistRepository = (db: DB) => {
         }
       };
   
+      // SRC: kilde: chatgpt.com  || med endringer /
       const getWaitlistRegistrationById = async (eventId: string): Promise<Result<Registration[]>> => {
         try {
         const exists = await eventExist(eventId);
@@ -225,6 +235,7 @@ export const createWaitlistRepository = (db: DB) => {
     }
 }
 
+      // SRC: kilde: chatgpt.com  || med endringer /
       const deleteRegistration = async (registrationId: string): Promise<Result<void>> => {
         try {
           const checkQuery = db.prepare("SELECT id FROM wait_list WHERE order_id = ?");
