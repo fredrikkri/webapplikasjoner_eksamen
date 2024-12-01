@@ -66,7 +66,10 @@ export const useCreateEvent = () => {
           is_private: eventData.rules?.is_private || "false",
           allow_multiple_events_same_day: eventData.rules?.allow_multiple_events_same_day || "true",
           waitlist: eventData.rules?.waitlist || "true",
-          restricted_days: eventData.rules?.restricted_days || null
+          restricted_days: eventData.rules?.restricted_days || null,
+          fixed_price: eventData.rules?.fixed_price || "false",
+          fixed_size: eventData.rules?.fixed_size || "false",
+          is_free: eventData.rules?.is_free || "false"
         }
       };
       await createEvent(formattedEventData);

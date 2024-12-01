@@ -44,28 +44,41 @@ export const createEventService = (eventRepository: EventRepository) => {
         }
 
         try {
+          console.log("Starting transaction for event creation");
           db.exec('BEGIN TRANSACTION');
 
           const result = await eventRepository.create(event);
           
           if (!result.success) {
+            console.error("Failed to create event:", result.error);
             db.exec('ROLLBACK');
             return result;
           }
 
-          const rulesResult = await rulesService.create(result.data, rules);
+          console.log("Event created successfully, creating rules");
+          const rulesResult = await rulesService.create(result.data, {
+            is_private: rules.is_private,
+            restricted_days: rules.restricted_days,
+            allow_multiple_events_same_day: rules.allow_multiple_events_same_day,
+            waitlist: rules.waitlist,
+            fixed_price: rules.fixed_price,
+            fixed_size: rules.fixed_size,
+            is_free: rules.is_free
+          });
           
           if (!rulesResult.success) {
+            console.error("Failed to create rules:", rulesResult.error);
             db.exec('ROLLBACK');
             return rulesResult;
           }
 
+          console.log("Rules created successfully, committing transaction");
           db.exec('COMMIT');
           return result;
 
         } catch (error) {
-          db.exec('ROLLBACK');
           console.error("Transaction error:", error);
+          db.exec('ROLLBACK');
           return {
             success: false,
             error: {

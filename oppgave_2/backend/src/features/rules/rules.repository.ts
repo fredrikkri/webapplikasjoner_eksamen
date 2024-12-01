@@ -11,12 +11,24 @@ export const createRulesRepository = (db: DB) => {
                 is_private: rulesData.is_private,
                 restricted_days: rulesData.restricted_days,
                 allow_multiple_events_same_day: rulesData.allow_multiple_events_same_day,
-                waitlist: rulesData.waitlist
+                waitlist: rulesData.waitlist,
+                fixed_price: rulesData.fixed_price,
+                fixed_size: rulesData.fixed_size,
+                is_free: rulesData.is_free
             };
 
             const query = db.prepare(`
-                INSERT INTO event_rules (event_id, is_private, restricted_days, allow_multiple_events_same_day, waitlist)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO event_rules (
+                    event_id, 
+                    is_private, 
+                    restricted_days, 
+                    allow_multiple_events_same_day, 
+                    waitlist,
+                    fixed_price,
+                    fixed_size,
+                    is_free
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `);
 
             query.run(
@@ -24,7 +36,10 @@ export const createRulesRepository = (db: DB) => {
                 rules.is_private,
                 rules.restricted_days,
                 rules.allow_multiple_events_same_day,
-                rules.waitlist
+                rules.waitlist,
+                rules.fixed_price,
+                rules.fixed_size,
+                rules.is_free
             );
 
             return {

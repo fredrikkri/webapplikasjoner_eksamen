@@ -68,6 +68,9 @@ export const createTables = (db: DB) => {
         restricted_days TEXT,
         allow_multiple_events_same_day TEXT,
         waitlist TEXT,
+        fixed_price TEXT,
+        fixed_size TEXT,
+        is_free TEXT,
         FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
     );
   `);

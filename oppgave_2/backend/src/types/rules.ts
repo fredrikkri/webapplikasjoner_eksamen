@@ -5,7 +5,10 @@ export const RulesSchema = z.object({
     is_private: z.string(),
     restricted_days: z.string().nullable(),
     allow_multiple_events_same_day: z.string(),
-    waitlist: z.string()
+    waitlist: z.string(),
+    fixed_price: z.string(),
+    fixed_size: z.string(),
+    is_free: z.string()
 });
 
 export const RulesCreateSchema = RulesSchema;
