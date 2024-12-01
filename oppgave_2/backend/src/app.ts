@@ -6,6 +6,7 @@ import { templateController } from "./features/event_template/template.controlle
 import { activeEventsController } from "./features/event_active/event_active.controller";
 import { waitlistController } from "./features/wait_list/waitlist.controller";
 import { RulesController } from "./features/rules/rules.controller";
+import { excelController } from "./features/excel/excel.controller";
 
 const app = new Hono();
 app.use("/*", cors());
@@ -21,6 +22,7 @@ app.route("api/v1", waitlistController)
 app.route("api/v1", templateController)
 app.route("api/v1", activeEventsController)
 app.route("api/v1", RulesController)
+app.route("api/v1", excelController)
 
 app.onError((err, c) => {
   console.error(err);

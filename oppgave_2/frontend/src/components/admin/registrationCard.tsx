@@ -121,8 +121,6 @@ export default function RegCard(props: RegCardProps) {
 
 
 </div>
-
-
         <div className="space-y-6">
         <div className="space-y-6">
   <div className="bg-white rounded-lg shadow-md p-6">

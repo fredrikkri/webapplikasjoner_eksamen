@@ -7,8 +7,8 @@ import DownloadExcel from "@/components/DownloadeExcel";
 export default function EventsPage() {
     return (
     <Home>
-      <EventsFilter />
       <DownloadExcel />
+      <EventsFilter />
       </Home>
     )
   }

@@ -1,3 +1,5 @@
+import DownloadExcel from "@/components/DownloadeExcel";
+
 export const BASE_URL = "http://localhost:3999/api/v1";
 
 export const ENDPOINTS = {
@@ -11,6 +13,7 @@ export const ENDPOINTS = {
   createWaitlistRegistration: `${BASE_URL}/waitlist-registrer`,
   createActiveEvent: `${BASE_URL}/activeevents/add`,
   createTemplate: `${BASE_URL}/templates/add`,
+  downloadExcel: `${BASE_URL}/download-excel`,
   getRegistrationEventData: `${BASE_URL}/registrations`,
   deleteRegistration: (id: string) => `${BASE_URL}/deleteregistration/${id}`,
   getWishlist: (eventId: string) => `${BASE_URL}/${eventId}/waitlist-orders`,
