@@ -1,5 +1,6 @@
 import { ENDPOINTS } from "@/config/config";
 import { Event } from "../../types/Event";
+import { getRulesByEventId } from "./rules";
 
 export const getEvent = async (slug: string): Promise<Event | undefined> => {
   const response = await fetch(ENDPOINTS.events + `/${slug}`);
@@ -10,6 +11,7 @@ export const getEvent = async (slug: string): Promise<Event | undefined> => {
   if (!result.success) {
     throw new Error(result.error.message || "Failed to fetch event");
   }
+
 
   return result.data as Event;
 };
@@ -25,7 +27,22 @@ export const getAllEvents = async (): Promise<Event[]> => {
     throw new Error(result.error.message || "Failed to fetch events");
   }
 
-  return result.data as Event[];
+  const eve = result.data as Event[];
+  const eventWithRules = await Promise.all(
+    eve.map(async (e) => {
+      try {
+        const rules = await getRulesByEventId(e.id);
+        if (rules) {
+          e.rules = rules;
+        }
+      } catch (error) {
+        console.error(`Failed to fetch rules for template ${e.id}:`, error);
+      }
+      return e;
+    })
+  );
+  console.log(eventWithRules)
+  return eventWithRules;
 };
 
 export const createEvent = async (data: Omit<Event, 'id'> & { rules: any }): Promise<void> => {

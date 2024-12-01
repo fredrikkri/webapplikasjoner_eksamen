@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAllEvents } from '@/hooks/useEvent';
 import EventCard from './EventCard';
+import { Rules } from '@/types/Rules';
 
 interface Event {
   id: string;
@@ -13,6 +14,7 @@ interface Event {
   total_slots: number;
   available_slots: number;
   price: number;
+  rules?: Rules;
 }
 
 interface EventsProps {
@@ -20,7 +22,6 @@ interface EventsProps {
   selectedYear?: number | null;
   selectedCategory?: string | null;
 }
-
 const ListEvents: React.FC<EventsProps> = ({ selectedMonth, selectedYear, selectedCategory }) => {
   const { events, loading, error } = useAllEvents(); 
   const [data, setData] = useState<Event[]>([]);
@@ -34,13 +35,15 @@ const ListEvents: React.FC<EventsProps> = ({ selectedMonth, selectedYear, select
         const matchesMonth = selectedMonth === null || eventDate.getMonth() === selectedMonth;
         const matchesYear = selectedYear === null || eventDate.getFullYear() === selectedYear;
         const matchesCategory = selectedCategory === null || event.event_type === selectedCategory;
+        const isNotPrivate = event.rules?.is_private === "false";
 
-        return matchesMonth && matchesYear && matchesCategory;
+        return matchesMonth && matchesYear && matchesCategory && isNotPrivate;
       });
 
       setData(filteredEvents);
     }
   }, [events, selectedMonth, selectedYear, selectedCategory]);
+
 
   if (loading) {
     return (
