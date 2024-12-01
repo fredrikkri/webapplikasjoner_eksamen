@@ -5,6 +5,7 @@ import { onAddTemplate } from "@/lib/services/templates";
 import { useCreateEvent } from "@/hooks/useEvent";
 import { useRouter } from "next/navigation";
 import { Rules } from "@/types/Rules";
+import { BASE_URL, ENDPOINTS } from "@/config/config";
 
 type TemplateCardProps = {
   id: string;
@@ -62,7 +63,10 @@ export default function TemplateCardExpanded({
       is_private: "false",
       restricted_days: null,
       allow_multiple_events_same_day: "true",
-      waitlist: "true"
+      waitlist: "true",
+      fixed_price: "false",
+      fixed_size: "false",
+      is_free: "false"
     }
   });
 
@@ -383,6 +387,30 @@ export default function TemplateCardExpanded({
             </div>
           </div>
         </div>
+
+        {eventData.rules?.is_private === "true" && (
+          <div className="mt-4">
+            <label className="text-sm font-medium text-slate-700">Custom URL</label>
+              <div className="flex items-center gap-2 mt-1">
+      <input
+        type="text"
+        value={`http://localhost:4000/events/${eventData.slug || "slug-not-available"}`}
+        readOnly
+        className="px-3 py-2 border rounded-md text-sm text-slate-700 bg-slate-50 border-slate-300 focus:outline-none focus:ring focus:ring-slate-200"
+      />
+      <button
+        type="button"
+        onClick={() => navigator.clipboard.writeText(`${BASE_URL}${eventData.slug || "slug-not-available"}`)}
+        className="px-3 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200"
+      >
+        Copy
+      </button>
+    </div>
+    <p className="text-xs text-slate-500 mt-1">
+      Del denne lenken med dine inviterte deltakere.
+    </p>
+  </div>
+)}
 
         <div className="flex gap-4 pt-6 border-t border-slate-200">
           <button
