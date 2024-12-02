@@ -17,7 +17,7 @@ export default function Admin() {
     <Home>
         <DeleteEvent event={event} />
         <AdminEvent event={event}/>
-        <RegCard event={event} waitlist={waitlist}/>
+        <RegCard event={event} waitlist={waitlist} />
     </Home>
       );
   }
