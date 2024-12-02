@@ -531,8 +531,90 @@ ellers:
 
 ## 5. Skal dokumentere hvilke sider (urler) som skal benytte de ulike APIene og grovt hva som kan gjøres på den enkelte siden. Hvilke sider i "app" skal opprettes og grovt hva som kan gjøres på de ulike sidene.
 
+**/events**
+
+Skjer momentant:
+- api/v1/activeevents
+    - Henter ut alle eventer som er aktive.
+
+Hva man kan gjøre på siden:
+- trykke på et av eventene
+    - Man blir tatt med til denne url: events/:event_slug
+- trykke på "Download Excel"
+    - man laster ned statestikk i excel fil: api/v1/download-excel
+- Filtrere på måned, år og event-kategori
+
+**/events/:event_slug**
+
+Skjer momentant:
+- api/v1/active-events/:event_slug
+    - henter ut et enkelt event
+
+Hva man kan gjøre på siden:
+- api/v1/waitlist-registrer
+    - legger til en ny registrering
+- events/:event_slug/admin
+    - trykker på admininistrer knapp for å komme til admin-side for dette eventet
+
+**/events/tech-conference-2024/admin**
+
+Skjer momentant:
+- api/v1/tech-conference-2024/waitlist-orders
+    - Man får opp venteliste for påmeldinger til eventet
+
+Hva man kan gjøre på siden:
+- api/v1/registrerWishlist
+    - Man flytter en ordre fra venteliste til å registrert-liste
+- api/v1/waitlist-registrations/:registration_id
+    - Man sletter en ordre i venteliste
+- api/v1/waitlist-registrer
+    - legger til en ny registrering manuelt som vil gå hoppe over venteliste
+
+**/templates**
+
+Skjer momentant:
+- api/v1/templates
+    - Henter ut alle templates som er public  
+ 
+Hva man kan gjøre på siden:
+- trykke på et av templatene
+    - Man blir tatt med til denne url: templates/:event_slug
+
+**templates/:event_slug**
+
+Skjer momentant:
+- api/v1/templates/:event_slug
+    - henter ut en template
+
+Hva man kan gjøre på siden:
+- api/v1/templates/add
+    - opretter en template basert på nåverende template
+- /api/v1/create
+    -  oppretter et nytt arangement basert på template
+
+**/opprett**
+
+Skjer momentant:
+- api/v1/events/:event_slug
+    - henter ut et event
+
+Hva man kan gjøre på siden:
+- api/v1/create
+    - oppretter et nytt event
+- api/v1/templates/add
+    - oppretter en ny mal
 
 ## 6. Skal dokumentere hvordan filtreringen skal foregå og løses i frontend og backend.
+
+### Filtrering på eventer
+Dette gjøres i frontend. Vi henter inn alle aktive eventer med et customHook i frontend. Vi sender med hvilken måned, år, eller kategori som er valgt inn i komponentet "ListEvents". Hvis det er valgt noe som ønskes å filtrere vekk, så filtrerer den vekk eventer som inneholder noe som ønskes å filtreres vekk.
+
+### Filtrering i repository
+Det gjøres filtrering i backend i repository-laget. Filtreringene som gjøres her er joins for når vi trenger data som matcher mellom to ulike tabeller. Da vil data som ikke matcher spørringen bli filtrert bort. 
+Et eksempel er når vi ønsker å finne en bestemt template. Da henter vi alle rader fra tabellen "events" og "events_template" tabellen. På grunn av join-operasjonen, så står vi kun igjen med data der id i event-tabellen er lik event_id i events_template-tabellen. Dette var et eksempel på hvordan vi gjør filtrering i backend.
+
+### Filtrering i excel dokument
+Vi valgte å gjøre filtrering direkte i excel dokumentet. Man kan trykke på rute A1 i "Registrations-worksheet". Da vil du få muligheten til å velge hvilke påmeldinger for hvilket år som skal vises. Dette ble gjort i backend i excel.controller laget. Når Worksheet blir opprettet, så sørger vi for at dropdownmeny med filtrering er muliggjort på celle A1 der "year" er plassert.
 
 ## 7. Skal dokumentere datamodellen og bakgrunnen for denne modellen.
 
