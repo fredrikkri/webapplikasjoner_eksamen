@@ -1,6 +1,8 @@
 import ExcelJS from "exceljs";
 import { RegistrationWithEventByYear } from "../../types/excel";
+import { Buffer } from 'node:buffer';
 
+// SRC: kilde: chatgpt.com /
 export const generateExcelFile = async (
   registrations: RegistrationWithEventByYear[],
   totalRegistrationsPerYear: { year: number, count: number }[],
@@ -29,16 +31,14 @@ export const generateExcelFile = async (
     });
   });
 
-  // Add statistics for total registrations per year
   const summaryWorksheet = workbook.addWorksheet("Summary");
   summaryWorksheet.addRow(["Year", "Total Registrations"]);
   totalRegistrationsPerYear.forEach(({ year, count }) => {
     summaryWorksheet.addRow([year, count]);
   });
 
-  // Add summary for new registrations in the last month
   summaryWorksheet.addRow(["New Registrations Last Month", newRegistrationsLastMonth]);
 
   const buffer = await workbook.xlsx.writeBuffer();
-  return buffer;
+  return buffer as Buffer;
 };
