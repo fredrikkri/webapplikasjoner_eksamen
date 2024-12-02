@@ -30,7 +30,6 @@ export const getEvent = async (slug: string): Promise<Event | undefined> => {
   return e;
 };
 
-
 export const getAllEvents = async (): Promise<Event[]> => {
   const response = await fetch(ENDPOINTS.events);
   if (!response.ok) {
@@ -59,7 +58,7 @@ export const getAllEvents = async (): Promise<Event[]> => {
   return eventWithRules;
 };
 
-export const createEvent = async (data: Omit<Event, 'id'> & { rules: any }): Promise<void> => {
+export const createEvent = async (data: Omit<Event, 'id'> & { rules: any }): Promise<{ success: boolean; data?: any; error?: { message: string } }> => {
   console.log("current event", data)
   try {
     const response = await fetch(ENDPOINTS.create, {
@@ -70,16 +69,28 @@ export const createEvent = async (data: Omit<Event, 'id'> & { rules: any }): Pro
       body: JSON.stringify(data),
     });
 
-    if (!response.ok) {
-      throw new Error(`Failed to create event: ${response.statusText}`);
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      return {
+        success: false,
+        error: {
+          message: result.error?.message || "Kunne ikke opprette arrangement"
+        }
+      };
     }
 
-    const result = await response.json();
-    if (!result.success) {
-      throw new Error(result.error.message || "Failed to create event");
-    }
+    return {
+      success: true,
+      data: result.data
+    };
   } catch (error) {
     console.error("Error creating event:", error);
-    throw error;
+    return {
+      success: false,
+      error: {
+        message: "Feil ved opprettelse av arrangement"
+      }
+    };
   }
 };

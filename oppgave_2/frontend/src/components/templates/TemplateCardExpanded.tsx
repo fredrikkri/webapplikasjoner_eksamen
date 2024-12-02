@@ -8,6 +8,7 @@ import { BASE_WEB } from "@/config/config";
 import { applyRules } from "@/lib/services/rules";
 import RuleItem from "./RuleItem";
 import { useCreateActiveEvent } from "@/hooks/useActiveEvent";
+import { checkExistingActiveEvents } from "@/lib/services/activeEvents";
 
 type TemplateCardProps = {
   id: string;
@@ -70,6 +71,7 @@ export default function TemplateCardExpanded({
     }
   });
 
+  const [error, setError] = useState<string | null>(null);
   const rules = applyRules(initialRules || eventData.rules!);
   const { addEvent, loading: createEventLoading, error: createEventError } = useCreateEvent();
   const { createActiveEvent, loading: createActiveEventLoading, error: createActiveEventError } = useCreateActiveEvent();
@@ -108,45 +110,80 @@ export default function TemplateCardExpanded({
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>, action: string) => {
     e.preventDefault();
+    setError(null);
 
     try {
       if (action === "addTemplate") {
-        await addEvent(eventData);
+        const eventResult = await addEvent(eventData);
+        if (!eventResult.success) {
+          setError(eventResult.error?.message || "Kunne ikke opprette arrangement");
+          return;
+        }
+
         const templateResponse = await onAddTemplate({ event_id: eventData.slug });
-  
         if (templateResponse) {
           setEventData(eventData);
           router.push(`/templates`);
         } else {
-          console.error("Failed to create template");
+          setError("Kunne ikke opprette mal");
         }
       } else if (action === "addEvent") {
-        console.log('Creating event with data:', eventData);
-        await addEvent(eventData);
-        
-        // Use template_id instead of id
-        console.log('Creating active event with template ID:', template_id);
-        console.log('Event slug:', eventData.slug);
-        
-        try {
-          const activeEventResponse = await createActiveEvent(eventData.slug, template_id);
-          console.log('Active event response:', activeEventResponse);
-          if(activeEventResponse){
+        if (template_id && initialRules?.allow_multiple_events_same_day === "false") {
+          const hasExistingEvent = await checkExistingActiveEvents(template_id, eventData.date);
+          
+          if (hasExistingEvent) {
+            setError("Det finnes allerede et arrangement med denne malen på valgt dato.");
+            return;
+          }
+        }
+
+        // First create the event
+        const eventResult = await addEvent(eventData);
+        if (!eventResult.success) {
+          setError(eventResult.error?.message || "Kunne ikke opprette arrangement");
+          return;
+        }
+
+        if (template_id) {
+          try {
+            // Then create the active event
+            const activeEventResult = await createActiveEvent(eventData.slug, template_id);
+            if (!activeEventResult) {
+              setError("Kunne ikke aktivere arrangement");
+              return;
+            }
+            
             setEventData(eventData);
             router.push(`/events/${eventData.slug}`);
+          } catch (error) {
+            setError("Feil ved aktivering av arrangement");
+            return;
           }
-        } catch (error) {
-          console.error('Error creating active event:', error);
-          throw error;
+        } else {
+          setEventData(eventData);
+          router.push(`/events/${eventData.slug}`);
         }
       }
     } catch (error) {
-      console.error("Error handling submit:", error);
+      setError("Feil ved håndtering av skjema");
     }
   };
 
   const inputClasses = "mt-2 block w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition duration-200";
   const labelClasses = "block text-sm font-medium text-slate-700 mb-1";
+
+  const getErrorMessage = () => {
+    if (error) {
+      return error;
+    }
+    if (createEventError) {
+      return createEventError;
+    }
+    if (createActiveEventError) {
+      return createActiveEventError;
+    }
+    return null;
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-8 border-l-4 border-indigo-500">
@@ -155,12 +192,6 @@ export default function TemplateCardExpanded({
           <h2 className="text-2xl font-bold text-indigo-900">Mal for {title}</h2>
           <p className="mt-2 text-slate-600">Tilpass malen etter dine behov</p>
         </div>
-
-        {(createEventError || createActiveEventError) && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
-            <p>{createEventError?.message || createActiveEventError?.message}</p>
-          </div>
-        )}
 
         <div className="space-y-6">
           <div>
@@ -348,6 +379,12 @@ export default function TemplateCardExpanded({
               <p className="text-xs text-slate-500 mt-1">
                 Del denne lenken med dine inviterte deltakere.
               </p>
+          </div>
+        )}
+
+        {getErrorMessage() && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <p>{getErrorMessage()}</p>
           </div>
         )}
 
