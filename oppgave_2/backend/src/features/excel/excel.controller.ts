@@ -71,7 +71,8 @@ export const createExcelController = () => {
         { header: "New Registrations (Last Month)", key: "new_registrations", width: 30 },
       ];
 
-      const eventSummary = {};
+      const eventSummary: { [key: string]: { event_title: string; location: string; total_registrations: number; new_registrations: number } } = {};
+
       const lastMonth = new Date();
       lastMonth.setMonth(lastMonth.getMonth() - 1);
 
