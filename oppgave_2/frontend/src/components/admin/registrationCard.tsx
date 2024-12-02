@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Event } from "@/types/Event";
 import { Registration } from "@/types/Registration";
-import { useCreateRegistrationById } from "@/hooks/useRegistration";
+import { useAllRegistrationsMembersByEventId, useCreateRegistrationById } from "@/hooks/useRegistration";
 import { deleteWaitlistRegistration } from "@/lib/services/waitlistRegistrations";
 import { getWaitListByEventId } from "@/hooks/useWaitlistRegistration";
 
@@ -14,10 +14,19 @@ export default function RegCard(props: RegCardProps) {
   const { event, waitlist } = props;
   const { addRegistration, loading, error } = useCreateRegistrationById();
   const { waitlist: fetchedWaitlist } = getWaitListByEventId(event?.id || "");
+  const { registrationMembers } = useAllRegistrationsMembersByEventId(
+    event ? event.id : ""
+  );
   const [selected, setSelected] = useState<Registration[]>([]);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
+  let totalMem = 0;
+
+  if(registrationMembers && event){
+    totalMem = event?.available_slots
+    totalMem -= registrationMembers.length
+  }
 
   // SRC: kilde: chatgpt.com  || med endringer /
   const handleSelectAll = () => {
@@ -182,7 +191,7 @@ export default function RegCard(props: RegCardProps) {
           <span className="text-lg font-semibold">Available Slots</span>
         </div>
         <div className="text-xl font-bold text-blue-700">
-          {event.available_slots}
+          {totalMem}
         </div>
       </div>
 
