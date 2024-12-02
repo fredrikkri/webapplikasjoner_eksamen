@@ -14,7 +14,7 @@
     *** Skjema tar hensyn til om det er plass på arrangementet, men tillater venteliste om det er satt opp som et alternativ på arrangementet
     *** Skjema viser hva total pris vil bli for bestillingen (om det er pris)
 
-- Statistikk (Fredrik work in progress)
+- [DONE] Statistikk (Fredrik work in progress)
 
 - Validering
     - registrering skjema
