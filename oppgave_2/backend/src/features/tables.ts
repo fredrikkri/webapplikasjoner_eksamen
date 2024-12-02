@@ -5,10 +5,10 @@ export const createTables = (db: DB) => {
   db.exec(`
     DROP TABLE IF EXISTS event_rules;
     DROP TABLE IF EXISTS registrations;
-    DROP TABLE IF EXISTS days;
-    DROP TABLE IF EXISTS events_template;
     DROP TABLE IF EXISTS wait_list;
     DROP TABLE IF EXISTS events_active;
+    DROP TABLE IF EXISTS events_template;
+    DROP TABLE IF EXISTS days;
     DROP TABLE IF EXISTS events;
 
     CREATE TABLE IF NOT EXISTS events (

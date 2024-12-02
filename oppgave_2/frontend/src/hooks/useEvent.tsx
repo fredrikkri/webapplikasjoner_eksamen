@@ -14,7 +14,7 @@ export const useAllEvents = () => {
         const eventdata = await getAllEvents();
         setEvents(eventdata as unknown as EventType[]);
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('An error occurred while fetching all events'));
+        setError(err instanceof Error ? err : new Error('Kunne ikke hente arrangementer'));
       } finally {
         setLoading(false);
       }
@@ -38,7 +38,7 @@ export const useEvent = (eventSlug: string) => {
         const eventdata = await getEvent(eventSlug);
         setEvent(eventdata as unknown as EventType);
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('An error occurred while fetching an event'));
+        setError(err instanceof Error ? err : new Error('Kunne ikke hente arrangement'));
       } finally {
         setLoading(false);
       }
@@ -54,11 +54,13 @@ export const useEvent = (eventSlug: string) => {
 
 export const useCreateEvent = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const addEvent = async (eventData: Omit<EventType, 'id'>) => {
     try {
       setLoading(true);
+      setError(null);
+      
       const formattedEventData = {
         ...eventData,
         rules: {
@@ -72,10 +74,22 @@ export const useCreateEvent = () => {
           is_free: eventData.rules?.is_free || "false"
         }
       };
-      await createEvent(formattedEventData);
+
+      const result = await createEvent(formattedEventData);
+      
+      if (!result.success) {
+        setError(result.error?.message || "Kunne ikke opprette arrangement");
+        return result;
+      }
+
+      return result;
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('An error occurred'));
-      throw err;
+      const errorMessage = err instanceof Error ? err.message : 'Kunne ikke opprette arrangement';
+      setError(errorMessage);
+      return {
+        success: false,
+        error: { message: errorMessage }
+      };
     } finally {
       setLoading(false);
     }
