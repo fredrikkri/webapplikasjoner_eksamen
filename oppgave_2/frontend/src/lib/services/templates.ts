@@ -20,6 +20,7 @@ export const getTemplate = async (slug: string): Promise<Template | undefined> =
     if (rules) {
       template.rules = rules;
     }
+    
   } catch (error) {
     console.error("Failed to fetch rules:", error);
   }
@@ -58,7 +59,7 @@ export const getAllTemplates = async (): Promise<Template[]> => {
   return templatesWithRules;
 };
 
-export const onAddTemplate = async ({ event_id }: { event_id: string }) => {
+export const onAddTemplate = async ({ event_id }: { event_id: string }): Promise<{ success: boolean; data?: { template_id: number } }> => {
   try {
     const response = await fetch(ENDPOINTS.createTemplate, {
       method: "POST",
@@ -70,13 +71,18 @@ export const onAddTemplate = async ({ event_id }: { event_id: string }) => {
 
     const data = await response.json();
     if (!data.success) {
-      console.log("FAIL: ", data.data);
-      return;
+      console.error("Failed to create template:", data.error);
+      return { success: false };
     }
-    return data;
+
+    return {
+      success: true,
+      data: {
+        template_id: parseInt(data.data)
+      }
+    };
   } catch (error) {
-    console.log("fail catch");
-  } finally {
-    console.log("finally");
+    console.error("Error creating template:", error);
+    return { success: false };
   }
 };

@@ -24,10 +24,19 @@ export const createTables = (db: DB) => {
         price INTEGER NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS events_template (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        event_id TEXT NOT NULL,
+        private TEXT,
+        FOREIGN KEY (event_id) REFERENCES events(id)
+    );
+
     CREATE TABLE IF NOT EXISTS events_active (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         event_id TEXT NOT NULL,
-        FOREIGN KEY (event_id) REFERENCES events(id)
+        template_id INTEGER,
+        FOREIGN KEY (event_id) REFERENCES events(id),
+        FOREIGN KEY (template_id) REFERENCES events_template(id)
     );
 
     CREATE TABLE IF NOT EXISTS wait_list (
@@ -37,13 +46,6 @@ export const createTables = (db: DB) => {
         has_paid TEXT NOT NULL,
         registration_date TEXT NOT NULL,
         order_id TEXT,
-        FOREIGN KEY (event_id) REFERENCES events(id)
-    );
-
-    CREATE TABLE IF NOT EXISTS events_template (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        event_id TEXT NOT NULL,
-        private TEXT,
         FOREIGN KEY (event_id) REFERENCES events(id)
     );
 
