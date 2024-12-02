@@ -296,6 +296,7 @@ export default function TemplateCardExpanded({
                   <p className="text-sm text-slate-500">Kun for inviterte deltakere</p>
                 </div>
                 <select
+                title="e"
                   name="rules.is_private"
                   value={eventData.rules?.is_private || "false"}
                   onChange={handleChange}
@@ -312,6 +313,7 @@ export default function TemplateCardExpanded({
                   <p className="text-sm text-slate-500">Deltakere kan melde seg på flere arrangementer på samme dato</p>
                 </div>
                 <select
+                title="e"
                   name="rules.allow_multiple_events_same_day"
                   value={eventData.rules?.allow_multiple_events_same_day || "true"}
                   onChange={handleChange}
@@ -328,6 +330,7 @@ export default function TemplateCardExpanded({
                   <p className="text-sm text-slate-500">Tillat påmelding til venteliste når arrangementet er fullt</p>
                 </div>
                 <select
+                title="e"
                   name="rules.waitlist"
                   value={eventData.rules?.waitlist || "true"}
                   onChange={handleChange}
@@ -371,6 +374,7 @@ export default function TemplateCardExpanded({
                             }}
                           >
                             <input
+                            title="e"
                               type="checkbox"
                               checked={selectedDays.includes(day)}
                               onChange={() => {}}
