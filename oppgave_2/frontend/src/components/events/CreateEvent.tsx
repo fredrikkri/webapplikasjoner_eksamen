@@ -449,7 +449,7 @@ const CreateEvent: React.FC = () => {
             name="action"
             value="addTemplate"
             type="submit"
-            className="w-2/5 bg-slate-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition duration-200 shadow-sm"
+            className="w-2/5 bg-indigo-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition duration-200 shadow-sm"
           >
             Lagre som mal
           </button>

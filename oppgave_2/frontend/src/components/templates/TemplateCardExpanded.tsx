@@ -281,8 +281,6 @@ export default function TemplateCardExpanded({
               </label>
             </div>
           </div>
-
-          {/* Rules Display Section */}
           <div className="mt-8">
             <h3 className="text-lg font-semibold text-slate-900 mb-4">Regler for malen</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -351,33 +349,78 @@ export default function TemplateCardExpanded({
           </div>
         )}
 
-        <div className="flex gap-4 pt-6 border-t border-slate-200">
-          <button
-            name="action"
-            value="addTemplate"
-            type="submit"
-            disabled={createEventLoading}
-            className="w-2/5 inline-flex justify-center items-center px-6 py-3 bg-slate-600 text-white font-medium rounded-lg hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition-all duration-200 shadow-sm disabled:opacity-50"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
-            </svg>
-            {createEventLoading ? 'Lagrer...' : 'Lagre som ny mal'}
-          </button>
+<div className="w-full flex flex-col gap-6 p-6">
+  <button
+    name="action"
+    value="addEvent"
+    type="submit"
+    disabled={createEventLoading || createActiveEventLoading}
+    className="w-full flex items-center justify-center bg-teal-600 hover:bg-teal-500 text-white font-semibold py-4 px-6 rounded-lg shadow-sm transition duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-green-400"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-5 w-5 mr-2"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M12 4v16m8-8H4"
+      />
+    </svg>
+    {createActiveEventLoading ? 'Starter...' : 'Start Arrangement'}
+  </button>
+  <div className="flex gap-6">
 
-          <button
-            name="action"
-            value="addEvent"
-            type="submit"
-            disabled={createEventLoading || createActiveEventLoading}
-            className="w-3/5 inline-flex justify-center items-center px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 shadow-sm disabled:opacity-50"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            {createActiveEventLoading ? 'Starter...' : 'Start Arrangement'}
-          </button>
-        </div>
+    <button
+      name="action"
+      value="addTemplate"
+      type="submit"
+      disabled={createEventLoading}
+      className="w-1/2 flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg shadow-sm transition duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-blue-400"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5 mr-2"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
+        />
+      </svg>
+      {createEventLoading ? 'Lagrer...' : 'Lagre som ny mal'}
+    </button>
+
+    <button
+      className="w-1/2 flex items-center justify-center bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-4 rounded-lg shadow-sm transition duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-purple-400"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5 mr-2"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M15 12H9m6 0H9m6 0a3 3 0 00-6 0m6 0a3 3 0 01-6 0m0-6.414L12 3m0 0L9.293 5.707M12 3l2.707 2.707"
+        />
+      </svg>
+      Rediger Mal
+    </button>
+  </div>
+</div>
+
       </form>
     </div>
   );
