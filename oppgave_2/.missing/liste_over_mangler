@@ -23,6 +23,6 @@
 
 - Funksjonalitet
     - Skal kunne endre data på et arrangement etter opprettelse. Regler må ivaretas.
-    - Skal kunne slette et arrangement.
+    - [DONE] Skal kunne slette et arrangement.
     - Skal kunne slette en mal.
     - Skal kunne endre en mal.
