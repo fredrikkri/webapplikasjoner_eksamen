@@ -4,6 +4,7 @@
 
     *** Gratis - sette feltet for pris til 0, og at det ikke kan endres
     *** Fast pris - sette feltet for pris til prisen som malen har, og at den ikke kan endres
+    *** Antall plasser - ikke tillate endring i antall plasser
     *** Venteliste - (Tobias work in progress) Bestemme om et arrangement kan ha venteliste eller ikke
     *** Faste dager - Gjør så man kun kan velge dagene i dateselector dersom det er restricted days og fjerne denne reglen fra malsiden
     *** Arrangementer samme dag - Ikke tillate å starte et arrangement med en mal som allerede er blitt brukt til å lage et arrangement
