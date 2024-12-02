@@ -51,11 +51,10 @@ export default function EventCardExpanded({
     let total = availableSlots;
     const fetchReg = registrationMembers.length
     total = total-fetchReg
-    totalSizeWaitlist -= total
-    total = total-registrationMembers?.length
-
+    totalSizeWaitlist = total
     if(totalSizeWaitlist < 0){totalSizeWaitlist=0}
   }
+
 
   const [registrations, setRegistrations] = useState<RegistrationType[]>([
     { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "", order_id: "" , responsible_person: "", number_of_people: 0},

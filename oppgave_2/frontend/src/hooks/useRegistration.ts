@@ -73,17 +73,22 @@ export const useCreateRegistration = () => {
   };
 
 
-  export const useAllRegistrationsMembersByEventId = (id: string) => {
-    const [registrationMembers, setregistrationMembers] = useState<RegistrationEventData[] | null>(null);
+  export const useAllRegistrationsMembersByEventId = (id: string | undefined) => {
+    const [registrationMembers, setRegistrationMembers] = useState<RegistrationEventData[] | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
   
     useEffect(() => {
+      if (!id) {
+        setLoading(false); // If no ID, stop loading and return empty data
+        return;
+      }
+  
       const fetchEvents = async () => {
         try {
           setLoading(true);
           const eventdata = await getAllRegisteredMembers(id);
-          setregistrationMembers(eventdata as unknown as RegistrationEventData[]);
+          setRegistrationMembers(eventdata as unknown as RegistrationEventData[]);
         } catch (err) {
           setError(err instanceof Error ? err : new Error('An error occurred while fetching all events'));
         } finally {
@@ -92,7 +97,8 @@ export const useCreateRegistration = () => {
       };
   
       fetchEvents();
-    }, []);
+    }, [id]); // Re-run the effect whenever `id` changes
   
     return { registrationMembers, loading, error };
   };
+  
