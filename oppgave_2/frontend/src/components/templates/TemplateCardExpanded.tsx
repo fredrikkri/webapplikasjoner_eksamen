@@ -9,6 +9,7 @@ import { applyRules } from "@/lib/services/rules";
 import RuleItem from "./RuleItem";
 import { useCreateActiveEvent } from "@/hooks/useActiveEvent";
 import DeleteTemplate from "./DeleteTemplate";
+import { checkExistingActiveEvents } from "@/lib/services/activeEvents";
 
 type TemplateCardProps = {
   id: string;
@@ -71,6 +72,7 @@ export default function TemplateCardExpanded({
     }
   });
 
+  const [error, setError] = useState<string | null>(null);
   const rules = applyRules(initialRules || eventData.rules!);
   const { addEvent, loading: createEventLoading, error: createEventError } = useCreateEvent();
   const { createActiveEvent, loading: createActiveEventLoading, error: createActiveEventError } = useCreateActiveEvent();
@@ -109,45 +111,80 @@ export default function TemplateCardExpanded({
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>, action: string) => {
     e.preventDefault();
+    setError(null);
 
     try {
       if (action === "addTemplate") {
-        await addEvent(eventData);
+        const eventResult = await addEvent(eventData);
+        if (!eventResult.success) {
+          setError(eventResult.error?.message || "Kunne ikke opprette arrangement");
+          return;
+        }
+
         const templateResponse = await onAddTemplate({ event_id: eventData.slug });
-  
         if (templateResponse) {
           setEventData(eventData);
           router.push(`/templates`);
         } else {
-          console.error("Failed to create template");
+          setError("Kunne ikke opprette mal");
         }
       } else if (action === "addEvent") {
-        console.log('Creating event with data:', eventData);
-        await addEvent(eventData);
-        
-        // Use template_id instead of id
-        console.log('Creating active event with template ID:', template_id);
-        console.log('Event slug:', eventData.slug);
-        
-        try {
-          const activeEventResponse = await createActiveEvent(eventData.slug, template_id);
-          console.log('Active event response:', activeEventResponse);
-          if(activeEventResponse){
+        if (template_id && initialRules?.allow_multiple_events_same_day === "false") {
+          const hasExistingEvent = await checkExistingActiveEvents(template_id, eventData.date);
+          
+          if (hasExistingEvent) {
+            setError("Det finnes allerede et arrangement med denne malen på valgt dato.");
+            return;
+          }
+        }
+
+        // First create the event
+        const eventResult = await addEvent(eventData);
+        if (!eventResult.success) {
+          setError(eventResult.error?.message || "Kunne ikke opprette arrangement");
+          return;
+        }
+
+        if (template_id) {
+          try {
+            // Then create the active event
+            const activeEventResult = await createActiveEvent(eventData.slug, template_id);
+            if (!activeEventResult) {
+              setError("Kunne ikke aktivere arrangement");
+              return;
+            }
+            
             setEventData(eventData);
             router.push(`/events/${eventData.slug}`);
+          } catch (error) {
+            setError("Feil ved aktivering av arrangement");
+            return;
           }
-        } catch (error) {
-          console.error('Error creating active event:', error);
-          throw error;
+        } else {
+          setEventData(eventData);
+          router.push(`/events/${eventData.slug}`);
         }
       }
     } catch (error) {
-      console.error("Error handling submit:", error);
+      setError("Feil ved håndtering av skjema");
     }
   };
 
   const inputClasses = "mt-2 block w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition duration-200";
   const labelClasses = "block text-sm font-medium text-slate-700 mb-1";
+
+  const getErrorMessage = () => {
+    if (error) {
+      return error;
+    }
+    if (createEventError) {
+      return createEventError;
+    }
+    if (createActiveEventError) {
+      return createActiveEventError;
+    }
+    return null;
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-8 border-l-4 border-indigo-500">
@@ -159,13 +196,7 @@ export default function TemplateCardExpanded({
         </div>
 
         <DeleteTemplate templateId={id}/>
-
-        </div>
-        {(createEventError || createActiveEventError) && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
-            <p>{createEventError?.message || createActiveEventError?.message}</p>
-          </div>
-        )}
+      </div>
 
         <div className="space-y-6">
           <div>
@@ -354,78 +385,26 @@ export default function TemplateCardExpanded({
           </div>
         )}
 
-<div className="w-full flex flex-col gap-6 p-6">
-  <button
-    name="action"
-    value="addEvent"
-    type="submit"
-    disabled={createEventLoading || createActiveEventLoading}
-    className="w-full flex items-center justify-center bg-teal-600 hover:bg-teal-500 text-white font-semibold py-4 px-6 rounded-lg shadow-sm transition duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-green-400"
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-5 w-5 mr-2"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M12 4v16m8-8H4"
-      />
-    </svg>
-    {createActiveEventLoading ? 'Starter...' : 'Start Arrangement'}
-  </button>
-  <div className="flex gap-6">
+        {getErrorMessage() && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <p>{getErrorMessage()}</p>
+          </div>
+        )}
 
-    {/* <button
-      name="action"
-      value="addTemplate"
-      type="submit"
-      disabled={createEventLoading}
-      className="w-1/2 flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg shadow-sm transition duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-blue-400"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5 mr-2"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
-        />
-      </svg>
-      {createEventLoading ? 'Lagrer...' : 'Lagre som ny mal'}
-    </button> */}
-
-    <button
-      className="w-1/2 flex items-center justify-center bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-4 rounded-lg shadow-sm transition duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-purple-400"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5 mr-2"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M15 12H9m6 0H9m6 0a3 3 0 00-6 0m6 0a3 3 0 01-6 0m0-6.414L12 3m0 0L9.293 5.707M12 3l2.707 2.707"
-        />
-      </svg>
-      Rediger Mal
-    </button>
-  </div>
-</div>
-
+        <div className="flex gap-4 pt-6 border-t border-slate-200">
+          <button
+            name="action"
+            value="addTemplate"
+            type="submit"
+            disabled={createEventLoading}
+            className="w-2/5 inline-flex justify-center items-center px-6 py-3 bg-slate-600 text-white font-medium rounded-lg hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition-all duration-200 shadow-sm disabled:opacity-50"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+            </svg>
+            {createEventLoading ? 'Lagrer...' : 'Lagre som ny mal'}
+          </button>
+        </div>
       </form>
     </div>
   );

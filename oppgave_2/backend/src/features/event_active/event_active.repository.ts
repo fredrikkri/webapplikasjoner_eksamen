@@ -34,12 +34,12 @@ export const createActiveEventsRepository = (db: DB) => {
         success: false,
         error: {
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed getting active events",
+          message: "Kunne ikke hente aktive arrangementer",
         },
       };
     }
   };
-  
+
   const create = async (data: ActiveEventsCreate): Promise<Result<string>> => {
     try {
       const event = db.prepare("SELECT id FROM events WHERE slug = ? LIMIT 1").get(data.event_id);
@@ -48,7 +48,7 @@ export const createActiveEventsRepository = (db: DB) => {
           success: false,
           error: {
             code: "NOT_FOUND",
-            message: `Event with slug ${data.event_id} does not exist.`,
+            message: `Arrangement med ID ${data.event_id} finnes ikke.`,
           },
         };
       }
@@ -62,7 +62,7 @@ export const createActiveEventsRepository = (db: DB) => {
             success: false,
             error: {
               code: "NOT_FOUND",
-              message: `Template with ID ${data.template_id} does not exist.`,
+              message: `Mal med ID ${data.template_id} finnes ikke.`,
             },
           };
         }
@@ -80,12 +80,12 @@ export const createActiveEventsRepository = (db: DB) => {
         data: eventId,
       };
     } catch (error) {
-      console.error("Error creating active event:", error);
+      console.error("Feil ved opprettelse av aktivt arrangement:", error);
       return {
         success: false,
         error: {
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error creating active event",
+          message: "Det oppstod en feil ved opprettelse av arrangementet.",
         },
       };
     }
@@ -105,7 +105,10 @@ export const createActiveEventsRepository = (db: DB) => {
       if (!eventData) {
         return {
           success: false,
-          error: { code: "NOT_FOUND", message: "Event not found in active events" },
+          error: { 
+            code: "NOT_FOUND", 
+            message: "Fant ikke arrangementet i aktive arrangementer" 
+          },
         };
       }
   
@@ -114,12 +117,12 @@ export const createActiveEventsRepository = (db: DB) => {
         data: eventData,
       };
     } catch (error) {
-      console.error("Error fetching event:", error);
+      console.error("Feil ved henting av arrangement:", error);
       return {
         success: false,
         error: {
           code: "INTERNAL_SERVER_ERROR",
-          message: "Error fetching event from active events",
+          message: "Det oppstod en feil ved henting av arrangementet",
         },
       };
     }

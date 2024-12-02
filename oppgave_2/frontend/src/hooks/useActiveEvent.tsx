@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Event } from "../types/Event";
 import { ENDPOINTS } from "@/config/config";
+import { onAddActiveEvent } from "@/lib/services/activeEvents";
 
 export const useActiveEvent = (eventSlug: string) => {
   const [event, setEvent] = useState<Event | null>(null);
@@ -68,34 +69,27 @@ export const useAllActiveEvents = () => {
 
 export const useCreateActiveEvent = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const createActiveEvent = async (eventId: string, templateId?: number) => {
     try {
       setLoading(true);
-      const response = await fetch(ENDPOINTS.createActiveEvent, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ 
-          event_id: eventId,
-          template_id: templateId 
-        }),
+      setError(null);
+      
+      const result = await onAddActiveEvent({ 
+        event_id: eventId,
+        template_id: templateId 
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to create active event");
-      }
-
-      const result = await response.json();
       if (!result.success) {
-        throw new Error(result.error.message || "Failed to create active event");
+        setError(result.error?.message || "Failed to create active event");
+        throw new Error(result.error?.message);
       }
 
       return result.data;
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('An error occurred while creating active event'));
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred while creating active event';
+      setError(errorMessage);
       throw err;
     } finally {
       setLoading(false);
