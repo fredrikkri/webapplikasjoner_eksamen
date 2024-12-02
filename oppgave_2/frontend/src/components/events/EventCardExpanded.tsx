@@ -257,17 +257,15 @@ export default function EventCardExpanded({
               </svg>
               Legg til flere personer
             </button>
-            <button
-  type="submit"
-  className="inline-flex items-center px-6 py-2 bg-teal-600 text-white font-medium rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all duration-200"
->
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-  </svg>
-  {rules && rules.waitlist === "true" && totalSizeWaitlist < registrations.length
-    ? "Legg til i venteliste" 
-    : "Registrer påmelding(er) og betal"}
-</button>
+            <button type="submit"
+            className="inline-flex items-center px-6 py-2 bg-teal-600 text-white font-medium rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            {rules && rules.waitlist === "true" && totalSizeWaitlist < registrations.length
+            ? "Legg til i venteliste" 
+            : "Registrer påmelding(er) og betal"}
+            </button>
           </div>
         </form>
       </div>
