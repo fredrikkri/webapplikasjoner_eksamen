@@ -380,7 +380,7 @@ export default function TemplateCardExpanded({
   </button>
   <div className="flex gap-6">
 
-    <button
+    {/* <button
       name="action"
       value="addTemplate"
       type="submit"
@@ -402,7 +402,7 @@ export default function TemplateCardExpanded({
         />
       </svg>
       {createEventLoading ? 'Lagrer...' : 'Lagre som ny mal'}
-    </button>
+    </button> */}
 
     <button
       className="w-1/2 flex items-center justify-center bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-4 rounded-lg shadow-sm transition duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-purple-400"
