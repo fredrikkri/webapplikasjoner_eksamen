@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { deleteEvent } from '../../lib/services/events';
-import { Event } from "../../types/Event"; 
+import { Event } from "../../types/Event";
 
 interface RegCardProps {
   event: Event | null;
@@ -8,7 +8,7 @@ interface RegCardProps {
 
 export default function DeleteEvent(props: RegCardProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); 
 
   const handleDelete = async () => {
     if (props.event) {
@@ -16,6 +16,7 @@ export default function DeleteEvent(props: RegCardProps) {
       setError(null);
 
       try {
+        console.log("yoyoyoyoy: ",props.event.id)
         await deleteEvent(props.event.id);
         alert('Event deleted successfully');
       } catch (err) {
@@ -27,15 +28,17 @@ export default function DeleteEvent(props: RegCardProps) {
   };
 
   return (
-    <div className="delete-event-card">
+    <div className="delete-event-card flex justify-end items-center p-5 space-x-4">
+      {error && <p className="text-red-500 text-sm">{error}</p>}
       <button
         onClick={handleDelete}
         disabled={isLoading}
-        style={{ backgroundColor: 'red', color: 'white', padding: '10px 20px', border: 'none', cursor: 'pointer' }}
+        className={`${
+          isLoading ? 'bg-gray-300 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'
+        } text-white font-bold py-2 px-6 rounded-lg transition-colors duration-300`}
       >
-        {isLoading ? 'deleting...' : 'Delete Event'}
+        {isLoading ? 'Sletter...' : 'Slett Event'}
       </button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 }

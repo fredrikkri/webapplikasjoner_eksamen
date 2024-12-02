@@ -45,6 +45,30 @@ export const createEventController = (EventService: any) => {
     return c.json(result, { status: 201 });
   });
 
+  app.delete("/delete-event/:eventId", async (c) => {
+    try {
+      const eventId = c.req.param("eventId");
+      console.log("eventId: ",eventId)
+      const result = await EventService.remove(eventId);
+      
+      if (!result.success) {
+        return errorResponse(
+          c,
+          result.error.code as ErrorCode,
+          result.error.message
+        );
+      }
+      return c.json(result, {status: 200});
+    } catch (error) {
+      console.error('Error in event deletion:', error);
+      return errorResponse(
+        c,
+        'INTERNAL_SERVER_ERROR',
+        error instanceof Error ? error.message : 'Failed to delete event'
+      );
+    }
+  });
+
   return app;
 }
 

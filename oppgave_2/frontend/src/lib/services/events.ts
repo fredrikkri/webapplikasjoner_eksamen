@@ -86,7 +86,7 @@ export const createEvent = async (data: Omit<Event, 'id'> & { rules: any }): Pro
 
 export const deleteEvent = async (eventId: string): Promise<void> => {
   try {
-    const response = await fetch(`${ENDPOINTS.deleteEvent}/${eventId}`, {
+    const response = await fetch(`${ENDPOINTS.deleteEvent(eventId)}`, {
       method: 'DELETE',
     });
   

@@ -15,7 +15,7 @@ export const createEventRepository = (db: DB) => {
         return data.count > 0;
       };
 
-            // SRC: kilde: chatgpt.com  || med justeringer /
+    // SRC: kilde: chatgpt.com  || med justeringer /
     const getById = async (slug: string): Promise<Result<Event>> => {
         try {
           const eventExists = await exist(slug);
@@ -153,7 +153,44 @@ export const createEventRepository = (db: DB) => {
         }
     };
 
-    return {list, getById, create};
+    const remove = async (id: string): Promise<Result<string>> => {
+      const db_transaction = db.transaction(() => {
+        console.log("final id oiwfoirfeo: ",id)
+        try {
+          const deleteCourseQuery = db.prepare("DELETE FROM events_active WHERE event_id = ?");
+          deleteCourseQuery.run(id);
+  
+          return id;
+        } catch (error) {
+          console.error("Error in delete transaction:", error);
+          throw error;
+        }
+      });
+  
+      try {
+        const result = db_transaction();
+        return {
+          success: true as const,
+          data: result,
+        };
+      } catch (error) {
+        if (error instanceof Error && error.message === "Course not found") {
+          return {
+            success: false as const,
+            error: { code: "NOT_FOUND", message: "Course not found" },
+          };
+        }
+        return {
+          success: false as const,
+          error: {
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Error deleting course",
+          },
+        };
+      }
+    };
+
+    return {list, getById, create, remove};
 };
 
 export const eventRepository = createEventRepository(db);
