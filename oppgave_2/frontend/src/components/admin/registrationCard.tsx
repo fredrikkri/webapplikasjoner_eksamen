@@ -16,15 +16,33 @@ export default function RegCard(props: RegCardProps) {
   const { waitlist: fetchedWaitlist } = getWaitListByEventId(event?.id || "");
   const [selected, setSelected] = useState<Registration[]>([]);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
 
-
+  // SRC: kilde: chatgpt.com  || med endringer /
   const handleSelectAll = () => {
-    if (waitlist) {
-      if (selected.length === waitlist.length) {
-        setSelected([]); // Deselect all
-      } else {
-        setSelected(waitlist.map(item => item)); // Select all
+    if (fetchedWaitlist && waitlist && event?.available_slots !== undefined) {
+      if (selected.length > 0) {
+        // Deselect all
+        setSelected([]);
+        return;
       }
+      const availableSlots = event.available_slots;
+      let totalSelectedPeople = 0;
+      const validSelections: Registration[] = [];
+  
+      for (const item of waitlist) {
+        if (totalSelectedPeople + item.number_of_people <= availableSlots) {
+          totalSelectedPeople += item.number_of_people;
+          validSelections.push(item);
+        } else {
+          continue;
+        }
+      }
+
+      console.log(validSelections)
+  
+      setSelected(validSelections);
     }
   };
 
@@ -37,11 +55,36 @@ export default function RegCard(props: RegCardProps) {
     );
   };
 
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
   // SRC: kilde: chatgpt.com  || med endringer /
   const handleClickAccept = async (selected: Registration[]) => {
     const uniqueSelected = Array.from(
       new Map(selected.map((item) => [item.order_id, item])).values()
     );
+
+    let totalPeople = 0;
+    for (let i = 0; i < selected.length; i++) {
+      const selectedOrderId = selected[i].order_id;
+
+      // Filter out all items that have the same order_id
+      const sameOrderRegistrations = fetchedWaitlist?.filter(
+        (item) => item.order_id === selectedOrderId
+      ) || [];
+
+      totalPeople += sameOrderRegistrations.length;
+    }
+    console.log(totalPeople)
+
+    if (event?.available_slots !== undefined && totalPeople > event?.available_slots) {
+      setPopupMessage("Du har valg for mange folk, det er kun "+event.available_slots+ " ledig plass.");
+      setShowPopup(true);
+      return;
+    }
+
+
     const orderIds: string[] = uniqueSelected.map((registration) => registration.order_id);
 
       try {
@@ -60,7 +103,6 @@ export default function RegCard(props: RegCardProps) {
         console.error(`Error accepting registration:`, error);
       }
     }
-    window.history.go()
   };
   
 
@@ -119,35 +161,73 @@ export default function RegCard(props: RegCardProps) {
         </div>
   
         <div className="space-y-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="flex items-center justify-between sm:justify-start space-x-4">
-                <div className="flex items-center text-slate-700">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-blue-500 mr-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                    />
-                  </svg>
-                  <span className="text-lg font-semibold">Available Slots</span>
-                </div>
-                <div className="text-xl font-bold text-blue-700">
-                  {event.available_slots}/{event.total_slots}
-                </div>
-              </div>
-            </div>
-            <div className="mt-4 text-sm text-slate-500">
-              <p>Plassene oppdateres i sanntid, og nye påmeldinger blir tilgjengelige etter hvert som de blir bekreftet.</p>
+  <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="flex items-center justify-between sm:justify-start space-x-4">
+        <div className="flex items-center text-slate-700">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 text-blue-500 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+            />
+          </svg>
+          <span className="text-lg font-semibold">Available Slots</span>
+        </div>
+        <div className="text-xl font-bold text-blue-700">
+          {event.available_slots}
+        </div>
+      </div>
+
+      <div className="flex items-center justify-end space-x-4">
+        <div className="flex items-center text-slate-700">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 text-blue-500 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+            />
+          </svg>
+          <span className="text-lg font-semibold">Total Slots</span>
+        </div>
+        <div className="text-xl font-bold text-blue-700">
+          {event.total_slots}
+        </div>
+      </div>
+    </div>
+
+    <div className="mt-4 text-sm text-slate-500">
+      <p>Plassene oppdateres i sanntid, og nye påmeldinger blir tilgjengelige etter hvert som de blir bekreftet.</p>
+    </div>
+  </div>
+
+  {showPopup && (
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-xs">
+              <h3 className="text-lg font-semibold text-red-600">{popupMessage}</h3>
+              <button
+                onClick={handleClosePopup}
+                className="mt-4 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all duration-200"
+              >
+                Close
+              </button>
             </div>
           </div>
+        )}
   
           <div className="space-y-2">
             <div className="bg-slate-50 rounded-lg p-4">
@@ -162,14 +242,15 @@ export default function RegCard(props: RegCardProps) {
                         <input
                           type="checkbox"
                           className="form-checkbox h-5 w-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
-                          checked={waitlist.length > 0 && selected.length === waitlist.length}
+                          // Check if all the available slots are selected
+                          checked={selected.length > 0 && selected.length <= event?.available_slots}
                           onChange={handleSelectAll}
                         />
                         <span>Velg alle</span>
                       </label>
                     </span>
                   </li>
-  
+
                   {waitlist
                     .sort((a, b) => {
                       const dateA = new Date(a.registration_date).getTime();
