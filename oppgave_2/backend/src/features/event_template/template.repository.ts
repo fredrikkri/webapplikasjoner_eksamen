@@ -2,6 +2,8 @@ import { Result } from "@/types";
 import db, { DB } from "../db";
 import { toDb } from "./template.mapper";
 import { TemplateCreate } from "@/types/template";
+import { Event } from "@/types/event";
+import { TemplateIdRow } from "@/types/template";
 
 export const createTemplateRepository = (db: DB) => {
 
@@ -86,7 +88,7 @@ export const createTemplateRepository = (db: DB) => {
       console.log("Processing deletion for event ID:", id);
       try {
         const getTemplateIdWithEventId = db.prepare("SELECT id FROM events_template WHERE event_id = ?");
-        const current_template_id_row = getTemplateIdWithEventId.get(id);
+        const current_template_id_row = getTemplateIdWithEventId.get(id) as TemplateIdRow | undefined;
 
   
         if (!current_template_id_row) {

@@ -9,6 +9,7 @@ export const TemplateCreate = TemplateSchema.omit( {
     id: true,
   })
 
+export  type TemplateIdRow = { id: number; };
 export type Template = z.infer<typeof TemplateSchema>
 export type TemplateCreate = z.infer<typeof TemplateCreate>
 
