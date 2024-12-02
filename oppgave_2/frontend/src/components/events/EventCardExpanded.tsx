@@ -1,10 +1,12 @@
 import { useCreateRegistration } from "@/hooks/useRegistration";
-import { useCreateWaitlistRegistration } from "../../hooks/useWaitlistRegistration";
+import { getWaitListByEventId, useCreateWaitlistRegistration } from "../../hooks/useWaitlistRegistration";
 import { useState } from "react";
 import { Registration as RegistrationType } from "@/types/Registration";
 import Link from "next/link";
+import { Rules } from "@/types/Rules";
 
 type EventCardProps = {
+  id: string,
   title: string;
   description: string;
   date: string;
@@ -14,9 +16,11 @@ type EventCardProps = {
   total_slots: number;
   available_slots: number;
   price: number;
+  rules?: Rules
 };
 
 export default function EventCardExpanded({
+  id,
   title,
   description,
   slug,
@@ -26,9 +30,22 @@ export default function EventCardExpanded({
   total_slots,
   available_slots,
   price,
+  rules
 }: EventCardProps) {
   const [availableSlots, setAvailableSlots] = useState<number>(available_slots);
   const { addWaitlistRegistration } = useCreateWaitlistRegistration();
+  const { waitlist: fetchedWaitlist} = getWaitListByEventId(id);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
+  let totalSizeWaitlist = availableSlots;
+
+  if(fetchedWaitlist){
+    let total = availableSlots;
+    const fetchWL = fetchedWaitlist.length
+    total = total-fetchWL
+    totalSizeWaitlist = total
+    if(totalSizeWaitlist < 0){totalSizeWaitlist=0}
+  }
 
   const [registrations, setRegistrations] = useState<RegistrationType[]>([
     { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "", order_id: "" , responsible_person: "", number_of_people: 0},
@@ -66,9 +83,18 @@ export default function EventCardExpanded({
     setRegistrations(updatedRegistrations);
   };
 
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const current_order_id = crypto.randomUUID();
+    if(registrations.length > totalSizeWaitlist && rules?.waitlist === "false"){
+      setPopupMessage("Du har valg for mange folk, det er kun "+totalSizeWaitlist+ " ledige plasser og ingen venteliste");
+      setShowPopup(true);
+      return
+    }
 
     const registrationData = registrations.map(({ id, email, has_paid, event_id, registration_date, responsible_person, number_of_people }) => ({
       id,
@@ -85,23 +111,7 @@ export default function EventCardExpanded({
       await addWaitlistRegistration(registration);
     }
 
-  //   try {
-  //     if (availableSlots >= registrationData.length) {
-  //       for (const registration of registrationData) {
-  //         await addRegistration(registration);
-  //         setAvailableSlots((prevAvailableSlots) => Math.max(prevAvailableSlots - 1, 0));
-  //       }
-  //     }
-  //     else {
-  //       for (const registration of registrationData) {
-  //       await addWaitlistRegistration(registration);
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error("error, could not create registration:", error);
-  //     alert(`Det oppsto en feil, kunne ikke gjennomføre registrering.`);
-  //   } 
-
+    window.history.go()
   }
 
   return (
@@ -158,7 +168,7 @@ export default function EventCardExpanded({
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
-              <span>Totalt {total_slots} plasser ({availableSlots} ledige)</span>
+              <span>Totalt {total_slots} plasser ({totalSizeWaitlist} ledige)</span>
             </div>
             <div className="flex items-center text-slate-600">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -168,9 +178,22 @@ export default function EventCardExpanded({
             </div>
           </div>
         </div>
-
+        {showPopup && (
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-xs">
+              <h3 className="text-lg font-semibold text-red-600">{popupMessage}</h3>
+              <button
+                onClick={handleClosePopup}
+                className="mt-4 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all duration-200"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
         {/* Registration Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
+
           <div className="bg-slate-50 rounded-lg p-6">
             <h3 className="text-lg font-semibold text-slate-900 mb-4">Registrer deltakere</h3>
             <div className="space-y-4">
@@ -228,14 +251,16 @@ export default function EventCardExpanded({
               Legg til flere personer
             </button>
             <button
-              type="submit"
-              className="inline-flex items-center px-6 py-2 bg-teal-600 text-white font-medium rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all duration-200"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              Registrer person(er)
-            </button>
+  type="submit"
+  className="inline-flex items-center px-6 py-2 bg-teal-600 text-white font-medium rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all duration-200"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+  </svg>
+  {rules && rules.waitlist === "true" && totalSizeWaitlist < registrations.length
+    ? "Legg til i venteliste" 
+    : "Registrer påmelding(er) og betal"}
+</button>
           </div>
         </form>
       </div>

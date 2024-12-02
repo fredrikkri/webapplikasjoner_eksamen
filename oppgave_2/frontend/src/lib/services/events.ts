@@ -4,17 +4,32 @@ import { getRulesByEventId } from "./rules";
 
 export const getEvent = async (slug: string): Promise<Event | undefined> => {
   const response = await fetch(ENDPOINTS.events + `/${slug}`);
+  
   if (!response.ok) {
     throw new Error("Failed to fetch event");
   }
+
   const result = await response.json();
+  
+  // Check if the result has success property
   if (!result.success) {
     throw new Error(result.error.message || "Failed to fetch event");
   }
 
+  const e = result.data as Event;
 
-  return result.data as Event;
+  try {
+    const rules = await getRulesByEventId(e.id);
+    if (rules) {
+      e.rules = rules;
+    }
+  } catch (error) {
+    console.error(`Failed to fetch rules for event ${e.id}:`, error);
+  }
+
+  return e;
 };
+
 
 export const getAllEvents = async (): Promise<Event[]> => {
   const response = await fetch(ENDPOINTS.events);

@@ -59,6 +59,7 @@ function SingleEvent({ slug = "" }: EventProps) {
       </div>
       
       <EventCardExpanded 
+      id={event.id}
         title={event.title} 
         description={event.description} 
         slug={event.slug}
@@ -67,7 +68,8 @@ function SingleEvent({ slug = "" }: EventProps) {
         event_type={event.event_type}
         total_slots={event.total_slots}
         available_slots={event.available_slots}
-        price={event.price} 
+        price={event.price}
+        rules={event.rules}
       />
     </div>
   );
