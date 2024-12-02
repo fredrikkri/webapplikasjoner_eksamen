@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Registration, RegistrationEventData  } from "../types/Registration";
-import {  createRegistration, createRegistrationById, deleteRegistration, getAllEventsRegistrations } from "../lib/services/registrations";
+import {  createRegistration, createRegistrationById, deleteRegistration, getAllEventsRegistrations, getAllRegisteredMembers } from "../lib/services/registrations";
 
 export const useCreateRegistration = () => {
     const [loading, setLoading] = useState<boolean>(false);
@@ -38,6 +38,7 @@ export const useCreateRegistration = () => {
     return { addRegistration, loading, error };
   };
 
+  // SRC: kilde: chatgpt.com  || med endringer /
   export const useAllRegistrations = () => {
     const [events, setEvents] = useState<RegistrationEventData[] | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -61,6 +62,7 @@ export const useCreateRegistration = () => {
   
     return { events, loading, error };
   };
+
   export const deleteRegistrationById = async (registrationId: string) => {
     try {
       const isDeleted = await deleteRegistration(registrationId);
@@ -70,3 +72,34 @@ export const useCreateRegistration = () => {
       throw err;
     }
   };
+
+  // SRC: kilde: chatgpt.com  || med endringer /
+  export const useAllRegistrationsMembersByEventId = (id: string | undefined) => {
+    const [registrationMembers, setRegistrationMembers] = useState<RegistrationEventData[] | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<Error | null>(null);
+  
+    useEffect(() => {
+      if (!id) {
+        setLoading(false);
+        return;
+      }
+  
+      const fetchEvents = async () => {
+        try {
+          setLoading(true);
+          const eventdata = await getAllRegisteredMembers(id);
+          setRegistrationMembers(eventdata as unknown as RegistrationEventData[]);
+        } catch (err) {
+          setError(err instanceof Error ? err : new Error('An error occurred while fetching all events'));
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchEvents();
+    }, [id]);
+  
+    return { registrationMembers, loading, error };
+  };
+  

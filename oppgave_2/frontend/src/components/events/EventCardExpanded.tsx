@@ -1,4 +1,4 @@
-import { useCreateRegistration } from "@/hooks/useRegistration";
+import { useAllRegistrationsMembersByEventId, useCreateRegistration } from "@/hooks/useRegistration";
 import { getWaitListByEventId, useCreateWaitlistRegistration } from "../../hooks/useWaitlistRegistration";
 import { useState } from "react";
 import { Registration as RegistrationType } from "@/types/Registration";
@@ -35,17 +35,24 @@ export default function EventCardExpanded({
   const [availableSlots, setAvailableSlots] = useState<number>(available_slots);
   const { addWaitlistRegistration } = useCreateWaitlistRegistration();
   const { waitlist: fetchedWaitlist} = getWaitListByEventId(id);
+  const { registrationMembers, loading, error } = useAllRegistrationsMembersByEventId(id)
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
   let totalSizeWaitlist = availableSlots;
 
   if(fetchedWaitlist){
-    let total = availableSlots;
-    const fetchWL = fetchedWaitlist.length
-    total = total-fetchWL
+    let total = totalSizeWaitlist-fetchedWaitlist.length;
+
     totalSizeWaitlist = total
     if(totalSizeWaitlist < 0){totalSizeWaitlist=0}
   }
+  if(registrationMembers){
+    let total = totalSizeWaitlist-registrationMembers.length;
+
+    totalSizeWaitlist = total
+    if(totalSizeWaitlist < 0){totalSizeWaitlist=0}
+  }
+
 
   const [registrations, setRegistrations] = useState<RegistrationType[]>([
     { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "", order_id: "" , responsible_person: "", number_of_people: 0},
