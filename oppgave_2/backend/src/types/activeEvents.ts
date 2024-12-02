@@ -2,12 +2,13 @@ import { z } from 'zod';
 
 export const ActiveEventsSchema = z.object({
     id: z.string(),
-    event_id: z.string()
+    event_id: z.string(),
+    template_id: z.number().optional()
 })
 
-export const ActiveEventsCreate = ActiveEventsSchema.omit( {
+export const ActiveEventsCreate = ActiveEventsSchema.omit({
     id: true,
-  })
+})
 
 export type ActiveEvents = z.infer<typeof ActiveEventsSchema>
 export type ActiveEventsCreate = z.infer<typeof ActiveEventsCreate>

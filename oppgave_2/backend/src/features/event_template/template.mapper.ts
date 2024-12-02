@@ -1,8 +1,7 @@
 import { Event } from "../../types/event";
-import { Template } from "../../types/template";
 import { createId } from "../../util/utils";
 
-export const createTemplateResponse = (template: any): Event => {
+export const createTemplateResponse = (template: any): Event & { template_id?: number } => {
     return {
         id: template.id,
         title: template.title,
@@ -14,28 +13,30 @@ export const createTemplateResponse = (template: any): Event => {
         total_slots: template.total_slots,
         available_slots: template.available_slots,
         price: template.price,
-      };
-};
-
-  
-export const fromDb = (event: Template) => {
-    return {
-      id: event.id ?? createId(),  
-      title: event?.event_id ?? "N/A",
+        template_id: template.template_id
     };
 };
-  
 
-export const createTemplate = (event: Partial<Template>): Template => {
+export const fromDb = (event: any) => {
     return {
-        id: event.id ?? "",  
-        event_id: event?.event_id ?? ""
+        id: event.id ?? createId(),  
+        event_id: event.event_id,
+        template_id: event.template_id
     };
 };
-  
-export const toDb = (data: Partial<Template>) => {
-  const event = createTemplate(data); 
-  return {
-    event_id: event.event_id
+
+export const createTemplate = (event: any) => {
+    return {
+        id: event.id ?? createId(),  
+        event_id: event.event_id,
+        template_id: event.template_id
+    };
+};
+
+export const toDb = (data: any) => {
+    const event = createTemplate(data); 
+    return {
+        event_id: event.event_id,
+        template_id: event.template_id
     };
 };

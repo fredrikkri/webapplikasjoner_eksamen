@@ -1,7 +1,8 @@
-import { Result } from "@/types";
+import { Result } from "@/types/index";
 import db, { DB } from "../db";
 import { toDb } from "./event_active.mapper";
 import { ActiveEventsCreate } from "../../types/activeEvents";
+import { Event } from "../../types/event";
 
 export const createActiveEventsRepository = (db: DB) => {
 
@@ -13,16 +14,16 @@ export const createActiveEventsRepository = (db: DB) => {
     return data.count > 0;
   };
 
-  // SRC: kilde: chatgpt.com  || med endringer /
   const list = async (query?: Record<string, string>): Promise<Result<Event[]>> => {
     try {
       const statement = db.prepare(`
-        SELECT e.*
+        SELECT e.*, ea.template_id, et.event_id as template_event_id
         FROM events e
-        JOIN events_active et ON e.id = et.event_id
+        JOIN events_active ea ON e.id = ea.event_id
+        LEFT JOIN events_template et ON ea.template_id = et.id
       `);
       
-      const data = statement.all() as Event[];
+      const data = statement.all() as (Event & { template_id?: number })[];
   
       return {
         success: true,
@@ -32,8 +33,8 @@ export const createActiveEventsRepository = (db: DB) => {
       return {
         success: false,
         error: {
-          code: "SOME_CODE_HERE",
-          message: "Failed getting templates",
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed getting active events",
         },
       };
     }
@@ -41,42 +42,65 @@ export const createActiveEventsRepository = (db: DB) => {
   
   const create = async (data: ActiveEventsCreate): Promise<Result<string>> => {
     try {
-      
       const event = db.prepare("SELECT id FROM events WHERE slug = ? LIMIT 1").get(data.event_id);
-      const eventId: string = (event as { id: string }).id;
-      const e: ActiveEventsCreate = { event_id: eventId }
+      if (!event) {
+        return {
+          success: false,
+          error: {
+            code: "NOT_FOUND",
+            message: `Event with slug ${data.event_id} does not exist.`,
+          },
+        };
+      }
 
-      const events = toDb(e);
+      const eventId: string = (event as { id: string }).id;
+
+      if (data.template_id !== undefined) {
+        const template = db.prepare("SELECT id FROM events_template WHERE id = ?").get(data.template_id);
+        if (!template) {
+          return {
+            success: false,
+            error: {
+              code: "NOT_FOUND",
+              message: `Template with ID ${data.template_id} does not exist.`,
+            },
+          };
+        }
+      }
 
       const query = db.prepare(`
-        INSERT INTO events_active (event_id)
-        VALUES (?)
+        INSERT INTO events_active (event_id, template_id)
+        VALUES (?, ?)
       `);
 
-      query.run(
-        events.event_id
-      );
+      query.run(eventId, data.template_id);
 
       return {
         success: true,
-        data: events.event_id,
+        data: eventId,
       };
     } catch (error) {
+      console.error("Error creating active event:", error);
       return {
         success: false,
         error: {
           code: "INTERNAL_SERVER_ERROR",
-          message: "Feil med oppretting av template",
+          message: "Error creating active event",
         },
       };
     }
   };
 
-  // SRC: kilde: chatgpt.com  || med endringer /
   const getEventByActiveEventsSlug = async (eventSlug: string): Promise<Result<Event>> => {
     try {
-      const query = db.prepare("SELECT e.* FROM events e JOIN events_active et ON e.id = et.event_id WHERE e.slug = ?");
-      const eventData = query.get(eventSlug) as Event;
+      const query = db.prepare(`
+        SELECT e.*, ea.template_id, et.event_id as template_event_id
+        FROM events e 
+        JOIN events_active ea ON e.id = ea.event_id 
+        LEFT JOIN events_template et ON ea.template_id = et.id 
+        WHERE e.slug = ?
+      `);
+      const eventData = query.get(eventSlug) as Event & { template_id?: number };
   
       if (!eventData) {
         return {
@@ -100,11 +124,8 @@ export const createActiveEventsRepository = (db: DB) => {
       };
     }
   };
-  
-  
 
-
-      return { list, create, getEventByActiveEventsSlug }
+  return { list, create, getEventByActiveEventsSlug }
 }
 
 export const activeEventsRepository = createActiveEventsRepository(db);

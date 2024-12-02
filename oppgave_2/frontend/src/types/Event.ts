@@ -12,4 +12,5 @@ export type Event = {
     available_slots: number;
     price: number;
     rules?: Rules;
+    template_id?: number;
 }
