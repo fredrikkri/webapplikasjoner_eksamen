@@ -617,7 +617,10 @@ Et eksempel er når vi ønsker å finne en bestemt template. Da henter vi alle r
 Vi valgte å gjøre filtrering direkte i excel dokumentet. Man kan trykke på rute A1 i "Registrations-worksheet". Da vil du få muligheten til å velge hvilke påmeldinger for hvilket år som skal vises. Dette ble gjort i backend i excel.controller laget. Når Worksheet blir opprettet, så sørger vi for at dropdownmeny med filtrering er muliggjort på celle A1 der "year" er plassert.
 
 ## 7. Skal dokumentere datamodellen og bakgrunnen for denne modellen.
+Vi har et table som heter event, denne blir aldri direkte rendret. Vi bruker "mellomtablene" som heter events_active og events_template som da har en ref til events tablet. Dette gjør det lett å hente data og kategorisere ulike typer arrangementer.
 
 ## 8. Skal dokumentere hvordan løse det å opprette / gjenbruke en mal.
+Hver gang vi velger å gjenbruke en mal så genererer vi en ny id bak tittelen, som da er "slug", som da er en unik verdi. vi genererer også nye id'er til set arrangement.
+Ved hjelp av events_template kan vi lett hente ut data fra events tablet. Hvis vi velger en mal så henter vi ut dataen fra events og genererer nye id'er til set informasjon ved opprettelse.
 
 ## 9. Skal dokumentere databasemodellen og nødvendige relasjoner.
