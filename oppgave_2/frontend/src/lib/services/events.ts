@@ -82,4 +82,19 @@ export const createEvent = async (data: Omit<Event, 'id'> & { rules: any }): Pro
     console.error("Error creating event:", error);
     throw error;
   }
-};
+}
+
+export const deleteEvent = async (eventId: string): Promise<void> => {
+  try {
+    const response = await fetch(`${ENDPOINTS.deleteEvent}/${eventId}`, {
+      method: 'DELETE',
+    });
+  
+    if (!response.ok) {
+      throw new Error(`Failed to delete event: ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error("Error, could not delete event:", error);
+    throw error;
+  }
+}
