@@ -160,6 +160,7 @@ export default function AdminEvent(props: RegCardProps) {
                       <div>
                         <label className="block text-sm font-medium text-gray-700">Email</label>
                         <input
+                        placeholder="e"
                           type="email"
                           value={registration.email}
                           onChange={(e) => handleInputChange(index, "email", e.target.value)}
