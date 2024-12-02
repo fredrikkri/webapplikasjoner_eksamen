@@ -12,10 +12,11 @@ export type Template = {
     available_slots: number;
     price: number;
     rules?: Rules;
+    template_id?: number;
 }
 
 export type TemplateBase = {
     id: string;
     event_id: string;
     private: string;
-  }
+}

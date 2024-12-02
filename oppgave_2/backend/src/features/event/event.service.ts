@@ -28,6 +28,10 @@ export const createEventService = (eventRepository: EventRepository) => {
         };
       };
 
+      const remove = async (id: string): Promise<Result<string>> => {
+        return eventRepository.remove(id);
+      };
+
       const getById = async (slug: string): Promise<Result<Event | undefined>> => {
         return eventRepository.getById(slug);
       };
@@ -92,7 +96,8 @@ export const createEventService = (eventRepository: EventRepository) => {
 return {
     list,
     getById,
-    create
+    create,
+    remove
   };
 };
 

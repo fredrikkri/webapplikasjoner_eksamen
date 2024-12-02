@@ -70,6 +70,7 @@ function SingleTemplate({ slug = "" }: TemplateProps) {
         available_slots={template.available_slots}
         price={template.price}
         rules={template.rules}
+        template_id={template.template_id}
       />
     </div>
   );
