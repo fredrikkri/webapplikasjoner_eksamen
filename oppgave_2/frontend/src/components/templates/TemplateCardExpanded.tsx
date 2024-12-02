@@ -151,11 +151,16 @@ export default function TemplateCardExpanded({
   return (
     <div className="bg-white rounded-xl shadow-lg p-8 border-l-4 border-indigo-500">
       <form onSubmit={(e) => handleSubmit(e, (e.nativeEvent as SubmitEvent).submitter?.getAttribute("value") as string)} className="space-y-6">
+      <div className="flex justify-between items-center border-b border-slate-200 pb-6">
         <div className="border-b border-slate-200 pb-6">
           <h2 className="text-2xl font-bold text-indigo-900">Mal for {title}</h2>
           <p className="mt-2 text-slate-600">Tilpass malen etter dine behov</p>
         </div>
-
+        <button
+          type="button"
+          className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-red-300"
+          >Slett mal</button>
+        </div>
         {(createEventError || createActiveEventError) && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
             <p>{createEventError?.message || createActiveEventError?.message}</p>
