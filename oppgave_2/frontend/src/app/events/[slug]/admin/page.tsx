@@ -13,12 +13,11 @@ export default function Admin() {
     const slug = params?.slug as string;
     const { event } = useEvent(slug);
     const { waitlist } = useWaitlist(slug)
-    const { registrationMembers } = useAllRegistrationsMembersByEventId(event?.id || "");
     return ( 
     <Home>
         <DeleteEvent event={event} />
         <AdminEvent event={event}/>
-        <RegCard event={event} waitlist={waitlist} registrationMembers={registrationMembers}/>
+        <RegCard event={event} waitlist={waitlist} />
     </Home>
       );
   }
