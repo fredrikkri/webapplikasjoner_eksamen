@@ -41,16 +41,14 @@ export default function EventCardExpanded({
   let totalSizeWaitlist = availableSlots;
 
   if(fetchedWaitlist){
-    let total = availableSlots;
-    const fetchWL = fetchedWaitlist.length
-    total = total-fetchWL
+    let total = totalSizeWaitlist-fetchedWaitlist.length;
+
     totalSizeWaitlist = total
     if(totalSizeWaitlist < 0){totalSizeWaitlist=0}
   }
   if(registrationMembers){
-    let total = availableSlots;
-    const fetchReg = registrationMembers.length
-    total = total-fetchReg
+    let total = totalSizeWaitlist-registrationMembers.length;
+
     totalSizeWaitlist = total
     if(totalSizeWaitlist < 0){totalSizeWaitlist=0}
   }

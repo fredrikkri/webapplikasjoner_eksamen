@@ -38,6 +38,7 @@ export const useCreateRegistration = () => {
     return { addRegistration, loading, error };
   };
 
+  // SRC: kilde: chatgpt.com  || med endringer /
   export const useAllRegistrations = () => {
     const [events, setEvents] = useState<RegistrationEventData[] | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -72,7 +73,7 @@ export const useCreateRegistration = () => {
     }
   };
 
-
+  // SRC: kilde: chatgpt.com  || med endringer /
   export const useAllRegistrationsMembersByEventId = (id: string | undefined) => {
     const [registrationMembers, setRegistrationMembers] = useState<RegistrationEventData[] | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -80,7 +81,7 @@ export const useCreateRegistration = () => {
   
     useEffect(() => {
       if (!id) {
-        setLoading(false); // If no ID, stop loading and return empty data
+        setLoading(false);
         return;
       }
   
@@ -97,7 +98,7 @@ export const useCreateRegistration = () => {
       };
   
       fetchEvents();
-    }, [id]); // Re-run the effect whenever `id` changes
+    }, [id]);
   
     return { registrationMembers, loading, error };
   };
