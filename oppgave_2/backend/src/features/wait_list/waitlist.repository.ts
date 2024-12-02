@@ -1,6 +1,6 @@
 import { Result } from "@/types";
 import db, { DB } from "../db";
-import { CreateRegistration, Registration } from "../../types/registration";
+import { CreateRegistration, Registration, RegistrationEvent } from "../../types/registration";
 import { toDb } from "./waitlist.mapper";
 
 export const createWaitlistRepository = (db: DB) => {
@@ -161,7 +161,7 @@ export const createWaitlistRepository = (db: DB) => {
         try {
       const event = db.prepare("SELECT id FROM events WHERE slug = ? LIMIT 1").get(data.event_id);
       const eventId: string = (event as { id: string }).id;
-      const e: Registration = { ...data, event_id: eventId }
+      const e: RegistrationEvent = { ...data, event_id: eventId }
 
 
           const registration = toDb(e);
