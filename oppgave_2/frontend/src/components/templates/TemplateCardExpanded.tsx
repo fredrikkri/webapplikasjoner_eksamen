@@ -194,8 +194,6 @@ export default function TemplateCardExpanded({
           <h2 className="text-2xl font-bold text-indigo-900">Mal for {title}</h2>
           <p className="mt-2 text-slate-600">Tilpass malen etter dine behov</p>
         </div>
-
-        <DeleteTemplate templateId={id}/>
       </div>
 
         <div className="space-y-6">
@@ -392,6 +390,7 @@ export default function TemplateCardExpanded({
         )}
 
         <div className="flex gap-4 pt-6 border-t border-slate-200">
+          <DeleteTemplate templateId={id}/>
           <button
             name="action"
             value="editEvent"
