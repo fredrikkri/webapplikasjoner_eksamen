@@ -16,9 +16,8 @@ export default function DeleteEvent(props: RegCardProps) {
       setError(null);
 
       try {
-        console.log("yoyoyoyoy: ",props.event.id)
         await deleteEvent(props.event.id);
-        alert('Event deleted successfully');
+        window.location.href = '/events';
       } catch (err) {
         setError("Error deleting event: " + (err instanceof Error ? err.message : 'Unknown error'));
       } finally {
