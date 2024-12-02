@@ -76,3 +76,16 @@ export const createRegistration = async (data: RegistrationEventData[]): Promise
     }
   };
   
+  export const getAllRegisteredMembers = async (id: string): Promise<RegistrationEventData[]> => {
+    const response = await fetch(ENDPOINTS.getRegisteredMembers(id));
+    if (!response.ok) {
+      throw new Error("Failed to fetch events");
+    }
+  
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.error.message || "Failed to fetch events");
+    }
+  
+    return result.data as RegistrationEventData[];
+  };

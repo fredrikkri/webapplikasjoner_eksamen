@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Registration, RegistrationEventData  } from "../types/Registration";
-import {  createRegistration, createRegistrationById, deleteRegistration, getAllEventsRegistrations } from "../lib/services/registrations";
+import {  createRegistration, createRegistrationById, deleteRegistration, getAllEventsRegistrations, getAllRegisteredMembers } from "../lib/services/registrations";
 
 export const useCreateRegistration = () => {
     const [loading, setLoading] = useState<boolean>(false);
@@ -61,6 +61,7 @@ export const useCreateRegistration = () => {
   
     return { events, loading, error };
   };
+
   export const deleteRegistrationById = async (registrationId: string) => {
     try {
       const isDeleted = await deleteRegistration(registrationId);
@@ -69,4 +70,29 @@ export const useCreateRegistration = () => {
       console.error("Error during deletion:", err);
       throw err;
     }
+  };
+
+
+  export const useAllRegistrationsMembersByEventId = (id: string) => {
+    const [registrationMembers, setregistrationMembers] = useState<RegistrationEventData[] | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<Error | null>(null);
+  
+    useEffect(() => {
+      const fetchEvents = async () => {
+        try {
+          setLoading(true);
+          const eventdata = await getAllRegisteredMembers(id);
+          setregistrationMembers(eventdata as unknown as RegistrationEventData[]);
+        } catch (err) {
+          setError(err instanceof Error ? err : new Error('An error occurred while fetching all events'));
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchEvents();
+    }, []);
+  
+    return { registrationMembers, loading, error };
   };
