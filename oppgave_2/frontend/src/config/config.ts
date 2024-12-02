@@ -1,6 +1,7 @@
 import DownloadExcel from "@/components/DownloadeExcel";
 
 export const BASE_URL = "http://localhost:3999/api/v1";
+export const BASE_WEB = "http://localhost:4000/events/";
 
 export const ENDPOINTS = {
   add: `${BASE_URL}/add`,

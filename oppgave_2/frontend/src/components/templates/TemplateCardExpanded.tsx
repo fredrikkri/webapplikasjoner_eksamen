@@ -5,7 +5,7 @@ import { onAddTemplate } from "@/lib/services/templates";
 import { useCreateEvent } from "@/hooks/useEvent";
 import { useRouter } from "next/navigation";
 import { Rules } from "@/types/Rules";
-import { BASE_URL, ENDPOINTS } from "@/config/config";
+import { BASE_URL, BASE_WEB, ENDPOINTS } from "@/config/config";
 
 type TemplateCardProps = {
   id: string;
@@ -296,6 +296,7 @@ export default function TemplateCardExpanded({
                   <p className="text-sm text-slate-500">Kun for inviterte deltakere</p>
                 </div>
                 <select
+                title="e"
                   name="rules.is_private"
                   value={eventData.rules?.is_private || "false"}
                   onChange={handleChange}
@@ -312,6 +313,7 @@ export default function TemplateCardExpanded({
                   <p className="text-sm text-slate-500">Deltakere kan melde seg på flere arrangementer på samme dato</p>
                 </div>
                 <select
+                title="e"
                   name="rules.allow_multiple_events_same_day"
                   value={eventData.rules?.allow_multiple_events_same_day || "true"}
                   onChange={handleChange}
@@ -328,6 +330,7 @@ export default function TemplateCardExpanded({
                   <p className="text-sm text-slate-500">Tillat påmelding til venteliste når arrangementet er fullt</p>
                 </div>
                 <select
+                title="e"
                   name="rules.waitlist"
                   value={eventData.rules?.waitlist || "true"}
                   onChange={handleChange}
@@ -371,6 +374,7 @@ export default function TemplateCardExpanded({
                             }}
                           >
                             <input
+                            title="e"
                               type="checkbox"
                               checked={selectedDays.includes(day)}
                               onChange={() => {}}
@@ -393,6 +397,7 @@ export default function TemplateCardExpanded({
             <label className="text-sm font-medium text-slate-700">Custom URL</label>
               <div className="flex items-center gap-2 mt-1">
       <input
+      placeholder="e"
         type="text"
         value={`http://localhost:4000/events/${eventData.slug || "slug-not-available"}`}
         readOnly
@@ -400,7 +405,7 @@ export default function TemplateCardExpanded({
       />
       <button
         type="button"
-        onClick={() => navigator.clipboard.writeText(`${BASE_URL}${eventData.slug || "slug-not-available"}`)}
+        onClick={() => navigator.clipboard.writeText(`${BASE_WEB}${eventData.slug || "slug-not-available"}`)}
         className="px-3 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200"
       >
         Copy
