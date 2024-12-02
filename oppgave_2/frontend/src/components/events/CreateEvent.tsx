@@ -449,8 +449,22 @@ const CreateEvent: React.FC = () => {
             name="action"
             value="addTemplate"
             type="submit"
-            className="w-2/5 bg-indigo-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition duration-200 shadow-sm"
+            className="w-2/5 flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-4 px-6 rounded-lg shadow-md transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2 transform hover:-translate-y-0.5 active:translate-y-0"
           >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
             Lagre som mal
           </button>
 
@@ -458,8 +472,22 @@ const CreateEvent: React.FC = () => {
             name="action"
             value="addEvent"
             type="submit"
-            className="w-3/5 bg-teal-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition duration-200 shadow-sm"
+            className="w-3/5 flex items-center justify-center bg-teal-600 hover:bg-teal-500 text-white font-semibold py-4 px-6 rounded-lg shadow-md transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-teal-300 focus:ring-offset-2 transform hover:-translate-y-0.5 active:translate-y-0"
           >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
             Opprett Event
           </button>
         </div>
