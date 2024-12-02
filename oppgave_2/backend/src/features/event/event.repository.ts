@@ -174,17 +174,17 @@ export const createEventRepository = (db: DB) => {
           data: result,
         };
       } catch (error) {
-        if (error instanceof Error && error.message === "Course not found") {
+        if (error instanceof Error && error.message === "Event not found") {
           return {
             success: false as const,
-            error: { code: "NOT_FOUND", message: "Course not found" },
+            error: { code: "NOT_FOUND", message: "Event not found" },
           };
         }
         return {
           success: false as const,
           error: {
             code: "INTERNAL_SERVER_ERROR",
-            message: "Error deleting course",
+            message: "Error deleting event",
           },
         };
       }

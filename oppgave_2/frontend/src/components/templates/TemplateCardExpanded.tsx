@@ -8,6 +8,7 @@ import { BASE_WEB } from "@/config/config";
 import { applyRules } from "@/lib/services/rules";
 import RuleItem from "./RuleItem";
 import { useCreateActiveEvent } from "@/hooks/useActiveEvent";
+import DeleteTemplate from "./DeleteTemplate";
 
 type TemplateCardProps = {
   id: string;
@@ -156,10 +157,9 @@ export default function TemplateCardExpanded({
           <h2 className="text-2xl font-bold text-indigo-900">Mal for {title}</h2>
           <p className="mt-2 text-slate-600">Tilpass malen etter dine behov</p>
         </div>
-        <button
-          type="button"
-          className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-red-300"
-          >Slett mal</button>
+
+        <DeleteTemplate templateId={id}/>
+
         </div>
         {(createEventError || createActiveEventError) && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">

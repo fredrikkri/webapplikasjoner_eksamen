@@ -17,6 +17,10 @@ export const createTemplateService = (templateRepository: TemplateRepository) =>
         };
       };
 
+      const remove = async (id: string): Promise<Result<string>> => {
+        return templateRepository.remove(id);
+      };
+
       const create = async (data: TemplateCreate): Promise<Result<string>> => {
         console.log("creat service: \n", data.event_id)
         const registration = createTemplate(data);
@@ -54,7 +58,7 @@ export const createTemplateService = (templateRepository: TemplateRepository) =>
       };
       
 
-return { list, create, getTemplatesByEventSlug };
+return { list, create, getTemplatesByEventSlug, remove };
 };
 
 export const templateService = createTemplateService(templateRepository);

@@ -43,6 +43,30 @@ export const createTemplateController = (templateService: TemplateService) => {
         return c.json(result);
       });
 
+      app.delete("/delete-template/:eventId", async (c) => {
+        try {
+          const eventId = c.req.param("eventId");
+          console.log("eventId: ",eventId)
+          const result = await templateService.remove(eventId);
+          
+          if (!result.success) {
+            return errorResponse(
+              c,
+              result.error.code as ErrorCode,
+              result.error.message
+            );
+          }
+          return c.json(result, {status: 200});
+        } catch (error) {
+          console.error('Error in template deletion:', error);
+          return errorResponse(
+            c,
+            'INTERNAL_SERVER_ERROR',
+            error instanceof Error ? error.message : 'Failed to delete template'
+          );
+        }
+      });
+
     return app;
 }
 

@@ -10,6 +10,7 @@ export const ENDPOINTS = {
   templates: `${BASE_URL}/templates`,
   create: `${BASE_URL}/create`,
   deleteEvent: (eventId: string) => `${BASE_URL}/delete-event/${eventId}`,
+  deleteTemplate: (eventId: string) => `${BASE_URL}/delete-template/${eventId}`,
   createRegistration: `${BASE_URL}/registrer`,
   createRegistrationById: `${BASE_URL}/registrerWishlist`,
   createWaitlistRegistration: `${BASE_URL}/waitlist-registrer`,
