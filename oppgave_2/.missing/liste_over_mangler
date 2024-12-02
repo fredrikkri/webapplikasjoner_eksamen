@@ -5,9 +5,9 @@
     *** [DONE] Gratis - sette feltet for pris til 0, og at det ikke kan endres
     *** [DONE]Fast pris - sette feltet for pris til prisen som malen har, og at den ikke kan endres
     *** [DONE] Antall plasser - ikke tillate endring i antall plasser
-    *** Venteliste - (Tobias work in progress) Bestemme om et arrangement kan ha venteliste eller ikke
+    *** [DONE] Venteliste - Bestemme om et arrangement kan ha venteliste eller ikke
     *** [DONE] Faste dager - Gjør så man kun kan velge dagene i dateselector dersom det er restricted days og fjerne denne reglen fra malsiden
-    *** Arrangementer samme dag - Ikke tillate å starte et arrangement med en mal som allerede er blitt brukt til å lage et arrangement
+    *** [DONE]Arrangementer samme dag - Ikke tillate å starte et arrangement med en mal som allerede er blitt brukt til å lage et arrangement
 
     Skjema
 
@@ -24,5 +24,5 @@
 - Funksjonalitet
     - Skal kunne endre data på et arrangement etter opprettelse. Regler må ivaretas.
     - [DONE] Skal kunne slette et arrangement.
-    - Skal kunne slette en mal (Fredrik work in progress).
+    - [DONE] Skal kunne slette en mal.
     - Skal kunne endre en mal.
