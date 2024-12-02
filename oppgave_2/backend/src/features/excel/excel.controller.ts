@@ -2,7 +2,7 @@ import { registrationService } from "./excel.service";
 import ExcelJS from "exceljs";
 import { Hono } from "hono";
 
-// SRC: kilde: chatgpt.com /
+// SRC: kilde: chatgpt.com / med endringer
 export const createExcelController = () => {
   const app = new Hono();
 
@@ -16,23 +16,26 @@ export const createExcelController = () => {
       const worksheet = workbook.addWorksheet("Registrations");
 
       worksheet.columns = [
-        { header: "Year", key: "year", width: 10 },
-        { header: "Event Title", key: "event_title", width: 25 },
-        { header: "Location", key: "location", width: 20 },
+        { header: "Registration Date", key: "registration_date", width: 20 },
+        { header: "Booking Id", key: "id", width: 40 },
+        { header: "Event Id", key: "event_id", width: 40 },
+        { header: "Event Title", key: "event_title", width: 40 },
+        { header: "Event Location", key: "location", width: 25 },
         { header: "Email", key: "email", width: 30 },
         { header: "Has Paid", key: "has_paid", width: 10 },
-        { header: "Registration Date", key: "registration_date", width: 20 },
+        
       ];
 
       Object.entries(groupedByYear).forEach(([year, registrations]) => {
         (registrations as any[]).forEach((reg) => {
           worksheet.addRow({
-            year: parseInt(year, 10),
+            registration_date: reg.registration_date,
+            id: reg.id,
+            event_id: reg.event_id,
             event_title: reg.event_title,
             location: reg.event_location,
             email: reg.email,
             has_paid: reg.has_paid,
-            registration_date: reg.registration_date,
           });
         });
       });

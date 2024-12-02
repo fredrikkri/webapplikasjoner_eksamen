@@ -107,18 +107,21 @@
   ],
   "registrations": [
     {
+      "id": "1-abc",
       "event_id": "event-1",
       "email": "john.doe@example.com",
       "has_paid": "true",
       "registration_date": "2024-11-01"
     },
     {
+      "id": "2-abc",
       "event_id": "event-2",
       "email": "jane.smith@example.com",
       "has_paid": "false",
       "registration_date": "2024-11-05"
     },
     {
+      "id": "3-abc",
       "event_id": "event-3",
       "email": "john.doe@example.com",
       "has_paid": "false",

@@ -1,8 +1,8 @@
 import ExcelJS from "exceljs";
-import { ExcelRegistrationEvent } from "../../types/excel";
+import { RegistrationWithEventByYear } from "../../types/excel";
 
 export const generateExcelFile = async (
-  registrations: ExcelRegistrationEvent[],
+  registrations: RegistrationWithEventByYear[],
   totalRegistrationsPerYear: { year: number, count: number }[],
   newRegistrationsLastMonth: number
 ): Promise<Buffer> => {
