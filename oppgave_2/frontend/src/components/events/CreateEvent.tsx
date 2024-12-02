@@ -6,6 +6,7 @@ import { useCreateEvent } from "../../hooks/useEvent";
 import { onAddTemplate } from "../../lib/services/templates";
 import { onAddActiveEvent } from "../../lib/services/activeEvents";
 import { Rules } from "../../types/Rules";
+import { applyRules } from "../../lib/services/rules";
 
 // SRC: kilde: chatgpt.com  / med endringer
 const CreateEvent: React.FC = () => {
@@ -36,6 +37,8 @@ const CreateEvent: React.FC = () => {
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const daysOfWeek = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag'];
 
+  const rules = applyRules(eventData.rules!);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -46,6 +49,15 @@ const CreateEvent: React.FC = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (eventData.rules?.is_free === "true") {
+      setEventData(prev => ({
+        ...prev,
+        price: 0
+      }));
+    }
+  }, [eventData.rules?.is_free]);
 
   const { addEvent, loading, error } = useCreateEvent();
 
@@ -78,11 +90,18 @@ const CreateEvent: React.FC = () => {
       setEventData((prevData) => ({
         ...prevData,
         [name]: name === "total_slots" || name === "available_slots" || name === "price" 
-          ? Number(value) 
+          ? Number(value)
           : value,
         slug: name === "title" ? generateSlug(value) : prevData.slug,
         available_slots: name === "available_slots" ? 0 : prevData.total_slots,
       }));
+    }
+  };
+
+  const handleNumberInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const input = e.currentTarget;
+    if (input.value === "0") {
+      input.value = "";
     }
   };
 
@@ -130,6 +149,15 @@ const CreateEvent: React.FC = () => {
     } catch (error) {
       console.error("Error handling submit:", error);
     }
+  };
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const date = new Date(e.target.value);
+    if (!rules.isDateAllowed(date)) {
+      alert('Denne datoen er ikke tillatt basert på valgte restriksjoner.');
+      return;
+    }
+    handleChange(e);
   };
 
   const inputClasses = "mt-2 block w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition duration-200";
@@ -183,7 +211,7 @@ const CreateEvent: React.FC = () => {
                   type="date"
                   name="date"
                   value={eventData.date || ""}
-                  onChange={handleChange}
+                  onChange={handleDateChange}
                   className={inputClasses}
                   required
                 />
@@ -236,11 +264,13 @@ const CreateEvent: React.FC = () => {
                 <input
                   type="number"
                   name="total_slots"
-                  value={eventData.total_slots || 0}
+                  value={eventData.total_slots}
                   onChange={handleChange}
+                  onKeyDown={handleNumberInput}
                   className={inputClasses}
                   required
                   min="0"
+                  disabled={rules.shouldDisableSize}
                 />
               </label>
             </div>
@@ -251,11 +281,13 @@ const CreateEvent: React.FC = () => {
                 <input
                   type="number"
                   name="price"
-                  value={eventData.price || 0}
+                  value={eventData.price}
                   onChange={handleChange}
+                  onKeyDown={handleNumberInput}
                   className={inputClasses}
                   required
                   min="0"
+                  disabled={rules.shouldDisablePrice}
                 />
               </label>
             </div>
@@ -365,7 +397,7 @@ const CreateEvent: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <label className="text-sm font-medium text-slate-700">Begrensede dager</label>
-                  <p className="text-sm text-slate-500">Velg dager hvor påmelding ikke er tillatt</p>
+                  <p className="text-sm text-slate-500">Velg tillatte dager for arrangementet</p>
                 </div>
                 <div className="relative" ref={dropdownRef}>
                   <button
