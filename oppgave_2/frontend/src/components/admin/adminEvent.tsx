@@ -4,6 +4,7 @@ import { Event } from "@/types/Event";
 import { Registration, RegistrationEventData } from "@/types/Registration";
 import crypto from "crypto"; // If you're using Node.js for crypto (otherwise skip this line)
 import { createId } from "@/util/utils";
+import { getWaitListByEventId } from "@/hooks/useWaitlistRegistration";
 
 interface RegCardProps {
   event: Event | null;
@@ -16,6 +17,10 @@ export default function AdminEvent(props: RegCardProps) {
   const [openForm, setOpenForm] = useState(false);
   const [newRegistrations, setNewRegistrations] = useState<{ email: string }[]>([]);
   const { addRegistration } = useCreateRegistration();
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
+
+  let totalSpace = 0;
 
 
   if (!event) {
@@ -34,12 +39,20 @@ export default function AdminEvent(props: RegCardProps) {
     (registration) => registration.event_id === event.id
   );
 
+  if(filteredRegistrations && event){
+    totalSpace = event?.available_slots-filteredRegistrations?.length
+  }
+
   const toggleDropdown = () => {
     setOpenDropdown((prev) => !prev);
   };
 
   const toggleForm = () => {
     setOpenForm((prev) => !prev);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
   };
 
   const handleAddRegistrationField = () => {
@@ -54,7 +67,7 @@ export default function AdminEvent(props: RegCardProps) {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const registrationData = newRegistrations.map(({ email }) => ({
         id: createId(),
         email,
@@ -63,6 +76,11 @@ export default function AdminEvent(props: RegCardProps) {
         has_paid: "false",
         order_id: createId()
     }));
+    if(totalSpace < registrationData.length){
+      setPopupMessage("Du har valgt for mange folk, det er kun "+totalSpace+ " ledige plass.");
+      setShowPopup(true);
+      return;
+    }
 
     console.log("Form submitted with new registrations:", registrationData);
     await addRegistration(registrationData)
@@ -139,6 +157,20 @@ export default function AdminEvent(props: RegCardProps) {
             </ul>
           )}
         </div>
+
+        {showPopup && (
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-xs">
+              <h3 className="text-lg font-semibold text-red-600">{popupMessage}</h3>
+              <button
+                onClick={handleClosePopup}
+                className="mt-4 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all duration-200"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Button to toggle new registration form */}
         <div className="mt-6">

@@ -25,13 +25,11 @@ export default function RegCard(props: RegCardProps) {
   );
   
 
-
   if(!loading && event && totalMem){
     if(registrationMembers){
       totalMem = totalMem-registrationMembers?.length
     }
   }
-
 
   // SRC: kilde: chatgpt.com  || med endringer /
   const handleSelectAll = () => {
@@ -79,7 +77,6 @@ export default function RegCard(props: RegCardProps) {
     for (let i = 0; i < selected.length; i++) {
       const selectedOrderId = selected[i].order_id;
 
-      // Filter out all items that have the same order_id
       const sameOrderRegistrations = fetchedWaitlist?.filter(
         (item) => item.order_id === selectedOrderId
       ) || [];
@@ -89,7 +86,7 @@ export default function RegCard(props: RegCardProps) {
     console.log("people: ", totalPeople)
 
     if (totalMem && totalMem < totalPeople || totalMem === 0 && event?.rules?.waitlist === "true") {
-      setPopupMessage("Du har valg for mange folk, det er kun "+totalMem+ " ledig plass. ");
+      setPopupMessage("Du har valgt for mange folk, det er kun "+totalMem+ " ledige plass. ");
       setShowPopup(true);
       return;
     }
