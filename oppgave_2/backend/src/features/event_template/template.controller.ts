@@ -73,6 +73,7 @@ export const createTemplateController = (templateService: TemplateService) => {
           const data = await c.req.json();
 
           const result = await templateService.edit(data);
+          console.log("Result endre mal hvis event basert på mal finnes: ", result)
           
           if (!result.success) {
             return errorResponse(

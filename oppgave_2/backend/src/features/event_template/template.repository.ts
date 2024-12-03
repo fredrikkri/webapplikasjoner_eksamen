@@ -130,6 +130,7 @@ export const createTemplateRepository = (db: DB) => {
   }
 };
 
+// SRC: kilde: chatgpt.com  || med endringer /
 const edit = async (data: EventWithRules): Promise<Result<string>> => {
   try {
     const templateExists = db.prepare("SELECT event_id FROM events_template WHERE event_id = ? LIMIT 1").get(data.rules.event_id);
@@ -155,7 +156,7 @@ const edit = async (data: EventWithRules): Promise<Result<string>> => {
       if (querry !== undefined) {
         return {
           success: true as const,
-          data: "Template not deleted: Event exists",
+          data: "Mal ble ikke endret fordi et arrangement allerede eksisterer med denne malen.",
         };
       }
   const updateEventQuery = db.prepare(`
@@ -197,7 +198,7 @@ const edit = async (data: EventWithRules): Promise<Result<string>> => {
 
   return {
     success: true as const,
-    data: `Template with ID ${data.id} updated successfully`,
+    data: `Vellykket oppdatering av malen med tittel: "${data.title}" `,
   };
 } catch (error) {
   console.error("Error updating template:", error);

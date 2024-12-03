@@ -102,21 +102,34 @@ export const deleteTemplate = async (eventId: string): Promise<void> => {
   }
 };
 
-export const editTemplate = async (eventData: Event): Promise<void> => {
+export const editTemplate = async (eventData: Event): Promise<{ success: boolean; data?: string; error?: string }> => {
   try {
     const response = await fetch(`${ENDPOINTS.editTemplate(eventData)}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(eventData)
+      body: JSON.stringify(eventData),
     });
-  
+
     if (!response.ok) {
-      throw new Error(`Failed to edit template: ${response.statusText}`);
+      const errorResponse = await response.json();
+      return {
+        success: false,
+        error: errorResponse?.message || `Failed to edit template: ${response.statusText}`,
+      };
     }
+
+    const result = await response.json();
+    return {
+      success: result.success || false,
+      data: result.data,
+    };
   } catch (error) {
     console.error("Error, could not edit template:", error);
-    throw error;
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error occurred.",
+    };
   }
 };
