@@ -109,6 +109,7 @@ export default function RegCard(props: RegCardProps) {
         console.error(`Error accepting registration:`, error);
       }
     }
+    window.history.go()
   };
   
 
@@ -122,6 +123,7 @@ export default function RegCard(props: RegCardProps) {
         console.error(`Error deleting registration ${registrationId}:`, error);
       }
     }
+    window.history.go()
   };
 
   // SRC: kilde: chatgpt.com /
@@ -216,7 +218,7 @@ export default function RegCard(props: RegCardProps) {
     </div>
 
     <div className="mt-4 text-sm text-slate-500">
-      <p>Plassene oppdateres i sanntid, og nye påmeldinger blir tilgjengelige etter hvert som de blir bekreftet.</p>
+      <p>Plassene oppdateres i sanntid, og nye påmeldinger blir tilgjengelige etter hvert som de blir registrert.</p>
     </div>
   </div>
 
