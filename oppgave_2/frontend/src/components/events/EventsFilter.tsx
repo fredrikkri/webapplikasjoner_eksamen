@@ -36,8 +36,8 @@ const EventsFilter = () => {
   return (
     <div className="w-full max-w-4xl mx-auto px-4">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Arrangementer</h1>
-        <p className="text-slate-600">Filtrer arrangementer etter dato og kategori</p>
+        <h1 className="text-3xl font-bold text-teal-900 mb-2">Arrangementer</h1>
+        <p className="text-teal-600">Filtrer arrangementer etter dato og kategori</p>
       </div>
 
       <div className="bg-white rounded-xl shadow-lg p-6 mb-8 space-y-6">

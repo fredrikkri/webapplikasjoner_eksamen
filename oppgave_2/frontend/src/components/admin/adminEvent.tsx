@@ -165,6 +165,10 @@ export default function AdminEvent(props: RegCardProps) {
   // SRC: kilde: chatgpt.com  / Tailwind er laget med gpt
   return (
     <article className="p-6 space-y-8">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold text-blue-900">Administrering</h2>
+        <p className="mt-2 text-blue-600">Her kan du håndtere påmeldinger og arrangement</p>
+      </div>
       <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
         <div className="p-6 bg-gradient-to-r from-blue-500 to-blue-600">
           <h2 className="text-2xl font-bold text-white mb-2">{event.title}</h2>

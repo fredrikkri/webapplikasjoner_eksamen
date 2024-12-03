@@ -188,8 +188,8 @@ const CreateEvent: React.FC = () => {
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg">
       <form onSubmit={(e) => handleSubmit(e, (e.nativeEvent as SubmitEvent).submitter?.getAttribute("value") as string)} className="space-y-6">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-slate-900">Opprett et nytt arrangement</h2>
-          <p className="mt-2 text-slate-600">Fyll ut skjemaet under for å opprette et nytt arrangement</p>
+          <h2 className="text-3xl font-bold text-teal-900">Opprett et nytt arrangement</h2>
+          <p className="mt-2 text-teal-600">Fyll ut skjemaet under for å opprette et nytt arrangement</p>
         </div>
 
         <div className="space-y-6">
