@@ -1,8 +1,6 @@
 # Documentation oppg2
 
-## 1. Skal lage enkle low-fi skisse basert på kravene over.
-
-## 2. Skal dokumentere hvilke api-endepunkter (ressurser) som skal brukes.
+## Skal dokumentere hvilke api-endepunkter (ressurser) som skal brukes.
 
 ### Events
 
@@ -529,7 +527,7 @@ ellers:
   }
 }
 
-## 5. Skal dokumentere hvilke sider (urler) som skal benytte de ulike APIene og grovt hva som kan gjøres på den enkelte siden. Hvilke sider i "app" skal opprettes og grovt hva som kan gjøres på de ulike sidene.
+## Skal dokumentere hvilke sider (urler) som skal benytte de ulike APIene og grovt hva som kan gjøres på den enkelte siden. Hvilke sider i "app" skal opprettes og grovt hva som kan gjøres på de ulike sidene.
 
 **/events**
 
@@ -604,7 +602,7 @@ Hva man kan gjøre på siden:
 - api/v1/templates/add
     - oppretter en ny mal
 
-## 6. Skal dokumentere hvordan filtreringen skal foregå og løses i frontend og backend.
+## Skal dokumentere hvordan filtreringen skal foregå og løses i frontend og backend.
 
 ### Filtrering på eventer
 Dette gjøres i frontend. Vi henter inn alle aktive eventer med et customHook i frontend. Vi sender med hvilken måned, år, eller kategori som er valgt inn i komponentet "ListEvents". Hvis det er valgt noe som ønskes å filtrere vekk, så filtrerer den vekk eventer som inneholder noe som ønskes å filtreres vekk.
@@ -616,11 +614,11 @@ Et eksempel er når vi ønsker å finne en bestemt template. Da henter vi alle r
 ### Filtrering i excel dokument
 Vi valgte å gjøre filtrering direkte i excel dokumentet. Man kan trykke på rute A1 i "Registrations-worksheet". Da vil du få muligheten til å velge hvilke påmeldinger for hvilket år som skal vises. Dette ble gjort i backend i excel.controller laget. Når Worksheet blir opprettet, så sørger vi for at dropdownmeny med filtrering er muliggjort på celle A1 der "year" er plassert.
 
-## 7. Skal dokumentere datamodellen og bakgrunnen for denne modellen.
+## Skal dokumentere datamodellen og bakgrunnen for denne modellen.
 Vi har et table som heter event, denne blir aldri direkte rendret. Vi bruker "mellomtablene" som heter events_active og events_template som da har en ref til events tablet. Dette gjør det lett å hente data og kategorisere ulike typer arrangementer.
 
-## 8. Skal dokumentere hvordan løse det å opprette / gjenbruke en mal.
+## Skal dokumentere hvordan løse det å opprette / gjenbruke en mal.
 Hver gang vi velger å gjenbruke en mal så genererer vi en ny id bak tittelen, som da er "slug", som da er en unik verdi. vi genererer også nye id'er til set arrangement.
 Ved hjelp av events_template kan vi lett hente ut data fra events tablet. Hvis vi velger en mal så henter vi ut dataen fra events og genererer nye id'er til set informasjon ved opprettelse.
 
-## 9. Skal dokumentere databasemodellen og nødvendige relasjoner.
+## Skal dokumentere databasemodellen og nødvendige relasjoner.
