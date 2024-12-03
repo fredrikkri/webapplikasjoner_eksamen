@@ -1,7 +1,7 @@
 import { Query } from "@/lib/query";
 import { templateRepository, TemplateRepository } from "./template.repository";
 import { Result } from "@/types";
-import { Event } from "@/types/event";
+import { Event, EventWithRules } from "@/types/event";
 import { createTemplate, createTemplateResponse } from "./template.mapper";
 import { TemplateCreate, validateTemplateCreate } from "../../types/template";
 
@@ -19,6 +19,10 @@ export const createTemplateService = (templateRepository: TemplateRepository) =>
 
       const remove = async (id: string): Promise<Result<string>> => {
         return templateRepository.remove(id);
+      };
+
+      const edit = async (data: EventWithRules): Promise<Result<string>> => {
+        return templateRepository.edit(data);
       };
 
       const create = async (data: TemplateCreate): Promise<Result<string>> => {
@@ -58,7 +62,7 @@ export const createTemplateService = (templateRepository: TemplateRepository) =>
       };
       
 
-return { list, create, getTemplatesByEventSlug, remove };
+return { list, create, getTemplatesByEventSlug, remove, edit };
 };
 
 export const templateService = createTemplateService(templateRepository);

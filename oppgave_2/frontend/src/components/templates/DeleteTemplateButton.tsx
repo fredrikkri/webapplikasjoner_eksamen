@@ -6,7 +6,7 @@ interface TemplateProps {
   templateId: string;
 }
 
-export default function DeleteTemplate(props: TemplateProps) {
+export default function DeleteTemplateButton(props: TemplateProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null); 
 
