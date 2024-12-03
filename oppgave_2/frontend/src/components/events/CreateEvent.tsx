@@ -493,20 +493,21 @@ const CreateEvent: React.FC = () => {
                   {isDropdownOpen && (
                     <div className="absolute right-0 mt-1 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-10">
                       <div className="py-1">
-                        {daysOfWeek.map((day) => (
+                      {daysOfWeek.map((day) => (
                           <div
                             key={day}
                             className="flex items-center px-4 py-2 hover:bg-slate-50 cursor-pointer"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleDayToggle(day);
-                            }}
+                            onClick={() => handleDayToggle(day)}
                           >
                             <input
                               type="checkbox"
                               checked={selectedDays.includes(day)}
-                              onChange={() => {}}
-                              className="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
+                              readOnly
+                              className={`h-4 w-4 rounded border-gray-300 ${
+                                selectedDays.includes(day)
+                                  ? 'bg-teal-600 border-teal-600'
+                                  : 'bg-white'
+                              } cursor-pointer`}
                             />
                             <span className="ml-3 text-sm text-gray-700">{day}</span>
                           </div>
