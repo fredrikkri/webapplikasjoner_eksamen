@@ -11,6 +11,7 @@ import { useCreateActiveEvent } from "@/hooks/useActiveEvent";
 import DeleteTemplateButton from "./DeleteTemplateButton";
 import { checkExistingActiveEvents } from "@/lib/services/activeEvents";
 import EditTemplateButton from "./EditTemplateButton";
+import { validateEventData, hasValidationErrors } from "../../util/validation";
 
 type TemplateCardProps = {
   id: string;
@@ -73,6 +74,7 @@ export default function TemplateCardExpanded({
     }
   });
 
+  const [validationErrors, setValidationErrors] = useState<Record<string, string | null>>({});
   const [error, setError] = useState<string | null>(null);
   const rules = applyRules(initialRules || eventData.rules!);
   const { addEvent, loading: createEventLoading, error: createEventError } = useCreateEvent();
@@ -92,6 +94,13 @@ export default function TemplateCardExpanded({
       slug: name === "title" ? generateSlug(value) : prevData.slug,
       available_slots: name === "available_slots" ? 0 : prevData.total_slots,
     }));
+
+    if (validationErrors[name]) {
+      setValidationErrors(prev => ({
+        ...prev,
+        [name]: null
+      }));
+    }
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,6 +122,13 @@ export default function TemplateCardExpanded({
   const handleSubmit = async (e: FormEvent<HTMLFormElement>, action: string) => {
     e.preventDefault();
     setError(null);
+
+    const validationResults = validateEventData(eventData);
+    setValidationErrors(validationResults);
+
+    if (hasValidationErrors(validationResults)) {
+      return;
+    }
 
     try {
       if (action === "addTemplate") {
@@ -171,6 +187,7 @@ export default function TemplateCardExpanded({
 
   const inputClasses = "mt-2 block w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition duration-200";
   const labelClasses = "block text-sm font-medium text-slate-700 mb-1";
+  const errorClasses = "text-red-500 text-sm mt-1";
 
   const getErrorMessage = () => {
     if (error) {
@@ -204,11 +221,12 @@ export default function TemplateCardExpanded({
                 name="title"
                 value={eventData.title || ""}
                 onChange={handleChange}
-                className={inputClasses}
+                className={`${inputClasses} ${validationErrors.title ? 'border-red-500' : ''}`}
                 required
                 placeholder="Skriv inn arrangementets tittel"
               />
             </label>
+            {validationErrors.title && <p className={errorClasses}>{validationErrors.title}</p>}
           </div>
 
           <div>
@@ -218,11 +236,12 @@ export default function TemplateCardExpanded({
                 name="description"
                 value={eventData.description || ""}
                 onChange={handleChange}
-                className={`${inputClasses} h-32 resize-none`}
+                className={`${inputClasses} h-32 resize-none ${validationErrors.description ? 'border-red-500' : ''}`}
                 required
                 placeholder="Beskriv arrangementet"
               />
             </label>
+            {validationErrors.description && <p className={errorClasses}>{validationErrors.description}</p>}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -234,10 +253,11 @@ export default function TemplateCardExpanded({
                   name="date"
                   value={eventData.date || ""}
                   onChange={handleDateChange}
-                  className={inputClasses}
+                  className={`${inputClasses} ${validationErrors.date ? 'border-red-500' : ''}`}
                   required
                 />
               </label>
+              {validationErrors.date && <p className={errorClasses}>{validationErrors.date}</p>}
             </div>
 
             <div>
@@ -248,11 +268,12 @@ export default function TemplateCardExpanded({
                   name="location"
                   value={eventData.location || ""}
                   onChange={handleChange}
-                  className={inputClasses}
+                  className={`${inputClasses} ${validationErrors.location ? 'border-red-500' : ''}`}
                   required
                   placeholder="Hvor skal arrangementet holdes?"
                 />
               </label>
+              {validationErrors.location && <p className={errorClasses}>{validationErrors.location}</p>}
             </div>
           </div>
 
@@ -263,7 +284,7 @@ export default function TemplateCardExpanded({
                 name="event_type"
                 value={eventData.event_type || event_type}
                 onChange={handleChange}
-                className={`${inputClasses} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:20px] bg-[right_0.5rem_center] bg-no-repeat pr-10`}
+                className={`${inputClasses} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:20px] bg-[right_0.5rem_center] bg-no-repeat pr-10 ${validationErrors.event_type ? 'border-red-500' : ''}`}
                 required
               >
                 <option value="">Ingen kategori</option>
@@ -277,6 +298,7 @@ export default function TemplateCardExpanded({
                 <option value="Kunngjøring">Kunngjøring</option>
               </select>
             </label>
+            {validationErrors.event_type && <p className={errorClasses}>{validationErrors.event_type}</p>}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -289,12 +311,13 @@ export default function TemplateCardExpanded({
                   value={eventData.total_slots}
                   onChange={handleChange}
                   onKeyDown={handleNumberInput}
-                  className={inputClasses}
+                  className={`${inputClasses} ${validationErrors.total_slots ? 'border-red-500' : ''}`}
                   required
                   min="0"
                   disabled={rules.shouldDisableSize}
                 />
               </label>
+              {validationErrors.total_slots && <p className={errorClasses}>{validationErrors.total_slots}</p>}
             </div>
 
             <div>
@@ -306,12 +329,13 @@ export default function TemplateCardExpanded({
                   value={eventData.price}
                   onChange={handleChange}
                   onKeyDown={handleNumberInput}
-                  className={inputClasses}
+                  className={`${inputClasses} ${validationErrors.price ? 'border-red-500' : ''}`}
                   required
                   min="0"
                   disabled={rules.shouldDisablePrice}
                 />
               </label>
+              {validationErrors.price && <p className={errorClasses}>{validationErrors.price}</p>}
             </div>
           </div>
           <div className="mt-8">
@@ -389,36 +413,35 @@ export default function TemplateCardExpanded({
         )}
 
         <div className="flex gap-4 pt-6 border-t border-slate-200">
-
           <DeleteTemplateButton templateId={id}/>
           
           <EditTemplateButton eventData={eventData}/>
 
           <button
-          name="action"
-          value="addEvent"
-          type="submit"
-          disabled={createEventLoading || createActiveEventLoading}
-          className="w-full flex items-center justify-center bg-teal-600 hover:bg-teal-400 text-white font-semibold py-4 px-6 rounded-lg shadow-md transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-300 focus:ring-offset-2 transform hover:scale-[1.02] active:scale-[0.98]"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 mr-2"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+            name="action"
+            value="addEvent"
+            type="submit"
+            disabled={createEventLoading || createActiveEventLoading}
+            className="w-full flex items-center justify-center bg-teal-600 hover:bg-teal-400 text-white font-semibold py-4 px-6 rounded-lg shadow-md transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-300 focus:ring-offset-2 transform hover:scale-[1.02] active:scale-[0.98]"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          {createActiveEventLoading ? 'Starter...' : 'Start Arrangement'}
-        </button>
-      </div>
-    </form>
-  </div>
-);
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            {createActiveEventLoading ? 'Starter...' : 'Start Arrangement'}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
 }
