@@ -1,3 +1,4 @@
+import { Event } from "@/types/Event";
 import { ENDPOINTS } from "../../config/config";
 import { Template } from "../../types/Template"
 import { getRulesByEventId } from "./rules";
@@ -98,6 +99,25 @@ export const deleteTemplate = async (eventId: string): Promise<void> => {
     }
   } catch (error) {
     console.error("Error, could not delete template:", error);
+    throw error;
+  }
+};
+
+export const editTemplate = async (eventData: Event): Promise<void> => {
+  try {
+    const response = await fetch(`${ENDPOINTS.editTemplate(eventData)}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(eventData)
+    });
+  
+    if (!response.ok) {
+      throw new Error(`Failed to edit template: ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error("Error, could not edit template:", error);
     throw error;
   }
 };

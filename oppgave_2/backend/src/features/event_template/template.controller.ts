@@ -67,6 +67,31 @@ export const createTemplateController = (templateService: TemplateService) => {
         }
       });
 
+      app.patch("/edit-template/:templateId", async (c) => {
+        try {
+          const templateId = c.req.param("templateId");
+          const data = await c.req.json();
+
+          const result = await templateService.edit(data);
+          
+          if (!result.success) {
+            return errorResponse(
+              c,
+              result.error.code as ErrorCode,
+              result.error.message
+            );
+          }
+          return c.json(result, {status: 200});
+        } catch (error) {
+          console.error('Error in template deletion:', error);
+          return errorResponse(
+            c,
+            'INTERNAL_SERVER_ERROR',
+            error instanceof Error ? error.message : 'Failed to edit template'
+          );
+        }
+      });
+
     return app;
 }
 
