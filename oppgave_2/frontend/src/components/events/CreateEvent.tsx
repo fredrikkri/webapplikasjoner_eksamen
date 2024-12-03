@@ -7,12 +7,14 @@ import { onAddTemplate } from "../../lib/services/templates";
 import { onAddActiveEvent } from "../../lib/services/activeEvents";
 import { Rules } from "../../types/Rules";
 import { applyRules } from "../../lib/services/rules";
+import { validateEventData, hasValidationErrors } from "../../util/validation";
 
 // SRC: kilde: chatgpt.com  / med endringer
 const CreateEvent: React.FC = () => {
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string | null>>({});
   const [eventData, setEventData] = useState<Omit<EventData, 'id'>>({
     title: '',
     description: '',
@@ -96,6 +98,13 @@ const CreateEvent: React.FC = () => {
         available_slots: name === "available_slots" ? 0 : prevData.total_slots,
       }));
     }
+
+    if (validationErrors[name]) {
+      setValidationErrors(prev => ({
+        ...prev,
+        [name]: null
+      }));
+    }
   };
 
   const handleNumberInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -126,6 +135,13 @@ const CreateEvent: React.FC = () => {
   // SRC: kilde: chatgpt.com  / med endringer
   const handleSubmit = async (e: FormEvent<HTMLFormElement>, action: string) => {
     e.preventDefault();
+
+    const validationResults = validateEventData(eventData);
+    setValidationErrors(validationResults);
+
+    if (hasValidationErrors(validationResults)) {
+      return;
+    }
 
     try {
       if (action === "addTemplate") {
@@ -163,6 +179,9 @@ const CreateEvent: React.FC = () => {
   const inputClasses = "mt-2 block w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition duration-200";
   const labelClasses = "block text-sm font-medium text-slate-700 mb-1";
   const selectClasses = "ml-3 block w-24 rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-teal-500 focus:outline-none focus:ring-teal-500 sm:text-sm";
+  const errorClasses = "text-red-500 text-sm mt-1";
+  const numberInputClasses = `${inputClasses} [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none relative pr-12`;
+  const dateInputClasses = `${inputClasses} cursor-pointer`;
 
   // SRC: kilde: chatgpt.com  / med endringer
   return (
@@ -182,11 +201,12 @@ const CreateEvent: React.FC = () => {
                 name="title"
                 value={eventData.title || ""}
                 onChange={handleChange}
-                className={inputClasses}
+                className={`${inputClasses} ${validationErrors.title ? 'border-red-500' : ''}`}
                 required
                 placeholder="Skriv inn arrangementets tittel"
               />
             </label>
+            {validationErrors.title && <p className={errorClasses}>{validationErrors.title}</p>}
           </div>
 
           <div>
@@ -196,26 +216,31 @@ const CreateEvent: React.FC = () => {
                 name="description"
                 value={eventData.description || ""}
                 onChange={handleChange}
-                className={`${inputClasses} h-32 resize-none`}
+                className={`${inputClasses} h-32 resize-none ${validationErrors.description ? 'border-red-500' : ''}`}
                 required
                 placeholder="Beskriv arrangementet"
               />
             </label>
+            {validationErrors.description && <p className={errorClasses}>{validationErrors.description}</p>}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className={labelClasses}>
                 Dato
-                <input
-                  type="date"
-                  name="date"
-                  value={eventData.date || ""}
-                  onChange={handleDateChange}
-                  className={inputClasses}
-                  required
-                />
+                <div className="relative" onClick={() => document.querySelector<HTMLInputElement>('input[name="date"]')?.showPicker()}>
+                  <input
+                    type="date"
+                    name="date"
+                    value={eventData.date}
+                    onChange={handleDateChange}
+                    className={`${dateInputClasses} ${validationErrors.date ? 'border-red-500' : ''}`}
+                    required
+                    lang="nb"
+                  />
+                </div>
               </label>
+              {validationErrors.date && <p className={errorClasses}>{validationErrors.date}</p>}
             </div>
 
             <div>
@@ -226,11 +251,12 @@ const CreateEvent: React.FC = () => {
                   name="location"
                   value={eventData.location || ""}
                   onChange={handleChange}
-                  className={inputClasses}
+                  className={`${inputClasses} ${validationErrors.location ? 'border-red-500' : ''}`}
                   required
                   placeholder="Hvor skal arrangementet holdes?"
                 />
               </label>
+              {validationErrors.location && <p className={errorClasses}>{validationErrors.location}</p>}
             </div>
           </div>
 
@@ -241,8 +267,7 @@ const CreateEvent: React.FC = () => {
                 name="event_type"
                 value={eventData.event_type || ""}
                 onChange={handleChange}
-                className={inputClasses}
-                required
+                className={`${inputClasses} ${validationErrors.event_type ? 'border-red-500' : ''}`}
               >
                 <option value="">Velg en kategori</option>
                 <option value="Seminar">Seminar</option>
@@ -255,41 +280,92 @@ const CreateEvent: React.FC = () => {
                 <option value="Kunngjøring">Kunngjøring</option>
               </select>
             </label>
+            {validationErrors.event_type && <p className={errorClasses}>{validationErrors.event_type}</p>}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className={labelClasses}>
                 Antall plasser
-                <input
-                  type="number"
-                  name="total_slots"
-                  value={eventData.total_slots}
-                  onChange={handleChange}
-                  onKeyDown={handleNumberInput}
-                  className={inputClasses}
-                  required
-                  min="0"
-                  disabled={rules.shouldDisableSize}
-                />
+                <div className="relative">
+                  <input
+                    type="number"
+                    name="total_slots"
+                    value={eventData.total_slots}
+                    onChange={handleChange}
+                    onKeyDown={handleNumberInput}
+                    className={`${numberInputClasses} ${validationErrors.total_slots ? 'border-red-500' : ''}`}
+                    required
+                    min="0"
+                    disabled={rules.shouldDisableSize}
+                  />
+                  <div className="absolute right-0 inset-y-0 flex flex-col border-l border-slate-300">
+                    <button
+                      type="button"
+                      onClick={() => handleChange({ target: { name: 'total_slots', value: String(eventData.total_slots + 1) } } as any)}
+                      className="flex-1 px-3 hover:bg-slate-50 flex items-center justify-center border-b border-slate-300 rounded-tr-lg"
+                      disabled={rules.shouldDisableSize}
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleChange({ target: { name: 'total_slots', value: String(Math.max(0, eventData.total_slots - 1)) } } as any)}
+                      className="flex-1 px-3 hover:bg-slate-50 flex items-center justify-center rounded-br-lg"
+                      disabled={rules.shouldDisableSize}
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </label>
+              {validationErrors.total_slots && <p className={errorClasses}>{validationErrors.total_slots}</p>}
             </div>
 
             <div>
               <label className={labelClasses}>
                 Pris (NOK)
-                <input
-                  type="number"
-                  name="price"
-                  value={eventData.price}
-                  onChange={handleChange}
-                  onKeyDown={handleNumberInput}
-                  className={inputClasses}
-                  required
-                  min="0"
-                  disabled={rules.shouldDisablePrice}
-                />
+                <div className="relative">
+                  <input
+                    type="number"
+                    name="price"
+                    value={eventData.price}
+                    onChange={handleChange}
+                    onKeyDown={handleNumberInput}
+                    className={`${numberInputClasses} ${validationErrors.price ? 'border-red-500' : ''}`}
+                    required
+                    min="0"
+                    disabled={rules.shouldDisablePrice}
+                  />
+                  <div className="absolute right-0 inset-y-0 flex flex-col border-l border-slate-300">
+                    <button
+                      type="button"
+                      onClick={() => handleChange({ target: { name: 'price', value: String(eventData.price + 1) } } as any)}
+                      className="flex-1 px-3 hover:bg-slate-50 flex items-center justify-center border-b border-slate-300 rounded-tr-lg"
+                      disabled={rules.shouldDisablePrice}
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleChange({ target: { name: 'price', value: String(Math.max(0, eventData.price - 1)) } } as any)}
+                      className="flex-1 px-3 hover:bg-slate-50 flex items-center justify-center rounded-br-lg"
+                      disabled={rules.shouldDisablePrice}
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </label>
+              {validationErrors.price && <p className={errorClasses}>{validationErrors.price}</p>}
             </div>
           </div>
 

@@ -25,3 +25,35 @@ export const ENDPOINTS = {
   getRegisteredMembers: (eventId: string) => `${BASE_URL}/registrations/${eventId}`,
   rules: (eventId: string) => `${BASE_URL}/rules/${eventId}`
 };
+
+export const VALIDATION = {
+  title: {
+    minLength: 3,
+    maxLength: 100
+  },
+  description: {
+    minLength: 10,
+    maxLength: 1000
+  },
+  location: {
+    minLength: 3,
+    maxLength: 100
+  },
+  totalSlots: {
+    min: 1,
+    max: 1000000
+  },
+  price: {
+    max: 100000
+  },
+  eventTypes: [
+    'Seminar',
+    'Webinar',
+    'Kurs',
+    'Konsert',
+    'Opplæring',
+    'Presentasjon',
+    'Forelesning',
+    'Kunngjøring'
+  ]
+} as const;
