@@ -1,4 +1,5 @@
 import DownloadExcel from "@/components/DownloadeExcel";
+import { Event } from "@/types/Event";
 
 export const BASE_URL = "http://localhost:3999/api/v1";
 export const BASE_WEB = "http://localhost:4000/events/";
@@ -11,6 +12,7 @@ export const ENDPOINTS = {
   create: `${BASE_URL}/create`,
   deleteEvent: (eventId: string) => `${BASE_URL}/delete-event/${eventId}`,
   deleteTemplate: (eventId: string) => `${BASE_URL}/delete-template/${eventId}`,
+  editTemplate: (eventData: Event) => `${BASE_URL}/edit-template/${eventData.id}`,
   createRegistration: `${BASE_URL}/registrer`,
   createRegistrationById: `${BASE_URL}/registrerWishlist`,
   createWaitlistRegistration: `${BASE_URL}/waitlist-registrer`,

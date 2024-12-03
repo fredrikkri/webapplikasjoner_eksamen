@@ -2,7 +2,7 @@ import { Result } from "@/types";
 import db, { DB } from "../db";
 import { toDb } from "./template.mapper";
 import { TemplateCreate } from "@/types/template";
-import { Event } from "@/types/event";
+import { Event, EventWithRules } from "@/types/event";
 import { TemplateIdRow } from "@/types/template";
 
 export const createTemplateRepository = (db: DB) => {
@@ -130,6 +130,71 @@ export const createTemplateRepository = (db: DB) => {
   }
 };
 
+const edit = async (data: EventWithRules): Promise<Result<string>> => {
+  try {
+    console.log("Update repository; ",data)
+  const templateExists = db.prepare("SELECT event_id FROM events_template WHERE event_id = ? LIMIT 1").get(data.rules.event_id);
+  if (!templateExists) {
+    console.log("No template found for given ID:", data.id);
+    return {
+      success: true as const,
+      data: "Could not edit template because it's not a template",
+    };
+  }
+  const updateEventQuery = db.prepare(`
+      UPDATE events
+      SET
+        title = ?,
+        description = ?,
+        slug = ?,
+        date = ?,
+        location = ?,
+        event_type = ?,
+        total_slots = ?,
+        price = ?
+      WHERE id = ?
+    `);
+
+  const result = updateEventQuery.run(
+    data.title,
+    data.description,
+    data.slug,
+    data.date,
+    data.location,
+    data.event_type,
+    data.total_slots,
+    data.price,
+    data.rules.event_id
+  );
+  console.log("Reslut of repo: ", result)
+
+  if (result.changes === 0) {
+    return {
+      success: false as const,
+      error: {
+        code: "NOT_FOUND",
+        message: "No matching event found to update",
+      },
+    };
+  }
+
+  return {
+    success: true as const,
+    data: `Template with ID ${data.id} updated successfully`,
+  };
+} catch (error) {
+  console.error("Error updating template:", error);
+
+  return {
+    success: false as const,
+    error: {
+      code: "INTERNAL_SERVER_ERROR",
+      message: "An error occurred while updating the template",
+    },
+  };
+}
+};
+
   
 
   // SRC: kilde: chatgpt.com  || med endringer /
@@ -166,7 +231,7 @@ export const createTemplateRepository = (db: DB) => {
     }
   };
 
-  return { list, create, getEventByTemplateSlug, remove }
+  return { list, create, getEventByTemplateSlug, remove, edit }
 }
 
 export const templateRepository = createTemplateRepository(db);
