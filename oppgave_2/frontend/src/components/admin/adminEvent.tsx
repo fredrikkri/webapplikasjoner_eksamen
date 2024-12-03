@@ -175,7 +175,7 @@ export default function AdminEvent(props: RegCardProps) {
           <p className="text-blue-50">{event.description}</p>
         </div>
 
-        <div className="p-4 border-b border-slate-200 flex space-x-2 justify-end">
+        <div className="border-b border-slate-200 flex space-x-2 justify-end">
           <EditEventButton event={event} />
           <DeleteEventButton event={event} />
         </div>

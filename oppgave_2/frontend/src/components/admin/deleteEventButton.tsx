@@ -30,7 +30,7 @@ export default function DeleteEventButton(props: RegCardProps) {
 
   return (
     <div className="relative">
-      <div className="flex items-center justify-end gap-4 p-5">
+      <div className="flex items-center justify-end gap-4 p-2">
         {error && (
           <div className="absolute top-0 left-0 right-0 -mt-2 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg shadow-md">
             <div className="flex items-center">
@@ -55,7 +55,7 @@ export default function DeleteEventButton(props: RegCardProps) {
             transition-all duration-200 shadow-sm
             ${isLoading 
               ? 'bg-slate-300 cursor-not-allowed' 
-              : 'bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2'
+              : 'bg-red-600 hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transform hover:scale-[1.02] active:scale-[0.98]'
             }
           `}
         >

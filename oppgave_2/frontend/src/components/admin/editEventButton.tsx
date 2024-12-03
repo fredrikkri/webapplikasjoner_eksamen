@@ -21,16 +21,16 @@ export default function EditEventButton({ event }: EditEventProps) {
   };
 
   return (
-    <div className="flex items-center justify-end gap-4 p-5">
+    <div className="flex items-center justify-end gap-4 p-2">
       <button
         onClick={handleEdit}
         disabled={isLoading}
         className={`
-          inline-flex items-center px-4 py-2 rounded-lg font-medium text-black
+          inline-flex items-center px-4 py-2 rounded-lg font-medium text-white
           transition-all duration-200 shadow-sm
           ${isLoading
-            ? "bg-yellow-300 cursor-not-allowed"
-            : "bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"}
+            ? "bg-amber-300 cursor-not-allowed"
+            : "bg-amber-500 hover:bg-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200 focus:ring-offset-2  transform hover:scale-[1.02] active:scale-[0.98]"}
         `}
       >
         {isLoading ? (
