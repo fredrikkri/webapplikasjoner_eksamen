@@ -153,6 +153,7 @@ export const createEventRepository = (db: DB) => {
         }
     };
 
+    // SRC: kilde: chatgpt.com  || med endringer /
     const remove = async (id: string): Promise<Result<string>> => {
       const db_transaction = db.transaction(() => {
         console.log("final id oiwfoirfeo: ",id)
@@ -190,7 +191,59 @@ export const createEventRepository = (db: DB) => {
       }
     };
 
-    return {list, getById, create, remove};
+    // SRC: kilde: chatgpt.com  || med endringer /
+    const updateAvailableSlots = async (eventId: string, newAvailableSlots: number): Promise<Result<string>> => {
+      try {
+        // Fetch the event based on the eventId to check if it exists
+        const event = db.prepare("SELECT * FROM events WHERE id = ? LIMIT 1").get(eventId);
+    
+        if (!event) {
+          return {
+            success: false as const,
+            error: {
+              code: "NOT_FOUND",
+              message: "No matching event found to update",
+            },
+          };
+        }
+    
+        const updateEventQuery = db.prepare(`
+          UPDATE events
+          SET available_slots = ?
+          WHERE id = ?
+        `);
+    
+        const result = updateEventQuery.run(newAvailableSlots, eventId);
+    
+        if (result.changes === 0) {
+          return {
+            success: false as const,
+            error: {
+              code: "NOT_FOUND",
+              message: "No matching event found to update",
+            },
+          };
+        }
+    
+        return {
+          success: true as const,
+          data: `Event with ID ${eventId} updated successfully. Available slots updated to ${newAvailableSlots}`,
+        };
+      } catch (error) {
+        console.error("Error updating available slots:", error);
+    
+        return {
+          success: false as const,
+          error: {
+            code: "INTERNAL_SERVER_ERROR",
+            message: "An error occurred while updating available slots",
+          },
+        };
+      }
+    };
+    
+
+    return {list, getById, create, remove, updateAvailableSlots};
 };
 
 export const eventRepository = createEventRepository(db);

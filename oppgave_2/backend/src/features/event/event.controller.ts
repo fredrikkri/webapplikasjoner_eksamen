@@ -69,6 +69,47 @@ export const createEventController = (EventService: any) => {
     }
   });
 
+  app.patch("/edit-event/:eventId/:newslots", async (c) => {
+    try {
+      // Extract eventId and newslots from route parameters
+      const eventId = c.req.param("eventId");
+      const newSlots = parseInt(c.req.param("newslots"), 10);
+  
+      // Validate newSlots to ensure it's a valid number
+      if (isNaN(newSlots) || newSlots < 0) {
+        return errorResponse(
+          c,
+          'BAD_REQUEST',
+          'Invalid value for new slots'
+        );
+      }
+  
+      // Call the service to update the available slots for the event
+      const result = await eventService.updateEventASlots(eventId, newSlots);
+  
+      // Check if the result was successful
+      if (!result.success) {
+        return errorResponse(
+          c,
+          result.error.code as ErrorCode,
+          result.error.message
+        );
+      }
+  
+      // Respond with the updated result
+      return c.json(result, { status: 200 });
+    } catch (error) {
+      console.error('Error in updating event:', error);
+      return errorResponse(
+        c,
+        'INTERNAL_SERVER_ERROR',
+        error instanceof Error ? error.message : 'Failed to update event'
+      );
+    }
+  });
+  
+  
+
   return app;
 }
 

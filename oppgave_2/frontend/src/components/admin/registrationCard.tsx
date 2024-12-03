@@ -4,6 +4,7 @@ import { Registration } from "@/types/Registration";
 import { useAllRegistrationsMembersByEventId, useCreateRegistrationById } from "@/hooks/useRegistration";
 import { deleteWaitlistRegistration } from "@/lib/services/waitlistRegistrations";
 import { getWaitListByEventId } from "@/hooks/useWaitlistRegistration";
+import { updateAvailableSlots } from "@/lib/services/events";
 
 interface RegCardProps {
   event: Event | null;
@@ -18,18 +19,15 @@ export default function RegCard(props: RegCardProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
-  let totalMem = event?.available_slots;
+  const [totalMem, setTotalMem] = useState(0)
 
-  const { registrationMembers, loading, error } = useAllRegistrationsMembersByEventId(
+
+  const { registrationMembers, loading } = useAllRegistrationsMembersByEventId(
     event?.id || ""
   );
   
 
-  if(!loading && event && totalMem){
-    if(registrationMembers){
-      totalMem = totalMem-registrationMembers?.length
-    }
-  }
+
 
   // SRC: kilde: chatgpt.com  || med endringer /
   const handleSelectAll = () => {
@@ -84,8 +82,8 @@ export default function RegCard(props: RegCardProps) {
       totalPeople += sameOrderRegistrations.length;
     }
 
-    if (totalMem && totalMem < totalPeople || totalMem === 0 && event?.rules?.waitlist === "true") {
-      setPopupMessage("Du har valgt for mange folk, det er kun "+totalMem+ " ledige plass. ");
+    if (totalMem && event && totalMem < totalPeople || totalMem === 0 && event?.rules?.waitlist === "true") {
+      setPopupMessage("Du har valgt for mange folk, det er kun "+3333+ " ledige plass. ");
       setShowPopup(true);
       return;
     }
@@ -95,6 +93,7 @@ export default function RegCard(props: RegCardProps) {
 
       try {
         await addRegistration(orderIds);
+        
       } catch (error) {
         console.error(`Error accepting registration:`, error);
       }
@@ -105,6 +104,7 @@ export default function RegCard(props: RegCardProps) {
       try {
       
         await deleteWaitlistRegistration(registration.order_id);
+
       } catch (error) {
         console.error(`Error accepting registration:`, error);
       }
@@ -119,6 +119,10 @@ export default function RegCard(props: RegCardProps) {
       const registrationId = selected[i].order_id;
       try {
         await deleteWaitlistRegistration(registrationId);
+        if(event){
+          await updateAvailableSlots(event.id, event.available_slots+1)
+        }
+
       } catch (error) {
         console.error(`Error deleting registration ${registrationId}:`, error);
       }
@@ -189,7 +193,7 @@ export default function RegCard(props: RegCardProps) {
           <span className="text-lg font-semibold">Available Slots</span>
         </div>
         <div className="text-xl font-bold text-blue-700">
-          {totalMem}
+          {event.available_slots + (registrationMembers?.length || 0)}
         </div>
       </div>
 

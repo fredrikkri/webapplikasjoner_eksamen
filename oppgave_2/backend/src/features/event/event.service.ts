@@ -93,7 +93,14 @@ export const createEventService = (eventRepository: EventRepository) => {
         }
       };
 
+
+const updateEventASlots = async (event_id: string, available_slots: number): Promise<Result<string>> => {
+  return eventRepository.updateAvailableSlots(event_id, available_slots);
+};
+
+
 return {
+    updateEventASlots,
     list,
     getById,
     create,

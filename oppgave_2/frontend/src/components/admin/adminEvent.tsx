@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { deleteRegistrationById, useAllRegistrations, useCreateRegistration } from "@/hooks/useRegistration";
 import { Event } from "@/types/Event";
-import { Registration, RegistrationEventData } from "@/types/Registration";
+import { RegistrationEventData } from "@/types/Registration";
 import { createId } from "@/util/utils";
-import { getWaitListByEventId } from "@/hooks/useWaitlistRegistration";
 import { validateEmail } from "@/util/validation";
 import DeleteEvent from "./deleteEvent";
+import { updateAvailableSlots } from "@/lib/services/events";
+
 
 interface RegCardProps {
   event: Event | null;
@@ -149,6 +150,7 @@ export default function AdminEvent(props: RegCardProps) {
   const handleRemovePerson = async (registrationId: string) => {
     try {
       await deleteRegistrationById(registrationId);
+      await updateAvailableSlots(event.id, event.available_slots+1)
 
       // Filter out the deleted registration and update the state
       if(filteredRegistrations){
@@ -202,7 +204,9 @@ export default function AdminEvent(props: RegCardProps) {
               </div>
               <div>
                 <p className="text-sm text-slate-600">Ledige plasser</p>
-                <p className="text-lg font-semibold text-slate-900">{totalSpace}</p>
+                <p className="text-lg font-semibold text-slate-900">
+                {event.total_slots - (filteredRegistrations?.length || 0)}
+                </p>
               </div>
             </div>
           </div>
