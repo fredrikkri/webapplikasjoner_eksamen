@@ -164,6 +164,7 @@ export default function AdminEvent(props: RegCardProps) {
       console.error("Failed to remove registration:", error);
     }
   };
+  
   return (
     <article className="p-6 space-y-8">
       <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">

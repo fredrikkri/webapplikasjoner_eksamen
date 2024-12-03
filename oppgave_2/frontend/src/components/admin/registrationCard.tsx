@@ -81,13 +81,16 @@ export default function RegCard(props: RegCardProps) {
 
       totalPeople += sameOrderRegistrations.length;
     }
-
-    if (totalMem && event && totalMem < totalPeople || totalMem === 0 && event?.rules?.waitlist === "true") {
-      setPopupMessage("Du har valgt for mange folk, det er kun "+3333+ " ledige plass. ");
+    console.log(totalPeople)
+    if(event){
+      const ee = event.total_slots - (registrationMembers?.length || 0)
+      console.log(ee)
+    if (event?.rules?.waitlist === "true" && ee < totalPeople) {
+      setPopupMessage("Du har valgt for mange folk, det er kun "+ee+ " ledige plass. ");
       setShowPopup(true);
       return;
     }
-
+  }
 
     const orderIds: string[] = uniqueSelected.map((registration) => registration.order_id);
 
@@ -109,7 +112,6 @@ export default function RegCard(props: RegCardProps) {
         console.error(`Error accepting registration:`, error);
       }
     }
-    window.history.go()
   };
   
 
@@ -193,7 +195,7 @@ export default function RegCard(props: RegCardProps) {
           <span className="text-lg font-semibold">Available Slots</span>
         </div>
         <div className="text-xl font-bold text-blue-700">
-          {event.available_slots + (registrationMembers?.length || 0)}
+          {event.total_slots - (registrationMembers?.length || 0)}
         </div>
       </div>
 
