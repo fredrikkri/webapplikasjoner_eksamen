@@ -82,7 +82,6 @@ export default function AdminEvent(props: RegCardProps) {
       return;
     }
 
-    console.log("Form submitted with new registrations:", registrationData);
     await addRegistration(registrationData)
     setNewRegistrations([]);
   };
@@ -107,56 +106,66 @@ export default function AdminEvent(props: RegCardProps) {
 
   return (
     <article className="p-6 space-y-6">
-      <div className="bg-white rounded-xl p-6 shadow-lg">
-        {/* Render the event details */}
-        <h2 className="text-2xl font-semibold text-gray-900">{event.title}</h2>
-        <p className="text-sm text-gray-600 mt-2">{event.description}</p>
+  <div className="bg-white p-8 rounded-xl shadow-xl">
+    {/* Event Title */}
+    <h2 className="text-3xl font-semibold text-gray-900">{event.title}</h2>
 
-        {/* Render the registrations */}
-        <div className="mt-6">
-          <h3 className="text-xl font-semibold text-gray-900">Registrations</h3>
-          {filteredRegistrations?.length === 0 ? (
-            <p>No registrations found for this event.</p>
-          ) : (
-            <ul className="space-y-4 mt-4">
-              <li className="flex justify-between items-center p-4 bg-slate-50 rounded-lg shadow-sm hover:bg-slate-100">
-                <div className="flex-1">
-                  <p className="text-lg font-medium text-gray-800">Administrer påmeldinger</p>
-                </div>
-                <button
-                  className="text-sm text-blue-600 focus:outline-none"
-                  onClick={toggleDropdown}
+    {/* Event Description */}
+    <p className="text-base text-gray-600 mt-3">{event.description}</p>
+
+{/* Render the registrations */}
+<div className="mt-6">
+  <h3 className="text-xl font-semibold text-gray-900">Registrations</h3>
+  {filteredRegistrations?.length === 0 ? (
+    <p>No registrations found for this event.</p>
+  ) : (
+    <ul className="space-y-4 mt-4">
+      <li 
+        className="flex "
+        onClick={toggleDropdown}
+      >
+        <button
+          className="flex items-center justify-between w-full px-4 py-2 bg-blue-50 text-gray-700 border border-gray-300 rounded-md shadow-sm hover:bg-blue-100 focus:outline-none"
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleDropdown();
+          }}
+        >
+          {openDropdown ? "Lukk Administrer påmeldinger" : "Vis Administrer påmeldinger"}
+        </button>
+      </li>
+
+      {/* Dropdown to show all responsible persons */}
+      {openDropdown && (
+        <li>
+          <div className="mt-2 p-4 bg-slate-50 shadow-lg rounded-lg">
+            <p className="font-semibold mb-4">Personer som skal på arrangementet:</p>
+            <ul className="space-y-3">
+              {filteredRegistrations?.map((registration: RegistrationEventData) => (
+                <li
+                  key={registration.id}
+                  className="flex justify-between items-center text-sm text-gray-700 p-4 bg-white rounded-lg shadow-sm hover:bg-slate-100 transition-all duration-200"
                 >
-                  {openDropdown ? "Hide All" : "View All"}
-                </button>
-              </li>
-
-              {/* Dropdown to show all responsible persons */}
-              {openDropdown && (
-                <div className="mt-2 p-4 bg-slate-50 shadow-lg rounded-lg">
-                  <p className="font-semibold mb-4">Personer som skal på arrangementet:</p>
-                  <ul className="space-y-3">
-                    {filteredRegistrations?.map((registration: RegistrationEventData) => (
-                      <li
-                        key={registration.id}
-                        className="flex justify-between items-center text-sm text-gray-700 p-4 bg-white rounded-lg shadow-sm hover:bg-slate-100 transition-all duration-200"
-                      >
-                        <div>{registration.email}</div>
-                                                {/* Aligning the "Remove" button to the right */}
-                                                <button
-                          className="text-red-500 hover:text-red-700 focus:outline-none ml-auto"
-                          onClick={() => handleRemovePerson(registration.id)}
-                        >
-                          Fjern
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+                  <div>{registration.email}</div>
+                  {/* Aligning the "Remove" button to the right */}
+                  <button
+                    className="text-red-500 hover:text-red-700 focus:outline-none ml-auto"
+                    onClick={() => handleRemovePerson(registration.id)}
+                  >
+                    Fjern
+                  </button>
+                </li>
+              ))}
             </ul>
-          )}
-        </div>
+          </div>
+        </li>
+      )}
+    </ul>
+  )}
+</div>
+
+
+
 
         {showPopup && (
           <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
