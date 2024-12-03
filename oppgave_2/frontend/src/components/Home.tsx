@@ -31,7 +31,7 @@ export default function Home({ children }: HomeProps) {
                   <a 
                     href="/events" 
                     className={`relative px-6 py-2.5 rounded-full font-bold transition-all duration-200 overflow-hidden group ${
-                      pathname === '/events'
+                      pathname.startsWith('/events')
                       ? 'bg-white text-teal-600 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
                       : 'text-white hover:bg-white/10'
                     }`}
@@ -48,7 +48,7 @@ export default function Home({ children }: HomeProps) {
                   <a 
                     href="/templates" 
                     className={`relative px-6 py-2.5 rounded-full font-bold transition-all duration-200 overflow-hidden group ${
-                      pathname === '/templates'
+                      pathname.startsWith('/templates')
                       ? 'bg-white text-teal-600 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
                       : 'text-white hover:bg-white/10'
                     }`}
@@ -65,7 +65,7 @@ export default function Home({ children }: HomeProps) {
                   <a 
                     href="/opprett" 
                     className={`relative px-6 py-2.5 rounded-full font-bold transition-all duration-200 overflow-hidden group ${
-                      pathname === '/opprett'
+                      pathname.startsWith('/opprett')
                       ? 'bg-white text-teal-600 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
                       : 'text-white hover:bg-white/10'
                     }`}
@@ -82,7 +82,7 @@ export default function Home({ children }: HomeProps) {
                   <a 
                     href="/statistikk" 
                     className={`relative px-6 py-2.5 rounded-full font-bold transition-all duration-200 overflow-hidden group ${
-                      pathname === '/statistikk'
+                      pathname.startsWith('/statistikk')
                       ? 'bg-white text-teal-600 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
                       : 'text-white hover:bg-white/10'
                     }`}
