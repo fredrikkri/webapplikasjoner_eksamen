@@ -14,7 +14,7 @@ interface RegCardProps {
 
 export default function AdminEvent(props: RegCardProps) {
   const { event } = props;
-  const { events, setEvents, loading, error } = useAllRegistrations();
+  const { events, loading, error, refetch } = useAllRegistrations();
   const [openDropdown, setOpenDropdown] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [newRegistrations, setNewRegistrations] = useState<{ email: string }[]>([]);
@@ -113,14 +113,14 @@ export default function AdminEvent(props: RegCardProps) {
       return;
     }
 
-    const registrationData = filteredRegistrations?.map(({ email }) => ({
+    const registrationData = newRegistrations.map(({ email }) => ({
         id: createId(),
         email,
         event_id: event.id,
         registration_date: new Date().toISOString(),
         has_paid: "false",
         order_id: createId()
-    })) || [];
+    }));
 
     if(totalSpace < registrationData.length){
       setPopupMessage("Du har valgt for mange folk, det er kun "+totalSpace+ " ledige plass.");
@@ -128,13 +128,17 @@ export default function AdminEvent(props: RegCardProps) {
       return;
     }
 
-    await addRegistration(registrationData);
-
-    const updatedRegistrations = [...filteredRegistrations || [], ...registrationData];
-    setEvents(updatedRegistrations);
-
-    setNewRegistrations([]);
-    setValidationErrors({});
+    try {
+      await addRegistration(registrationData);
+      await refetch();
+      setNewRegistrations([]);
+      setValidationErrors({});
+      setOpenForm(false);
+    } catch (error) {
+      console.error("Failed to add registration:", error);
+      setPopupMessage("Det oppstod en feil ved registrering av deltakere.");
+      setShowPopup(true);
+    }
   };
 
   const handleRemoveRegistrationField = (index: number) => {
@@ -151,16 +155,11 @@ export default function AdminEvent(props: RegCardProps) {
     try {
       await deleteRegistrationById(registrationId);
       await updateAvailableSlots(event.id, event.available_slots+1)
-
-      if(filteredRegistrations){
-      const updatedRegistrations = filteredRegistrations.filter(
-        (registration) => registration.id !== registrationId
-      );
-    
-      setEvents(updatedRegistrations);
-    }
+      await refetch();
     } catch (error) {
       console.error("Failed to remove registration:", error);
+      setPopupMessage("Det oppstod en feil ved fjerning av deltaker.");
+      setShowPopup(true);
     }
   };
 

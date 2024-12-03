@@ -44,23 +44,23 @@ export const useCreateRegistration = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
   
+    const fetchEvents = async () => {
+      try {
+        setLoading(true);
+        const eventdata = await getAllEventsRegistrations();
+        setEvents(eventdata as unknown as RegistrationEventData[]);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('An error occurred while fetching all events'));
+      } finally {
+        setLoading(false);
+      }
+    };
+
     useEffect(() => {
-      const fetchEvents = async () => {
-        try {
-          setLoading(true);
-          const eventdata = await getAllEventsRegistrations();
-          setEvents(eventdata as unknown as RegistrationEventData[]);
-        } catch (err) {
-          setError(err instanceof Error ? err : new Error('An error occurred while fetching all events'));
-        } finally {
-          setLoading(false);
-        }
-      };
-  
       fetchEvents();
     }, []);
   
-    return { events, setEvents, loading, error };
+    return { events, setEvents, loading, error, refetch: fetchEvents };
   };
 
   export const deleteRegistrationById = async (registrationId: string) => {
@@ -102,4 +102,3 @@ export const useCreateRegistration = () => {
   
     return { registrationMembers, loading, error };
   };
-  
