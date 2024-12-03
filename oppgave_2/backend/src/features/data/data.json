@@ -51,13 +51,7 @@
   ],
   "events_active": [
     {
-      "event_id": "event-1"
-    },
-    {
       "event_id": "event-2"
-    },
-    {
-      "event_id": "event-3"
     },
     {
       "event_id": "event-4"

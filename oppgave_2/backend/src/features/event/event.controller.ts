@@ -69,6 +69,31 @@ export const createEventController = (EventService: any) => {
     }
   });
 
+  app.patch("/edit-event/:eventId", async (c) => {
+    try {
+      const eventId = c.req.param("eventId");
+      const data = await c.req.json();
+
+      const result = await eventService.edit(data);
+      
+      if (!result.success) {
+        return errorResponse(
+          c,
+          result.error.code as ErrorCode,
+          result.error.message
+        );
+      }
+      return c.json(result, {status: 200});
+    } catch (error) {
+      console.error('Error in event deletion:', error);
+      return errorResponse(
+        c,
+        'INTERNAL_SERVER_ERROR',
+        error instanceof Error ? error.message : 'Failed to edit event'
+      );
+    }
+  });
+
   return app;
 }
 

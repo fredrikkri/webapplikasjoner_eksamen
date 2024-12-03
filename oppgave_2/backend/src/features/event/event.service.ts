@@ -36,6 +36,10 @@ export const createEventService = (eventRepository: EventRepository) => {
         return eventRepository.getById(slug);
       };
 
+      const edit = async (data: Event): Promise<Result<string>> => {
+        return eventRepository.edit(data);
+      };
+
       const create = async (data: EventCreate): Promise<Result<string>> => {
         const { rules, ...eventData } = data;
         const event = createEvent({ ...eventData, rules });
@@ -97,7 +101,8 @@ return {
     list,
     getById,
     create,
-    remove
+    remove,
+    edit
   };
 };
 

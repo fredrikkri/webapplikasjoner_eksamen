@@ -59,20 +59,20 @@ export default function EditEventButton({ event }: EditEventProps) {
           </>
         ) : (
           <>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-4 h-4 mr-2"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 4v2m0 12v2m8-8h-2M4 12H2m15.364-7.364l-1.414 1.414m0 10.95l1.414-1.414M6.343 6.343l1.414 1.414M6.343 17.657l1.414-1.414"
-              />
-            </svg>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5 mr-2"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+        />
+      </svg>
             Rediger arrangement
           </>
         )}
