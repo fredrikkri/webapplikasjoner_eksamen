@@ -5,7 +5,8 @@ import { Registration, RegistrationEventData } from "@/types/Registration";
 import { createId } from "@/util/utils";
 import { getWaitListByEventId } from "@/hooks/useWaitlistRegistration";
 import { validateEmail } from "@/util/validation";
-import DeleteEvent from "./deleteEvent";
+import DeleteEventButton from "./deleteEventButton";
+import EditEventButton from "./editEventButton";
 
 interface RegCardProps {
   event: Event | null;
@@ -150,7 +151,6 @@ export default function AdminEvent(props: RegCardProps) {
     try {
       await deleteRegistrationById(registrationId);
 
-      // Filter out the deleted registration and update the state
       if(filteredRegistrations){
       const updatedRegistrations = filteredRegistrations.filter(
         (registration) => registration.id !== registrationId
@@ -165,18 +165,16 @@ export default function AdminEvent(props: RegCardProps) {
   return (
     <article className="p-6 space-y-8">
       <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-        {/* Event Header */}
         <div className="p-6 bg-gradient-to-r from-blue-500 to-blue-600">
           <h2 className="text-2xl font-bold text-white mb-2">{event.title}</h2>
           <p className="text-blue-50">{event.description}</p>
         </div>
 
-        {/* Event Actions */}
-        <div className="p-0 border-b border-slate-200">
-          <DeleteEvent event={event} />
+        <div className="p-0 border-b border-slate-200 flex space-x-2 justify-end">
+          <EditEventButton event={event} />
+          <DeleteEventButton event={event} />
         </div>
 
-        {/* Event Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
             <div className="flex items-center gap-4">
@@ -223,9 +221,7 @@ export default function AdminEvent(props: RegCardProps) {
         </div>
       </div>
 
-      {/* Registrations Management */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Left Column - Registration List */}
         <div className="space-y-4">
           <button
             className="w-full flex items-center justify-between px-6 py-4 bg-white text-slate-700 font-medium rounded-xl hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 border border-slate-200 shadow-sm"
@@ -289,7 +285,6 @@ export default function AdminEvent(props: RegCardProps) {
           )}
         </div>
 
-        {/* Right Column - Manual Registration */}
         <div className="space-y-4">
           <button
             className="w-full flex items-center justify-between px-6 py-4 bg-white text-slate-700 font-medium rounded-xl hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 border border-slate-200 shadow-sm"

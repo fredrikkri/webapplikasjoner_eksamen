@@ -6,7 +6,7 @@ interface RegCardProps {
   event: Event | null;
 }
 
-export default function DeleteEvent(props: RegCardProps) {
+export default function DeleteEventButton(props: RegCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
