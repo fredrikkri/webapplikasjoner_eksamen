@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Registration as RegistrationType } from "@/types/Registration";
 import Link from "next/link";
 import { Rules } from "@/types/Rules";
+import { validateEmail } from "@/util/validation";
 
 type EventCardProps = {
   id: string,
@@ -38,6 +39,7 @@ export default function EventCardExpanded({
   const { registrationMembers, loading, error } = useAllRegistrationsMembersByEventId(id)
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
+  const [validationErrors, setValidationErrors] = useState<Record<string, string | null>>({});
   let totalSizeWaitlist = availableSlots;
 
   if(fetchedWaitlist){
@@ -52,7 +54,6 @@ export default function EventCardExpanded({
     totalSizeWaitlist = total
     if(totalSizeWaitlist < 0){totalSizeWaitlist=0}
   }
-
 
   const [registrations, setRegistrations] = useState<RegistrationType[]>([
     { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "", order_id: "" , responsible_person: "", number_of_people: 0},
@@ -74,6 +75,10 @@ export default function EventCardExpanded({
   const handleRemoveEmailField = (index: number) => {
     const updatedRegistrations = registrations.filter((_, i) => i !== index);
     setRegistrations(updatedRegistrations);
+
+    const updatedErrors = { ...validationErrors };
+    delete updatedErrors[registrations[index].id];
+    setValidationErrors(updatedErrors);
   };
 
   // SRC: kilde: chatgpt.com / med endringer
@@ -83,6 +88,10 @@ export default function EventCardExpanded({
 
     if (name === "email") {
       updatedRegistrations[index].email = value;
+      setValidationErrors(prev => ({
+        ...prev,
+        [updatedRegistrations[index].id]: null
+      }));
     } else if (name === "has_paid") {
       updatedRegistrations[index].has_paid = checked ? "true" : "false";
     }
@@ -96,11 +105,28 @@ export default function EventCardExpanded({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const newValidationErrors: Record<string, string | null> = {};
+    let hasErrors = false;
+
+    registrations.forEach(registration => {
+      const emailError = validateEmail(registration.email);
+      if (emailError) {
+        newValidationErrors[registration.id] = emailError;
+        hasErrors = true;
+      }
+    });
+
+    if (hasErrors) {
+      setValidationErrors(newValidationErrors);
+      return;
+    }
+
     const current_order_id = crypto.randomUUID();
     if(registrations.length > totalSizeWaitlist && rules?.waitlist === "false"){
       setPopupMessage("Du har valg for mange folk, det er kun "+totalSizeWaitlist+ " ledige plasser og ingen venteliste");
       setShowPopup(true);
-      return
+      return;
     }
 
     const registrationData = registrations.map(({ id, email, has_paid, event_id, registration_date, responsible_person, number_of_people }) => ({
@@ -118,8 +144,8 @@ export default function EventCardExpanded({
       await addWaitlistRegistration(registration);
     }
 
-    window.history.go()
-  }
+    window.history.go();
+  };
 
   return (
     <article className="bg-white rounded-xl shadow-lg border-l-4 border-teal-500">
@@ -200,22 +226,30 @@ export default function EventCardExpanded({
         )}
         {/* Registration Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-
           <div className="bg-slate-50 rounded-lg p-6">
             <h3 className="text-lg font-semibold text-slate-900 mb-4">Registrer deltakere</h3>
             <div className="space-y-4">
               {registrations.map((registration, index) => (
                 <div key={registration.id} className="bg-white rounded-lg p-4 shadow-sm">
                   <div className="space-y-4">
-                    <input
-                      type="email"
-                      name="email"
-                      value={registration.email}
-                      onChange={(e) => handleChange(e, index)}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
-                      placeholder="E-postadresse"
-                      required
-                    />
+                    <div>
+                      <input
+                        type="email"
+                        name="email"
+                        value={registration.email}
+                        onChange={(e) => handleChange(e, index)}
+                        className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
+                          validationErrors[registration.id]
+                            ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                            : 'border-slate-300 focus:ring-teal-500 focus:border-teal-500'
+                        }`}
+                        placeholder="E-postadresse"
+                        required
+                      />
+                      {validationErrors[registration.id] && (
+                        <p className="mt-1 text-sm text-red-600">{validationErrors[registration.id]}</p>
+                      )}
+                    </div>
                     <div className="flex items-center space-x-3">
                       <label className="inline-flex items-center">
                         <input
