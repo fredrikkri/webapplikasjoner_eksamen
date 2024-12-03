@@ -82,7 +82,6 @@ export default function AdminEvent(props: RegCardProps) {
       return;
     }
 
-    console.log("Form submitted with new registrations:", registrationData);
     await addRegistration(registrationData)
     setNewRegistrations([]);
   };

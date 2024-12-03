@@ -83,7 +83,6 @@ export default function RegCard(props: RegCardProps) {
 
       totalPeople += sameOrderRegistrations.length;
     }
-    console.log("people: ", totalPeople)
 
     if (totalMem && totalMem < totalPeople || totalMem === 0 && event?.rules?.waitlist === "true") {
       setPopupMessage("Du har valgt for mange folk, det er kun "+totalMem+ " ledige plass. ");
@@ -115,7 +114,6 @@ export default function RegCard(props: RegCardProps) {
 
   // SRC: kilde: chatgpt.com  || med endringer /
   const handleClickDecline = async (selected: Registration[]) => {
-    console.log("Declined registrations:", selected);
     for (let i = 0; i < selected.length; i++) {
       const registrationId = selected[i].order_id;
       try {
