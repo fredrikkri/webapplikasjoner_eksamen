@@ -48,6 +48,9 @@ export const VALIDATION = {
   price: {
     max: 100000
   },
+  email: {
+    maxLength: 254
+  },
   eventTypes: [
     'Seminar',
     'Webinar',

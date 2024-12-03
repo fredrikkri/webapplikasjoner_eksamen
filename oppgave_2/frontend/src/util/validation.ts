@@ -97,6 +97,24 @@ export const validatePrice = (price: number): string | null => {
   return null;
 };
 
+export const validateEmail = (email: string): string | null => {
+  if (!email || email.trim() === '') {
+    return 'E-post er påkrevd';
+  }
+
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  
+  if (!emailRegex.test(email)) {
+    return 'Ugyldig e-postadresse';
+  }
+
+  if (email.length > VALIDATION.email.maxLength) {
+    return `E-postadressen kan ikke være lengre enn ${VALIDATION.email.maxLength} tegn`;
+  }
+
+  return null;
+};
+
 export const validateEventData = (eventData: {
   title: string;
   description: string;
