@@ -5,6 +5,7 @@ import { Registration, RegistrationEventData } from "@/types/Registration";
 import { createId } from "@/util/utils";
 import { getWaitListByEventId } from "@/hooks/useWaitlistRegistration";
 import { validateEmail } from "@/util/validation";
+import DeleteEvent from "./deleteEvent";
 
 interface RegCardProps {
   event: Event | null;
@@ -150,6 +151,11 @@ export default function AdminEvent(props: RegCardProps) {
         <div className="p-6 bg-gradient-to-r from-blue-500 to-blue-600">
           <h2 className="text-2xl font-bold text-white mb-2">{event.title}</h2>
           <p className="text-blue-50">{event.description}</p>
+        </div>
+
+        {/* Event Actions */}
+        <div className="p-0 border-b border-slate-200">
+          <DeleteEvent event={event} />
         </div>
 
         {/* Event Stats */}
