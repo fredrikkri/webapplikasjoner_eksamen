@@ -35,9 +35,9 @@ export default function AdminEvent(props: RegCardProps) {
     return (
       <div className="flex items-center justify-center min-h-[200px] bg-slate-50 rounded-xl border-2 border-slate-200">
         <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 bg-teal-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-          <div className="w-2 h-2 bg-teal-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-          <div className="w-2 h-2 bg-teal-600 rounded-full animate-bounce"></div>
+          <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+          <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+          <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
         </div>
       </div>
     );
@@ -147,17 +147,17 @@ export default function AdminEvent(props: RegCardProps) {
     <article className="p-6 space-y-8">
       <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
         {/* Event Header */}
-        <div className="p-6 bg-gradient-to-r from-teal-500 to-teal-600">
+        <div className="p-6 bg-gradient-to-r from-blue-500 to-blue-600">
           <h2 className="text-2xl font-bold text-white mb-2">{event.title}</h2>
-          <p className="text-teal-50">{event.description}</p>
+          <p className="text-blue-50">{event.description}</p>
         </div>
 
         {/* Event Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-teal-100 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
@@ -170,8 +170,8 @@ export default function AdminEvent(props: RegCardProps) {
 
           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-teal-100 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                 </svg>
@@ -185,8 +185,8 @@ export default function AdminEvent(props: RegCardProps) {
 
           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-teal-100 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -204,11 +204,11 @@ export default function AdminEvent(props: RegCardProps) {
         {/* Left Column - Registration List */}
         <div className="space-y-4">
           <button
-            className="w-full flex items-center justify-between px-6 py-4 bg-white text-slate-700 font-medium rounded-xl hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all duration-200 border border-slate-200 shadow-sm"
+            className="w-full flex items-center justify-between px-6 py-4 bg-white text-slate-700 font-medium rounded-xl hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 border border-slate-200 shadow-sm"
             onClick={toggleDropdown}
           >
             <span className="flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
               {openDropdown ? "Lukk påmeldingsliste" : "Vis påmeldingsliste"}
@@ -232,8 +232,8 @@ export default function AdminEvent(props: RegCardProps) {
                   className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors duration-150"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="p-2 bg-teal-100 rounded-lg">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </div>
@@ -268,11 +268,11 @@ export default function AdminEvent(props: RegCardProps) {
         {/* Right Column - Manual Registration */}
         <div className="space-y-4">
           <button
-            className="w-full flex items-center justify-between px-6 py-4 bg-white text-slate-700 font-medium rounded-xl hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all duration-200 border border-slate-200 shadow-sm"
+            className="w-full flex items-center justify-between px-6 py-4 bg-white text-slate-700 font-medium rounded-xl hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 border border-slate-200 shadow-sm"
             onClick={toggleForm}
           >
             <span className="flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
               </svg>
               {openForm ? "Lukk manuell registrering" : "Vis manuell registrering"}
@@ -309,7 +309,7 @@ export default function AdminEvent(props: RegCardProps) {
                         className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
                           validationErrors[index]
                             ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
-                            : 'border-slate-300 focus:ring-teal-500 focus:border-teal-500'
+                            : 'border-slate-300 focus:ring-blue-500 focus:border-blue-500'
                         }`}
                         placeholder="navn@example.com"
                         required
@@ -349,7 +349,7 @@ export default function AdminEvent(props: RegCardProps) {
 
                 <button
                   type="submit"
-                  className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-teal-600 text-white font-medium rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all duration-200"
+                  className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -375,7 +375,7 @@ export default function AdminEvent(props: RegCardProps) {
             <p className="text-slate-600 mb-6">{popupMessage}</p>
             <button
               onClick={handleClosePopup}
-              className="w-full inline-flex items-center justify-center px-4 py-2 bg-teal-600 text-white font-medium rounded-lg hover:bg-teal-700 transition-all duration-200"
+              className="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all duration-200"
             >
               Lukk
             </button>
