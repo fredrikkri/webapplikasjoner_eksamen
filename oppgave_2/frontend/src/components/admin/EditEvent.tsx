@@ -142,7 +142,7 @@ export default function EditEvent({ eventSlug }: EditEventProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-8 border-l-4 border-indigo-500">
+    <div className="bg-white max-w-5xl mx-auto rounded-xl shadow-lg p-8 border-l-4 border-indigo-500">
       <div className="flex justify-between items-center pb-6 border-b border-slate-200 mb-6">
         <div>
           <h2 className="text-2xl font-bold text-indigo-900">Rediger arrangement</h2>
