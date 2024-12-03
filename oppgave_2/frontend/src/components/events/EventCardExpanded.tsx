@@ -5,6 +5,7 @@ import { Registration as RegistrationType } from "@/types/Registration";
 import Link from "next/link";
 import { Rules } from "@/types/Rules";
 import { validateEmail } from "@/util/validation";
+import { updateAvailableSlots } from "@/lib/services/events";
 
 type EventCardProps = {
   id: string,
@@ -40,18 +41,7 @@ export default function EventCardExpanded({
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
   const [validationErrors, setValidationErrors] = useState<Record<string, string | null>>({});
-  let totalSizeWaitlist = availableSlots;
 
-  if(fetchedWaitlist){
-    let total = totalSizeWaitlist-fetchedWaitlist.length;
-    totalSizeWaitlist = total
-    if(totalSizeWaitlist < 0){totalSizeWaitlist=0}
-  }
-  if(registrationMembers){
-    let total = totalSizeWaitlist-registrationMembers.length;
-    totalSizeWaitlist = total
-    if(totalSizeWaitlist < 0){totalSizeWaitlist=0}
-  }
 
   const [registrations, setRegistrations] = useState<RegistrationType[]>([
     { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "", order_id: "" , responsible_person: "", number_of_people: 0},
@@ -120,8 +110,8 @@ export default function EventCardExpanded({
     }
 
     const current_order_id = crypto.randomUUID();
-    if(registrations.length > totalSizeWaitlist && rules?.waitlist === "false"){
-      setPopupMessage("Du har valg for mange folk, det er kun "+totalSizeWaitlist+ " ledige plasser og ingen venteliste");
+    if(registrations.length > available_slots && rules?.waitlist === "false"){
+      setPopupMessage("Du har valg for mange folk, det er kun "+available_slots+ " ledige plasser og ingen venteliste");
       setShowPopup(true);
       return;
     }
@@ -140,6 +130,12 @@ export default function EventCardExpanded({
     for (const registration of registrationData) {
       await addWaitlistRegistration(registration);
     }
+    if(availableSlots-registrationData.length <= 0){
+      await updateAvailableSlots(id, 0)
+      window.history.go();
+      return
+    }
+    await updateAvailableSlots(id, availableSlots-registrationData.length)
 
     window.history.go();
   };
@@ -200,7 +196,7 @@ export default function EventCardExpanded({
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
-              <span>Totalt {total_slots} plasser ({totalSizeWaitlist} ledige)</span>
+              <span>Totalt {total_slots} plasser ({available_slots} ledige)</span>
             </div>
             <div className="flex items-center text-slate-600">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -365,7 +361,7 @@ export default function EventCardExpanded({
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
-            {rules && rules.waitlist === "true" && totalSizeWaitlist < registrations.length
+            {rules && rules.waitlist === "true" && availableSlots < registrations.length
               ? "Legg til i venteliste" 
               : "Registrer påmelding(er) og betal"}
           </button>

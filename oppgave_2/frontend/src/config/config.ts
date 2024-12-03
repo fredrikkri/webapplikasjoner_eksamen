@@ -26,7 +26,8 @@ export const ENDPOINTS = {
   deleteWaitlistItem: (registrationId: string) => `${BASE_URL}/waitlist-registrations/${registrationId}`,
   getAttendersWaitList: (eventId: string) => `${BASE_URL}/waitlist-registrations/${eventId}`,
   getRegisteredMembers: (eventId: string) => `${BASE_URL}/registrations/${eventId}`,
-  rules: (eventId: string) => `${BASE_URL}/rules/${eventId}`
+  rules: (eventId: string) => `${BASE_URL}/rules/${eventId}`,
+  updateEventAvailableSlots: (eventId: string, available_slots: string) => `${BASE_URL}/edit-event/${eventId}/${available_slots}`,
 };
 
 export const VALIDATION = {

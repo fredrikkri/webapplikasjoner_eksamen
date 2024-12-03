@@ -117,6 +117,7 @@ export const editEvent = async (eventData: Event): Promise<void> => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(eventData)
+      
     });
   
     if (!response.ok) {
@@ -125,5 +126,33 @@ export const editEvent = async (eventData: Event): Promise<void> => {
   } catch (error) {
     console.error("Error, could not edit event:", error);
     throw error;
+  }
+};
+
+export const updateAvailableSlots = async (event_id: string, available_slots: number): Promise<void> => {
+  try {
+    // Prepare the request body with the available slots data
+    const bodyData = {
+      available_slots,  // Include the available_slots in the request body
+    };
+
+    const response = await fetch(`${ENDPOINTS.updateEventAvailableSlots(event_id, available_slots.toString())}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+
+      body: JSON.stringify(bodyData),  // Send bodyData in the request
+    });
+
+    // Handle unsuccessful response
+    if (!response.ok) {
+      throw new Error(`Failed to update available slots: ${response.statusText}`);
+    }
+
+    // If successful, you can add any further success handling here if needed
+  } catch (error) {
+    console.error("Error, could not update available slots:", error);
+    throw error;  // Re-throw the error to handle it in the calling function
   }
 };
