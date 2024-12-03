@@ -18,45 +18,37 @@ export default function RegCard(props: RegCardProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
-  let totalMem = 0;
+  let totalMem = event?.available_slots;
 
   const { registrationMembers, loading, error } = useAllRegistrationsMembersByEventId(
     event?.id || ""
   );
   
 
-
-  if(!loading && event){
+  if(!loading && event && totalMem){
     if(registrationMembers){
-      totalMem = event?.available_slots
       totalMem = totalMem-registrationMembers?.length
     }
   }
-
-  
 
   // SRC: kilde: chatgpt.com  || med endringer /
   const handleSelectAll = () => {
     if (fetchedWaitlist && waitlist && event?.available_slots !== undefined) {
       if (selected.length > 0) {
-        // Deselect all
         setSelected([]);
         return;
       }
-      const availableSlots = event.available_slots;
       let totalSelectedPeople = 0;
       const validSelections: Registration[] = [];
   
       for (const item of waitlist) {
-        if (totalSelectedPeople + item.number_of_people <= availableSlots) {
+        if (totalMem && totalSelectedPeople + item.number_of_people <= totalMem) {
           totalSelectedPeople += item.number_of_people;
           validSelections.push(item);
         } else {
           continue;
         }
       }
-
-      console.log(validSelections)
   
       setSelected(validSelections);
     }
@@ -85,17 +77,16 @@ export default function RegCard(props: RegCardProps) {
     for (let i = 0; i < selected.length; i++) {
       const selectedOrderId = selected[i].order_id;
 
-      // Filter out all items that have the same order_id
       const sameOrderRegistrations = fetchedWaitlist?.filter(
         (item) => item.order_id === selectedOrderId
       ) || [];
 
       totalPeople += sameOrderRegistrations.length;
     }
-    console.log(totalPeople)
+    console.log("people: ", totalPeople)
 
-    if (totalMem > selected.length) {
-      setPopupMessage("Du har valg for mange folk, det er kun "+totalMem+ " ledig plass.");
+    if (totalMem && totalMem < totalPeople || totalMem === 0 && event?.rules?.waitlist === "true") {
+      setPopupMessage("Du har valgt for mange folk, det er kun "+totalMem+ " ledige plass. ");
       setShowPopup(true);
       return;
     }
