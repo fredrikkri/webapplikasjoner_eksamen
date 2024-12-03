@@ -84,54 +84,52 @@ export const createTemplateRepository = (db: DB) => {
   };
 
   const remove = async (id: string): Promise<Result<string>> => {
-    const db_transaction = db.transaction(() => {
-      console.log("Processing deletion for event ID:", id);
-      try {
-        const getTemplateIdWithEventId = db.prepare("SELECT id FROM events_template WHERE event_id = ?");
-        const current_template_id_row = getTemplateIdWithEventId.get(id) as TemplateIdRow | undefined;
+  const db_transaction = db.transaction(() => {
+    console.log("Processing deletion for event ID:", id);
+    try {
+      const getTemplateIdWithEventId = db.prepare("SELECT id FROM events_template WHERE event_id = ?");
+      const current_template_id_row = getTemplateIdWithEventId.get(id) as TemplateIdRow | undefined;
 
-  
-        if (!current_template_id_row) {
-          throw new Error("Template not found");
-        }
-  
-        const current_template_id = current_template_id_row.id;
-  
+      if (current_template_id_row === null) {
+        return "Template not deleted: Event exists";
+      } else {
         const updateActiveEventQuery = db.prepare("UPDATE events_active SET template_id = NULL WHERE template_id = ?");
-        updateActiveEventQuery.run(current_template_id);
-  
+        updateActiveEventQuery.run(id);
+
         const deleteCourseQuery = db.prepare("DELETE FROM events_template WHERE event_id = ?");
         deleteCourseQuery.run(id);
-  
+
         return id;
-      } catch (error) {
-        console.error("Error in delete transaction:", error);
-        throw error;
       }
-    });
-  
-    try {
-      const result = db_transaction();
+    } catch (error) {
+      console.error("Error in delete transaction:", error);
+      throw error;
+    }
+  });
+
+  try {
+    const result = db_transaction();
+    if (result === "Template not deleted: Event exists") {
       return {
         success: true as const,
         data: result,
       };
-    } catch (error) {
-      if (error instanceof Error && error.message === "Template not found") {
-        return {
-          success: false as const,
-          error: { code: "NOT_FOUND", message: "Template not found" },
-        };
-      }
-      return {
-        success: false as const,
-        error: {
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Error deleting template",
-        },
-      };
     }
-  };
+    return {
+      success: true as const,
+      data: result,
+    };
+  } catch (error) {
+    return {
+      success: false as const,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error deleting template",
+      },
+    };
+  }
+};
+
   
 
   // SRC: kilde: chatgpt.com  || med endringer /

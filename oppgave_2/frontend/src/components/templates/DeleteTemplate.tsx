@@ -17,7 +17,7 @@ export default function DeleteTemplate(props: TemplateProps) {
 
       try {
         await deleteTemplate(props.templateId);
-        window.location.href = '/events';
+        window.location.href = '/templates';
       } catch (err) {
         setError("Error deleting event: " + (err instanceof Error ? err.message : 'Unknown error'));
       } finally {
