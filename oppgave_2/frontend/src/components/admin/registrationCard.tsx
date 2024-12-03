@@ -26,25 +26,24 @@ export default function RegCard(props: RegCardProps) {
     event?.id || ""
   );
   
-
-
-
   // SRC: kilde: chatgpt.com  || med endringer /
   const handleSelectAll = () => {
-    if (fetchedWaitlist && waitlist && event?.available_slots !== undefined) {
+    if (fetchedWaitlist && waitlist && event) {
       if (selected.length > 0) {
         setSelected([]);
         return;
       }
+
+      const availableSlots = event.total_slots - (registrationMembers?.length || 0);
       let totalSelectedPeople = 0;
       const validSelections: Registration[] = [];
   
       for (const item of waitlist) {
-        if (totalMem && totalSelectedPeople + item.number_of_people <= totalMem) {
+        if (totalSelectedPeople + item.number_of_people <= availableSlots) {
           totalSelectedPeople += item.number_of_people;
           validSelections.push(item);
         } else {
-          continue;
+          break;
         }
       }
   
@@ -114,7 +113,6 @@ export default function RegCard(props: RegCardProps) {
     }
   };
   
-
   // SRC: kilde: chatgpt.com  || med endringer /
   const handleClickDecline = async (selected: Registration[]) => {
     for (let i = 0; i < selected.length; i++) {
@@ -255,8 +253,7 @@ export default function RegCard(props: RegCardProps) {
                         <input
                           type="checkbox"
                           className="form-checkbox h-5 w-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
-                          // Check if all the available slots are selected
-                          checked={selected.length > 0 && selected.length <= event?.available_slots}
+                          checked={selected.length > 0}
                           onChange={handleSelectAll}
                         />
                         <span>Velg alle</span>
