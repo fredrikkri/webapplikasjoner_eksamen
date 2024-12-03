@@ -190,7 +190,71 @@ export const createEventRepository = (db: DB) => {
       }
     };
 
-    return {list, getById, create, remove};
+    const edit = async (data: Event): Promise<Result<string>> => {
+      try {
+        const templateExists = db.prepare("SELECT id FROM events WHERE id = ? LIMIT 1").get(data.id);
+      if (!templateExists) {
+        console.log("No template found for given ID:", data.id);
+        return {
+          success: true as const,
+          data: "Could not edit template because it's not a template",
+        };
+      }
+
+      const updateEventQuery = db.prepare(`
+          UPDATE events
+          SET
+            title = ?,
+            description = ?,
+            slug = ?,
+            date = ?,
+            location = ?,
+            event_type = ?,
+            total_slots = ?,
+            price = ?
+          WHERE id = ?
+        `);
+    
+      const result = updateEventQuery.run(
+        data.title,
+        data.description,
+        data.slug,
+        data.date,
+        data.location,
+        data.event_type,
+        data.total_slots,
+        data.price,
+        data.id
+      );
+
+      if (result.changes === 0) {
+        return {
+          success: false as const,
+          error: {
+            code: "NOT_FOUND",
+            message: "No matching event found to update",
+          },
+        };
+      }
+    
+      return {
+        success: true as const,
+        data: `Event with ID ${data.id} updated successfully`,
+      };
+    } catch (error) {
+      console.error("Error updating event:", error);
+    
+      return {
+        success: false as const,
+        error: {
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An error occurred while updating the event",
+        },
+      };
+    }
+    };
+
+    return {list, getById, create, remove, edit};
 };
 
 export const eventRepository = createEventRepository(db);

@@ -13,6 +13,7 @@ export const ENDPOINTS = {
   deleteEvent: (eventId: string) => `${BASE_URL}/delete-event/${eventId}`,
   deleteTemplate: (eventId: string) => `${BASE_URL}/delete-template/${eventId}`,
   editTemplate: (eventData: Event) => `${BASE_URL}/edit-template/${eventData.id}`,
+  editEvent: (eventData: Event) => `${BASE_URL}/edit-event/${eventData.id}`,
   createRegistration: `${BASE_URL}/registrer`,
   createRegistrationById: `${BASE_URL}/registrerWishlist`,
   createWaitlistRegistration: `${BASE_URL}/waitlist-registrer`,

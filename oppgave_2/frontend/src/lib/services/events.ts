@@ -109,3 +109,22 @@ export const deleteEvent = async (eventId: string): Promise<void> => {
     throw error;
   }
 }
+
+export const editEvent = async (eventData: Event): Promise<void> => {
+  try {
+    const response = await fetch(`${ENDPOINTS.editEvent(eventData)}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(eventData)
+    });
+  
+    if (!response.ok) {
+      throw new Error(`Failed to edit event: ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error("Error, could not edit event:", error);
+    throw error;
+  }
+};
