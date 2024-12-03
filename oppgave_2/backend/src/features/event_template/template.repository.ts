@@ -132,8 +132,7 @@ export const createTemplateRepository = (db: DB) => {
 
 const edit = async (data: EventWithRules): Promise<Result<string>> => {
   try {
-    console.log("Update repository; ",data)
-  const templateExists = db.prepare("SELECT event_id FROM events_template WHERE event_id = ? LIMIT 1").get(data.rules.event_id);
+    const templateExists = db.prepare("SELECT event_id FROM events_template WHERE event_id = ? LIMIT 1").get(data.rules.event_id);
   if (!templateExists) {
     console.log("No template found for given ID:", data.id);
     return {
@@ -141,6 +140,24 @@ const edit = async (data: EventWithRules): Promise<Result<string>> => {
       data: "Could not edit template because it's not a template",
     };
   }
+  console.log("\n\nrules.event_id: ", data.rules.event_id)
+  const getTemplateIdWithEventId = db.prepare("SELECT id FROM events_template WHERE event_id = ?");
+  const current_template_id_row = getTemplateIdWithEventId.get(data.rules.event_id) as TemplateIdRow | undefined;
+
+  console.log("curretn tempid: ",current_template_id_row?.id)
+  const getActiveEventIfTemplate = db.prepare("SELECT template_id FROM events_active WHERE template_id = ?");
+  const templateId = current_template_id_row?.id;
+  const querry = getActiveEventIfTemplate.get(templateId);
+
+
+  console.log("temp_id in active events: ",querry)
+
+      if (querry !== undefined) {
+        return {
+          success: true as const,
+          data: "Template not deleted: Event exists",
+        };
+      }
   const updateEventQuery = db.prepare(`
       UPDATE events
       SET
