@@ -329,8 +329,8 @@ export default function EditEvent({ eventSlug }: EditEventProps) {
             type="submit"
             disabled={isLoading}
             className={`w-full flex items-center justify-center ${
-              isLoading ? "bg-slate-300" : "bg-teal-600 hover:bg-teal-500"
-            } text-white font-semibold py-4 px-6 rounded-lg shadow-md transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-teal-300 focus:ring-offset-2 transform hover:scale-[1.02] active:scale-[0.98]`}
+              isLoading ? "bg-slate-300" : "bg-blue-600 hover:bg-blue-500"
+            } text-white font-semibold py-4 px-6 rounded-lg shadow-md transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 transform hover:scale-[1.02] active:scale-[0.98]`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
