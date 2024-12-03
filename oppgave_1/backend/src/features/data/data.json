@@ -108,13 +108,13 @@
       "id": "1",
       "createdBy": { "id": "2", "name": "Sara Olsen" },
       "comment": "very nice lesson. I learn how to cure covid from this lesson. thank you",
-      "lesson": { "slug": "variabler" }
+      "lesson": { "id": "1" }
     },
     {
       "id": "2",
       "createdBy": { "id": "3", "name": "Finn Finnsen" },
       "comment": "This lesson was okay. I only learned how to cure cancer.",
-      "lesson": { "slug": "variabler" }
+      "lesson": { "id": "1" }
     }
   ],
   "courseCreateSteps": [

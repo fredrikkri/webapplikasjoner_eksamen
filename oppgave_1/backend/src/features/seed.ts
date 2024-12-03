@@ -23,8 +23,8 @@ export const seed = async (db: DB) => {
   `);
 
   const insertComment = db.prepare(`
-    INSERT INTO comments (createdBy, comment, lesson_id)
-    VALUES (?, ?, (SELECT id FROM lessons WHERE slug = ?))
+    INSERT INTO comments (id, createdBy, comment, lesson_id)
+    VALUES (?, ?, ?, ?)
   `);
 
   const insertUser = db.prepare(`
@@ -99,12 +99,18 @@ export const seed = async (db: DB) => {
       }
     }
 
-    // Insert comments (after lessons are inserted so we can look up lesson_id)
+    // Insert comments with createdBy as JSON string
     for (const comment of comments) {
+      const createdByJson = JSON.stringify({
+        id: comment.createdBy.id,
+        name: comment.createdBy.name
+      });
+
       insertComment.run(
-        comment.createdBy.name,
+        comment.id,
+        createdByJson,
         comment.comment,
-        comment.lesson.slug
+        comment.lesson.id
       );
     }
   })();
