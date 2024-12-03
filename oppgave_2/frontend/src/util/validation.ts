@@ -26,6 +26,7 @@ export const validateDescription = (description: string): string | null => {
   return null;
 };
 
+{/* SRC: kilde: chatgpt.com  || metode under er laget med gpt, endringer er gjort for å tilpasse til vårt prosjekt */}
 export const validateDate = (date: string): string | null => {
   if (!date) {
     return 'Dato er påkrevd';
@@ -97,6 +98,7 @@ export const validatePrice = (price: number): string | null => {
   return null;
 };
 
+{/* SRC: kilde: chatgpt.com  || metode under er laget med gpt, endringer er gjort for å tilpasse til vårt prosjekt */}
 export const validateEmail = (email: string): string | null => {
   if (!email || email.trim() === '') {
     return 'E-post er påkrevd';
