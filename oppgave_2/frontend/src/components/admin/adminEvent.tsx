@@ -164,7 +164,7 @@ export default function AdminEvent(props: RegCardProps) {
   };
   // SRC: kilde: chatgpt.com  / Tailwind er laget med gpt
   return (
-    <article className="p-6 space-y-8">
+    <article className="max-w-5xl mx-auto p-6 space-y-8">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-blue-900">Administrering</h2>
         <p className="mt-2 text-blue-600">Her kan du håndtere påmeldinger og arrangement</p>
@@ -175,7 +175,7 @@ export default function AdminEvent(props: RegCardProps) {
           <p className="text-blue-50">{event.description}</p>
         </div>
 
-        <div className="p-0 border-b border-slate-200 flex space-x-2 justify-end">
+        <div className="p-4 border-b border-slate-200 flex space-x-2 justify-end">
           <EditEventButton event={event} />
           <DeleteEventButton event={event} />
         </div>
