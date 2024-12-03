@@ -212,10 +212,8 @@ const edit = async (data: EventWithRules): Promise<Result<string>> => {
 }
 };
 
-  
-
-  // SRC: kilde: chatgpt.com  || med endringer /
-  const getEventByTemplateSlug = async (eventSlug: string): Promise<Result<Event>> => {
+// SRC: kilde: chatgpt.com  || med endringer /
+const getEventByTemplateSlug = async (eventSlug: string): Promise<Result<Event>> => {
     try {
       const query = db.prepare(`
         SELECT e.*, et.id as template_id 
