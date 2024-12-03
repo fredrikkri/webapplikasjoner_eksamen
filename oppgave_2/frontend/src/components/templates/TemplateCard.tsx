@@ -11,10 +11,10 @@ type TemplateCardProps = {
 }
 
 export default function TemplateCard({ title, description, date, location, slug, event_type }: TemplateCardProps) {
+  {/* SRC: kilde: chatgpt.com  || Tailwind laget med gpt */}
   return (
     <article className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col h-full border-l-4 border-indigo-500">
       <div className="p-6 flex flex-col flex-grow">
-        {/* Header */}
         <div className="space-y-2 mb-4">
           <div className="flex items-start justify-between gap-4">
             <h2 className="text-2xl font-bold text-indigo-900 min-h-[4.5rem] line-clamp-3">{title}</h2>
@@ -24,8 +24,6 @@ export default function TemplateCard({ title, description, date, location, slug,
           </div>
           <p className="text-slate-600 line-clamp-3">{description}</p>
         </div>
-
-        {/* Template Details */}
         <div className="space-y-3 flex-grow">
           <div className="flex items-center text-slate-600">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 shrink-0 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -49,8 +47,6 @@ export default function TemplateCard({ title, description, date, location, slug,
           </div>
         </div>
       </div>
-
-      {/* Action Button */}
       <div className="p-6 pt-0 mt-auto">
         <Link href={`/templates/${slug}`} className="block">
           <button className="w-full inline-flex items-center justify-center px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200">

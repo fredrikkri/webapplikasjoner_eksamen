@@ -119,6 +119,7 @@ export default function TemplateCardExpanded({
     }
   };
 
+  {/* SRC: kilde: chatgpt.com  || Brukt gpt når vi ikke klarte å få til submmitt av formfield når vi har to stykk submit-knapper til et og samme formfield. Vi har gjort endringer frem og tilbake og samarbeidet med gpt for å få det til å fungere */}
   const handleSubmit = async (e: FormEvent<HTMLFormElement>, action: string) => {
     e.preventDefault();
     setError(null);
@@ -202,6 +203,7 @@ export default function TemplateCardExpanded({
     return null;
   };
 
+  {/* SRC: kilde: chatgpt.com  || Tailwind laget med gpt, mens annet er laget med gpt for å forbedre kode. Vi har også gjort endringer frem og tilbake på hva gpt prøvde å fikse */}
   return (
     <div className="bg-white rounded-xl shadow-lg p-8 border-l-4 border-indigo-500">
       <form onSubmit={(e) => handleSubmit(e, (e.nativeEvent as SubmitEvent).submitter?.getAttribute("value") as string)} className="space-y-6">

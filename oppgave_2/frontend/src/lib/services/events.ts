@@ -2,6 +2,7 @@ import { ENDPOINTS } from "@/config/config";
 import { Event } from "../../types/Event";
 import { getRulesByEventId } from "./rules";
 
+// SRC: kilde: chatgpt.com  / metode under er laget med gpt. Det er gjort nødvendige endringer for å tilpasse den til vårt prosjekt.
 export const getEvent = async (slug: string): Promise<Event | undefined> => {
   const response = await fetch(ENDPOINTS.events + `/${slug}`);
   
@@ -10,8 +11,6 @@ export const getEvent = async (slug: string): Promise<Event | undefined> => {
   }
 
   const result = await response.json();
-  
-  // Check if the result has success property
   if (!result.success) {
     throw new Error(result.error.message || "Failed to fetch event");
   }

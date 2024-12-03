@@ -149,7 +149,7 @@ export default function EventCardExpanded({
   return (
     <article className="bg-white rounded-xl shadow-lg border-l-4 border-teal-500">
       <div className="p-8">
-        {/* Header Section */}
+        {/*   // SRC: kilde: chatgpt.com  || med endringer / */}
         <div className="flex justify-between items-start mb-8 pb-6 border-b border-slate-200">
           <div>
             <h2 className="text-2xl font-bold text-slate-900 mb-2">{title}</h2>
@@ -166,7 +166,7 @@ export default function EventCardExpanded({
           </Link>
         </div>
 
-        {/* Event Details */}
+        {/*   // SRC: kilde: chatgpt.com  || med endringer / */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="space-y-4">
             <div className="flex items-center text-slate-600">
@@ -211,7 +211,7 @@ export default function EventCardExpanded({
           </div>
         </div>
 
-        {/* Registration Form */}
+        {/*   // SRC: kilde: chatgpt.com  || med endringer / */}
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
             <div className="p-6 bg-gradient-to-r from-teal-500 to-teal-600">
@@ -300,7 +300,7 @@ export default function EventCardExpanded({
             </div>
           </div>
 
-          {/* Order Summary - Only shown when there are registrations */}
+          {/*  // SRC: kilde: chatgpt.com  || med endringer / */}
           {registrations.length > 0 && (
             <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
               <div className="p-6 border-b border-slate-200">

@@ -9,7 +9,8 @@ const DownloadExcel = () => {
   const handleDownload = async () => {
     await downloadExcel();
   };
-
+  
+  {/* SRC: kilde: chatgpt.com  || Tailwind laget med gpt */}
   return (
     <section className="flex flex-col items-center justify-center py-8 px-4 mt-6 bg-white rounded-lg shadow-sm">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Statistikk</h2>

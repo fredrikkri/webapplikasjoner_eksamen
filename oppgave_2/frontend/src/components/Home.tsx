@@ -10,14 +10,13 @@ interface HomeProps {
 export default function Home({ children }: HomeProps) {
   const pathname = usePathname();
 
+  {/* SRC: kilde: chatgpt.com */}
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
       <div className="mx-auto grid min-h-screen w-full grid-rows-[auto_minmax(900px,_1fr)_auto] px-4 sm:px-6 lg:px-8">
-        {/* Navigation */}
         <nav className="sticky top-0 z-50 backdrop-blur-sm bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500 shadow-xl w-screen left-0 -mx-4 sm:-mx-6 lg:-mx-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-20">
-              {/* Logo */}
               <h1 className="relative group" data-testid="logo">
                 <a href="/events" className="flex items-center gap-3 group">
                   <span className="text-4xl transform group-hover:scale-110 transition-transform duration-200">🥷🏻</span>
@@ -27,7 +26,6 @@ export default function Home({ children }: HomeProps) {
                 </a>
               </h1>
 
-              {/* Navigation Links */}
               <ul className="flex items-center gap-6" data-testid="nav">
                 <li data-testid="nav_events">
                   <a 
@@ -102,12 +100,10 @@ export default function Home({ children }: HomeProps) {
           </div>
         </nav>
 
-        {/* Main Content */}
         <main className="py-8">
           {children}
         </main>
 
-        {/* Footer */}
         <footer className="relative border-t border-slate-200 py-8 bg-gradient-to-r from-blue-500 via-teal-500 to-emerald-500 text-white shadow-inner w-screen left-0 -mx-4 sm:-mx-6 lg:-mx-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">

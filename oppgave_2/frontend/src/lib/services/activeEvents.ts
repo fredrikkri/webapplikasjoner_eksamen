@@ -14,8 +14,6 @@ export const checkExistingActiveEvents = async (templateId: number, date: string
       console.error("Kunne ikke hente aktive arrangementer");
       return false;
     }
-
-    // Check if there's any active event with the same template on the same date
     const existingEvent = data.data.find((event: any) => 
       event.template_id === templateId && 
       new Date(event.date).toISOString().split('T')[0] === new Date(date).toISOString().split('T')[0]

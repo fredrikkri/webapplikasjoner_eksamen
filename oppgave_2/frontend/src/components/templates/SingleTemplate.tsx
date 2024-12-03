@@ -8,6 +8,7 @@ interface TemplateProps {
 function SingleTemplate({ slug = "" }: TemplateProps) {
   const { template, loading, error } = useTemplate(slug);
 
+  {/* SRC: kilde: chatgpt.com  || Tailwind laget med gpt */}
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-indigo-600">

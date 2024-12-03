@@ -11,6 +11,7 @@ interface EventCardProps {
   available_slots: number;
 }
 
+  // SRC: kilde: chatgpt.com  || Tailwind laget med gpt /
 export default function EventCard({ 
   title, 
   description, 
@@ -24,7 +25,6 @@ export default function EventCard({
   return (
     <article className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col h-full">
       <div className="p-6 flex flex-col flex-grow">
-        {/* Header */}
         <div className="space-y-2 mb-4">
           <div className="flex items-start justify-between gap-4">
             <h2 className="text-2xl font-bold text-slate-900 min-h-[4.5rem] line-clamp-3">{title}</h2>
@@ -34,8 +34,6 @@ export default function EventCard({
           </div>
           <p className="text-slate-600 line-clamp-3">{description}</p>
         </div>
-
-        {/* Event Details */}
         <div className="space-y-3 flex-grow">
           <div className="flex items-center text-slate-600">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -58,8 +56,6 @@ export default function EventCard({
             <span>{location}</span>
           </div>
         </div>
-
-        {/* Availability Status */}
         <div className="mt-4">
           {available_slots > 0 ? (
             <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-teal-100 text-teal-800">
@@ -78,8 +74,6 @@ export default function EventCard({
           )}
         </div>
       </div>
-
-      {/* Action Button */}
       <div className="p-6 pt-0 mt-auto">
         <Link href={`/events/${slug}`} className="block">
           <button className="w-full inline-flex items-center justify-center px-6 py-3 bg-teal-600 text-white font-medium rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-colors duration-200">

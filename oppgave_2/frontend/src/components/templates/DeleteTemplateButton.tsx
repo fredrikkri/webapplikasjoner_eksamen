@@ -26,6 +26,7 @@ export default function DeleteTemplateButton(props: TemplateProps) {
     }
   };
 
+    // SRC: kilde: chatgpt.com  || Tailwind laget med gpt /
   return (
     <button
       onClick={handleDelete}

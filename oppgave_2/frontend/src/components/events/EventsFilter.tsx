@@ -41,7 +41,7 @@ const EventsFilter = () => {
       </div>
 
       <div className="bg-white rounded-xl shadow-lg p-6 mb-8 space-y-6">
-        {/* Date Filters */}
+        {/*   // SRC: kilde: chatgpt.com  || med endringer / */}
         <div className="space-y-4">
           <h2 className="text-lg font-semibold text-slate-900">Datofilter</h2>
           <div className="flex flex-wrap gap-4 items-center">
@@ -79,7 +79,7 @@ const EventsFilter = () => {
           </div>
         </div>
 
-        {/* Category Filter */}
+        {/*   // SRC: kilde: chatgpt.com  || med endringer / */}
         <div className="space-y-4">
           <h2 className="text-lg font-semibold text-slate-900">Kategorifilter</h2>
           <div className="flex flex-wrap gap-4 items-center">

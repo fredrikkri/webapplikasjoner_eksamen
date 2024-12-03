@@ -6,7 +6,8 @@ type RuleItemProps = {
 
 export default function RuleItem({ label, description, value }: RuleItemProps) {
   if (label === "Tillatte dager") {
-    const days = value ? value.split(',') : [];
+    const days = value ? value.split(',') : [];    
+    {/* SRC: kilde: chatgpt.com  || Tailwind laget med gpt */}
     return (
       <div className="bg-white rounded-lg p-4 shadow-sm border border-slate-200 hover:border-indigo-300 transition-colors duration-200">
         {days.length > 0 ? (
@@ -38,7 +39,7 @@ export default function RuleItem({ label, description, value }: RuleItemProps) {
       </div>
     );
   }
-
+    {/* SRC: kilde: chatgpt.com  || Tailwind laget med gpt */}
   return (
     <div className="bg-white rounded-lg p-4 shadow-sm border border-slate-200 hover:border-indigo-300 transition-colors duration-200">
       <div className="flex justify-between items-start">

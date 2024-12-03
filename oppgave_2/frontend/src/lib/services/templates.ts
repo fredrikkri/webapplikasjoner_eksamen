@@ -3,6 +3,7 @@ import { ENDPOINTS } from "../../config/config";
 import { Template } from "../../types/Template"
 import { getRulesByEventId } from "./rules";
 
+// SRC: kilde: chatgpt.com  / Metode under er laget med gpt. Nødvendige tilpassninger er gjort for å få den til å passe med vårt prosjekt.
 export const getTemplate = async (slug: string): Promise<Template | undefined> => {
   const response = await fetch(ENDPOINTS.templates + `/${slug}`);
   if (!response.ok) {
@@ -16,7 +17,6 @@ export const getTemplate = async (slug: string): Promise<Template | undefined> =
   const template = result.data as Template;
   
   try {
-    // Fetch rules using the template id
     const rules = await getRulesByEventId(template.id);
     if (rules) {
       template.rules = rules;
@@ -42,7 +42,6 @@ export const getAllTemplates = async (): Promise<Template[]> => {
 
   const templates = result.data as Template[];
   
-  // Fetch rules for each template
   const templatesWithRules = await Promise.all(
     templates.map(async (template) => {
       try {

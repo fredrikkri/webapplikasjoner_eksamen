@@ -26,6 +26,7 @@ export default function EditTemplateButton(props: TemplateEditProps) {
     }
   };
 
+    // SRC: kilde: chatgpt.com  || Tailwind laget med gpt /
   return (
   <button
       onClick={handleEdit}

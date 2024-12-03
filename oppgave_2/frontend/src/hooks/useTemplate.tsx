@@ -66,11 +66,11 @@ export const useCreateEvent = () => {
         throw new Error("Template creation failed.");
       }
 
-      return response; // Returner responsen hvis nødvendig
+      return response;
     } catch (err) {
       setError(err instanceof Error ? err : new Error("An unknown error occurred."));
       console.error(err);
-      return null; // Returner null ved feil
+      return null;
     } finally {
       setLoading(false);
     }
