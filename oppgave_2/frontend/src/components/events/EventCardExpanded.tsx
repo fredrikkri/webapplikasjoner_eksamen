@@ -38,6 +38,7 @@ export default function EventCardExpanded({
   const { registrationMembers, loading, error } = useAllRegistrationsMembersByEventId(id)
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
+  const [totalCost, setTotalCost] = useState(price)
   let totalSizeWaitlist = availableSlots;
 
   if(fetchedWaitlist){
@@ -64,6 +65,7 @@ export default function EventCardExpanded({
 
   // SRC: kilde: chatgpt.com
   const handleAddEmailField = () => {
+    setTotalCost(totalCost+price)
     setRegistrations([
       ...registrations,
       { id: crypto.randomUUID(), event_id: slug, email: "", has_paid: "false", registration_date: "", order_id: "" , responsible_person: "", number_of_people: 0},
@@ -72,6 +74,7 @@ export default function EventCardExpanded({
 
   // SRC: kilde: chatgpt.com
   const handleRemoveEmailField = (index: number) => {
+    setTotalCost(totalCost-price)
     const updatedRegistrations = registrations.filter((_, i) => i !== index);
     setRegistrations(updatedRegistrations);
   };
@@ -245,6 +248,30 @@ export default function EventCardExpanded({
               ))}
             </div>
           </div>
+
+          {/* penger^n */}
+          <div className="bg-yellow-100 p-6 rounded-lg shadow-lg">
+            <div className="flex justify-between items-center">
+              <div className="text-3xl font-bold text-gray-900">
+                {title}
+              </div>
+
+              <div className="text-lg font-medium text-gray-700 bg-yellow-200 px-4 py-2 rounded-full shadow-sm">
+                {registrations.length} {registrations.length === 1 ? 'Person' : 'People'}
+              </div>
+            </div>
+
+            {/* Additional Information Section */}
+            <div className="mt-4 text-gray-600 text-sm">
+              <p className="font-medium">Order Summary</p>
+              <ul className="space-y-2">
+                <li>Antall: {registrations.length} {registrations.length === 1 ? 'person' : 'people'}</li>
+                <li>Total kostnad: {totalCost}kr</li>
+                <li>Status: <span className="text-green-500 font-semibold">Confirmed</span></li>
+              </ul>
+            </div>
+          </div>
+
 
           <div className="flex justify-between pt-4">
             <button
