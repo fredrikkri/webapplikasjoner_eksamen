@@ -5,8 +5,8 @@ import { RegistrationEventData } from "@/types/Registration";
 import { createId } from "@/util/utils";
 import { validateEmail } from "@/util/validation";
 import EditEventButton from "./editEventButton";
-import DeleteEvent from "./deleteEvent";
 import { updateAvailableSlots } from "../../lib/services/events";
+import DeleteEventButton from "./deleteEventButton";
 
 interface RegCardProps {
   event: Event | null;
@@ -58,7 +58,7 @@ export default function AdminEvent(props: RegCardProps) {
   );
 
   if(filteredRegistrations && event){
-    totalSpace = event?.available_slots - filteredRegistrations?.length;
+    totalSpace = event?.available_slots;
   }
 
   const toggleDropdown = () => {
