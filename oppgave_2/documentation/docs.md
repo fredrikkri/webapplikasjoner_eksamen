@@ -1,4 +1,4 @@
-# Documentation oppg2
+# Documentation oppgave 2
 
 ## 1. Skal lage enkle low-fi skisse basert på kravene over.
 
@@ -624,3 +624,77 @@ Hver gang vi velger å gjenbruke en mal så genererer vi en ny id bak tittelen, 
 Ved hjelp av events_template kan vi lett hente ut data fra events tablet. Hvis vi velger en mal så henter vi ut dataen fra events og genererer nye id'er til set informasjon ved opprettelse.
 
 ## 9. Skal dokumentere databasemodellen og nødvendige relasjoner.
+
+Databasemodellen består av følgende tabeller og relasjoner:
+
+### events (Hovedtabell)
+- Primærnøkkel: id (TEXT)
+- Kolonner:
+  - title (TEXT, NOT NULL)
+  - description (TEXT, NOT NULL)
+  - slug (TEXT, NOT NULL)
+  - date (TEXT, NOT NULL)
+  - location (TEXT, NOT NULL)
+  - event_type (TEXT, NOT NULL)
+  - total_slots (INTEGER, NOT NULL)
+  - available_slots (INTEGER, NOT NULL)
+  - price (INTEGER, NOT NULL)
+
+### events_template
+- Primærnøkkel: id (INTEGER AUTOINCREMENT)
+- Fremmednøkkel: event_id -> events(id)
+- Kolonner:
+  - private (TEXT)
+
+### events_active
+- Primærnøkkel: id (INTEGER AUTOINCREMENT)
+- Fremmednøkler:
+  - event_id -> events(id)
+  - template_id -> events_template(id)
+
+### wait_list
+- Primærnøkkel: id (TEXT)
+- Fremmednøkkel: event_id -> events(id)
+- Kolonner:
+  - email (TEXT, NOT NULL)
+  - has_paid (TEXT, NOT NULL)
+  - registration_date (TEXT, NOT NULL)
+  - order_id (TEXT)
+
+### registrations
+- Primærnøkkel: id (TEXT)
+- Fremmednøkkel: event_id -> events(id)
+- Kolonner:
+  - email (TEXT, NOT NULL)
+  - has_paid (TEXT, NOT NULL)
+  - registration_date (TEXT, NOT NULL)
+  - order_id (TEXT)
+
+### days
+- Primærnøkkel: id (INTEGER AUTOINCREMENT)
+- Kolonner:
+  - day (TEXT, NOT NULL)
+
+### event_rules
+- Primærnøkkel: event_id (TEXT)
+- Fremmednøkkel: event_id -> events(id) ON DELETE CASCADE
+- Kolonner:
+  - is_private (TEXT)
+  - restricted_days (TEXT)
+  - allow_multiple_events_same_day (TEXT)
+  - waitlist (TEXT)
+  - fixed_price (TEXT)
+  - fixed_size (TEXT)
+  - is_free (TEXT)
+
+Relasjoner og deres betydning:
+1. events_template og events_active er mellomtabeller som refererer til hovedtabellen events, dette muliggjør kategorisering av events som enten maler eller aktive arrangementer
+2. wait_list og registrations har lignende struktur og begge refererer til events, dette håndterer både venteliste og faktiske registreringer for arrangementer
+3. event_rules er direkte knyttet til events med CASCADE DELETE, som betyr at reglene automatisk slettes når et arrangement slettes
+4. Alle fremmednøkler er aktivert med "PRAGMA foreign_keys = ON" for å sikre referanseintegritet
+
+Dette databasedesignet støtter:
+- Fleksibel håndtering av arrangementer (både maler og aktive)
+- Robust registreringssystem med ventelistefunksjonalitet
+- Omfattende regelsett for hvert arrangement
+- Effektiv dataintegritet gjennom fremmednøkler
