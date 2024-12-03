@@ -131,6 +131,7 @@ export default function AdminEvent(props: RegCardProps) {
     try {
       await addRegistration(registrationData);
       await refetch();
+      await updateAvailableSlots(event.id, event.available_slots-registrationData.length)
       setNewRegistrations([]);
       setValidationErrors({});
       setOpenForm(false);

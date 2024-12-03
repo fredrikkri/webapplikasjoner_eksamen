@@ -1,6 +1,8 @@
+import { useAllRegistrations } from "@/hooks/useRegistration";
 import Link from "next/link";
 
 interface EventCardProps {
+  id: string,
   title: string;
   description: string;
   date: string;
@@ -13,6 +15,7 @@ interface EventCardProps {
 
   // SRC: kilde: chatgpt.com  || Tailwind laget med gpt /
 export default function EventCard({ 
+  id,
   title, 
   description, 
   date, 
@@ -22,6 +25,8 @@ export default function EventCard({
   total_slots, 
   available_slots 
 }: EventCardProps) {
+
+
   return (
     <article className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col h-full">
       <div className="p-6 flex flex-col flex-grow">

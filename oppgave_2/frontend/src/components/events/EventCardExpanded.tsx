@@ -129,13 +129,13 @@ export default function EventCardExpanded({
 
     for (const registration of registrationData) {
       await addWaitlistRegistration(registration);
+      await updateAvailableSlots(id, availableSlots-registrationData.length)
     }
     if(availableSlots-registrationData.length <= 0){
       await updateAvailableSlots(id, 0)
       window.history.go();
       return
     }
-    await updateAvailableSlots(id, availableSlots-registrationData.length)
 
     window.history.go();
   };
