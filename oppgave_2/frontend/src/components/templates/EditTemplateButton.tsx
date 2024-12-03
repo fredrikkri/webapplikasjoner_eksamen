@@ -29,9 +29,7 @@ export default function EditTemplateButton(props: TemplateEditProps) {
           window.location.href = '/templates';
         });
         alert(responseEdit.data);
-      } else {
-        setError(responseEdit.error || "En ukjent feil oppsto.");
-      }
+      } 
     } catch (err) {
       setError(
         "En feil oppsto under oppdatering: " +

@@ -16,8 +16,15 @@ export default function DeleteTemplateButton(props: TemplateProps) {
       setError(null);
 
       try {
-        await deleteTemplate(props.templateId);
-        window.location.href = '/templates';
+        const responseEdit = await deleteTemplate(props.templateId);
+        setTimeout(() => {
+          window.location.href = '/templates';
+        });
+        if (responseEdit.data === undefined) {
+          alert("Kunne ikke slette mal siden malen allerede er i bruk.");
+        } else {
+          alert("Malen ble slettet!");
+        }
       } catch (err) {
         setError("Error deleting event: " + (err instanceof Error ? err.message : 'Unknown error'));
       } finally {

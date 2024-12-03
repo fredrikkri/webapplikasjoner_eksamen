@@ -87,15 +87,24 @@ export const onAddTemplate = async ({ event_id }: { event_id: string }): Promise
   }
 };
 
-export const deleteTemplate = async (eventId: string): Promise<void> => {
+export const deleteTemplate = async (eventId: string): Promise<{ success: boolean; data?: string; error?: string }> => {
   try {
     const response = await fetch(`${ENDPOINTS.deleteTemplate(eventId)}`, {
       method: 'DELETE',
     });
   
     if (!response.ok) {
-      throw new Error(`Failed to delete template: ${response.statusText}`);
+      const errorResponse = await response.json();
+      return {
+        success: false,
+        error: errorResponse?.message || `Failed to edit template: ${response.statusText}`,
+      };
     }
+    const result = await response.json();
+    return {
+      success: result.success || false,
+      data: result.data,
+    };
   } catch (error) {
     console.error("Error, could not delete template:", error);
     throw error;
