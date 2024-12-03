@@ -213,8 +213,8 @@ export const createWaitlistRepository = (db: DB) => {
   
       if (regdata.length === 0) {
         return {
-          success: false,
-          error: { code: "NOT_FOUND", message: "No registrations found for this event" },
+          success: true,
+          data: regdata,
         };
       }
 
