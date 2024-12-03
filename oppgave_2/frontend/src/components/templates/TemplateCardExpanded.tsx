@@ -1,3 +1,5 @@
+'use client';
+
 import { FormEvent, useState } from "react";
 import { Event as EventData } from "../../types/Event";
 import { onAddTemplate } from "@/lib/services/templates";
@@ -82,7 +84,7 @@ export default function TemplateCardExpanded({
   const router = useRouter();
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> | { target: { name: string; value: string } }
   ) => {
     const { name, value } = e.target;
     
@@ -188,6 +190,7 @@ export default function TemplateCardExpanded({
   const inputClasses = "mt-2 block w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition duration-200";
   const labelClasses = "block text-sm font-medium text-slate-700 mb-1";
   const errorClasses = "text-red-500 text-sm mt-1";
+  const numberInputClasses = `${inputClasses} [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none relative pr-12`;
 
   const getErrorMessage = () => {
     if (error) {
@@ -305,17 +308,41 @@ export default function TemplateCardExpanded({
             <div>
               <label className={labelClasses}>
                 Antall plasser
-                <input
-                  type="number"
-                  name="total_slots"
-                  value={eventData.total_slots}
-                  onChange={handleChange}
-                  onKeyDown={handleNumberInput}
-                  className={`${inputClasses} ${validationErrors.total_slots ? 'border-red-500' : ''}`}
-                  required
-                  min="0"
-                  disabled={rules.shouldDisableSize}
-                />
+                <div className="relative">
+                  <input
+                    type="number"
+                    name="total_slots"
+                    value={eventData.total_slots}
+                    onChange={handleChange}
+                    onKeyDown={handleNumberInput}
+                    className={`${numberInputClasses} ${validationErrors.total_slots ? 'border-red-500' : ''}`}
+                    required
+                    min="0"
+                    disabled={rules.shouldDisableSize}
+                  />
+                  <div className="absolute right-0 inset-y-0 flex flex-col border-l border-slate-300">
+                    <button
+                      type="button"
+                      onClick={() => handleChange({ target: { name: 'total_slots', value: String(eventData.total_slots + 1) } })}
+                      className="flex-1 px-3 hover:bg-slate-50 flex items-center justify-center border-b border-slate-300 rounded-tr-lg"
+                      disabled={rules.shouldDisableSize}
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleChange({ target: { name: 'total_slots', value: String(Math.max(0, eventData.total_slots - 1)) } })}
+                      className="flex-1 px-3 hover:bg-slate-50 flex items-center justify-center rounded-br-lg"
+                      disabled={rules.shouldDisableSize}
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </label>
               {validationErrors.total_slots && <p className={errorClasses}>{validationErrors.total_slots}</p>}
             </div>
@@ -323,21 +350,46 @@ export default function TemplateCardExpanded({
             <div>
               <label className={labelClasses}>
                 Pris (NOK)
-                <input
-                  type="number"
-                  name="price"
-                  value={eventData.price}
-                  onChange={handleChange}
-                  onKeyDown={handleNumberInput}
-                  className={`${inputClasses} ${validationErrors.price ? 'border-red-500' : ''}`}
-                  required
-                  min="0"
-                  disabled={rules.shouldDisablePrice}
-                />
+                <div className="relative">
+                  <input
+                    type="number"
+                    name="price"
+                    value={eventData.price}
+                    onChange={handleChange}
+                    onKeyDown={handleNumberInput}
+                    className={`${numberInputClasses} ${validationErrors.price ? 'border-red-500' : ''}`}
+                    required
+                    min="0"
+                    disabled={rules.shouldDisablePrice}
+                  />
+                  <div className="absolute right-0 inset-y-0 flex flex-col border-l border-slate-300">
+                    <button
+                      type="button"
+                      onClick={() => handleChange({ target: { name: 'price', value: String(eventData.price + 1) } })}
+                      className="flex-1 px-3 hover:bg-slate-50 flex items-center justify-center border-b border-slate-300 rounded-tr-lg"
+                      disabled={rules.shouldDisablePrice}
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleChange({ target: { name: 'price', value: String(Math.max(0, eventData.price - 1)) } })}
+                      className="flex-1 px-3 hover:bg-slate-50 flex items-center justify-center rounded-br-lg"
+                      disabled={rules.shouldDisablePrice}
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </label>
               {validationErrors.price && <p className={errorClasses}>{validationErrors.price}</p>}
             </div>
           </div>
+
           <div className="mt-8">
             <h3 className="text-lg font-semibold text-slate-900 mb-4">Regler for malen</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
