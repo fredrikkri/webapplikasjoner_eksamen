@@ -12,7 +12,7 @@ interface RegCardProps {
 
 export default function AdminEvent(props: RegCardProps) {
   const { event } = props;
-  const { events, loading, error } = useAllRegistrations();
+  const { events, setEvents, loading, error } = useAllRegistrations();
   const [openDropdown, setOpenDropdown] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [newRegistrations, setNewRegistrations] = useState<{ email: string }[]>([]);
@@ -40,7 +40,7 @@ export default function AdminEvent(props: RegCardProps) {
   );
 
   if(filteredRegistrations && event){
-    totalSpace = event?.available_slots-filteredRegistrations?.length
+    totalSpace = event?.available_slots - filteredRegistrations?.length;
   }
 
   const toggleDropdown = () => {
@@ -89,14 +89,14 @@ export default function AdminEvent(props: RegCardProps) {
       return;
     }
 
-    const registrationData = newRegistrations.map(({ email }) => ({
+    const registrationData = filteredRegistrations?.map(({ email }) => ({
         id: createId(),
         email,
         event_id: event.id,
         registration_date: new Date().toISOString(),
         has_paid: "false",
         order_id: createId()
-    }));
+    })) || [];
 
     if(totalSpace < registrationData.length){
       setPopupMessage("Du har valgt for mange folk, det er kun "+totalSpace+ " ledige plass.");
@@ -105,6 +105,10 @@ export default function AdminEvent(props: RegCardProps) {
     }
 
     await addRegistration(registrationData);
+
+    const updatedRegistrations = [...filteredRegistrations || [], ...registrationData];
+    setEvents(updatedRegistrations);
+
     setNewRegistrations([]);
     setValidationErrors({});
   };
@@ -121,12 +125,20 @@ export default function AdminEvent(props: RegCardProps) {
 
   const handleRemovePerson = async (registrationId: string) => {
     try {
-        await deleteRegistrationById(registrationId);
+      await deleteRegistrationById(registrationId);
+
+      // Filter out the deleted registration and update the state
+      if(filteredRegistrations){
+      const updatedRegistrations = filteredRegistrations.filter(
+        (registration) => registration.id !== registrationId
+      );
+    
+      setEvents(updatedRegistrations);
+    }
     } catch (error) {
       console.error("Failed to remove registration:", error);
     }
   };
-
   return (
     <article className="p-6 space-y-6">
       <div className="bg-white p-8 rounded-xl shadow-xl">

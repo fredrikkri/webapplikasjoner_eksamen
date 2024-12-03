@@ -60,7 +60,7 @@ export const useCreateRegistration = () => {
       fetchEvents();
     }, []);
   
-    return { events, loading, error };
+    return { events, setEvents, loading, error };
   };
 
   export const deleteRegistrationById = async (registrationId: string) => {

@@ -29,9 +29,9 @@ export const createRegistrationResponse = (data: Registration): Registration => 
       };
   };
 
-  export const createRegistration = (data: Partial<CreateRegistration>): Registration => {
+  export const createRegistration = (data: Partial<CreateRegistration>): RegistrationEvent => {
     return {
-      id: createId(),
+      id: data.id ?? createId(),
       event_id: data.event_id ?? "N/A",
       email: data.email ?? "unknown",
       has_paid: data.has_paid ?? "false",
@@ -41,7 +41,7 @@ export const createRegistrationResponse = (data: Registration): Registration => 
   };
   
   export const fromDb = (data: CreateRegistration) => {
-    const newRegistration: Registration = {
+    const newRegistration: RegistrationEvent = {
       id: createId(),
       event_id: data.event_id ?? "N/A",
       email: data.email ?? "unknown",

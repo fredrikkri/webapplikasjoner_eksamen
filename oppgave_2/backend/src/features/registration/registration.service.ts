@@ -29,7 +29,7 @@ export const createRegistrationService = (registrationRepository: RegistrationRe
           const registrations = data.map((registration) => {
             const newRegistration = {
               ...registration,
-              id: createId(),
+              id: registration.id ?? createId(),
               order_id: createId(),
               registration_date: new Date().toISOString(),
             };
