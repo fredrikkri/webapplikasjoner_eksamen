@@ -1,6 +1,5 @@
 import { ENDPOINTS } from "../../config/config";
 
-// SRC: kilde: chatgpt.com / med endringer
 export const downloadExcelFile = async (): Promise<void> => {
   const response = await fetch(ENDPOINTS.downloadExcel);
 
